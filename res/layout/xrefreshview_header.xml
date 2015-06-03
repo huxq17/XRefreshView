@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/xlistview_header_content"
+    android:id="@+id/xrefreshview_header_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white" >
 
     <RelativeLayout
-        android:id="@+id/xlistview_header_text"
+        android:id="@+id/xrefreshview_header_text"
         android:layout_width="match_parent"
+        android:layout_height="70dp"
         android:gravity="bottom"
-        android:paddingBottom="10dp"
-        android:layout_height="70dp" >
+        android:paddingBottom="10dp" >
 
         <RelativeLayout
             android:id="@+id/right_text"
@@ -19,29 +19,19 @@
             android:layout_centerInParent="true" >
 
             <TextView
-                android:id="@+id/xlistview_header_hint_textview"
+                android:id="@+id/xrefreshview_header_hint_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/xlistview_header_hint_normal" />
+                android:text="@string/xrefreshview_header_hint_normal" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/xrefreshview_header_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/xlistview_header_hint_textview"
-                android:layout_marginTop="3dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/xlistview_header_last_time"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/xlistview_header_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                android:layout_below="@+id/xrefreshview_header_hint_textview"
+                android:layout_marginTop="3dp"
+                android:text="@string/xrefreshview_never_refresh"
+                android:textSize="12sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -53,13 +43,13 @@
             android:layout_toLeftOf="@+id/right_text" >
 
             <ImageView
-                android:id="@+id/xlistview_header_arrow"
+                android:id="@+id/xrefreshview_header_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/xlistview_arrow" />
+                android:src="@drawable/xrefreshview_arrow" />
 
             <ProgressBar
-                android:id="@+id/xlistview_header_progressbar"
+                android:id="@+id/xrefreshview_header_progressbar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:visibility="gone" />

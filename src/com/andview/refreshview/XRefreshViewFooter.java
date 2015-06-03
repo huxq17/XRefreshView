@@ -2,7 +2,7 @@
  * @file XFooterView.java
  * @create Mar 31, 2012 9:33:43 PM
  * @author Maxwin
- * @description XListView's footer
+ * @description Xrefreshview's footer
  */
 package com.andview.refreshview;
 
@@ -45,12 +45,12 @@ public class XRefreshViewFooter extends LinearLayout {
 		mHintView.setVisibility(View.INVISIBLE);
 		if (state == STATE_READY) {
 //			mHintView.setVisibility(View.VISIBLE);
-//			mHintView.setText(R.string.xlistview_footer_hint_ready);
+//			mHintView.setText(R.string.xrefreshview_footer_hint_ready);
 		} else if (state == STATE_LOADING) {
 			mProgressBar.setVisibility(View.VISIBLE);
 		} else {
 //			mHintView.setVisibility(View.VISIBLE);
-//			mHintView.setText(R.string.xlistview_footer_hint_normal);
+//			mHintView.setText(R.string.xrefreshview_footer_hint_normal);
 		}
 	}
 
@@ -128,10 +128,10 @@ public class XRefreshViewFooter extends LinearLayout {
 		moreView.setLayoutParams(new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-		mContentView = moreView.findViewById(R.id.xlistview_footer_content);
-		mProgressBar = moreView.findViewById(R.id.xlistview_footer_progressbar);
+		mContentView = moreView.findViewById(R.id.xrefreshview_footer_content);
+		mProgressBar = moreView.findViewById(R.id.xrefreshview_footer_progressbar);
 		mHintView = (TextView) moreView
-				.findViewById(R.id.xlistview_footer_hint_textview);
+				.findViewById(R.id.xrefreshview_footer_hint_textview);
 	}
 
 }

@@ -24,6 +24,7 @@ public class XRefreshViewHeader extends LinearLayout {
 	private ImageView mArrowImageView;
 	private ProgressBar mProgressBar;
 	private TextView mHintTextView;
+	private TextView mHeaderTimeTextView;
 	private int mState = STATE_NORMAL;
 
 	private Animation mRotateUpAnim;
@@ -75,9 +76,10 @@ public class XRefreshViewHeader extends LinearLayout {
 					}
 				});
 
-		mArrowImageView = (ImageView) findViewById(R.id.xlistview_header_arrow);
-		mHintTextView = (TextView) findViewById(R.id.xlistview_header_hint_textview);
-		mProgressBar = (ProgressBar) findViewById(R.id.xlistview_header_progressbar);
+		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
+		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
+		mHeaderTimeTextView = (TextView) findViewById(R.id.xrefreshview_header_time);
+		mProgressBar = (ProgressBar) findViewById(R.id.xrefreshview_header_progressbar);
 
 		mRotateUpAnim = new RotateAnimation(0.0f, -180.0f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -90,7 +92,9 @@ public class XRefreshViewHeader extends LinearLayout {
 		mRotateDownAnim.setDuration(ROTATE_ANIM_DURATION);
 		mRotateDownAnim.setFillAfter(true);
 	}
-
+	public void setRefreshTime(String time){
+		mHeaderTimeTextView.setText(time);
+	}
 	/**
 	 * 获取view的屏幕上的坐标
 	 * 
@@ -125,17 +129,17 @@ public class XRefreshViewHeader extends LinearLayout {
 			if (mState == STATE_REFRESHING) {
 				mArrowImageView.clearAnimation();
 			}
-			mHintTextView.setText(R.string.xlistview_header_hint_normal);
+			mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
 			break;
 		case STATE_READY:
 			if (mState != STATE_READY) {
 				mArrowImageView.clearAnimation();
 				mArrowImageView.startAnimation(mRotateUpAnim);
-				mHintTextView.setText(R.string.xlistview_header_hint_ready);
+				mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
 			}
 			break;
 		case STATE_REFRESHING:
-			mHintTextView.setText(R.string.xlistview_header_hint_loading);
+			mHintTextView.setText(R.string.xrefreshview_header_hint_loading);
 			int[] l = getViewLocationOnView(mProgressBar);
 			break;
 		default:
