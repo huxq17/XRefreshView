@@ -1,6 +1,6 @@
 package com.andview.refreshview;
 
-public interface RefreshBase {
+public interface XRefreshViewBase {
 	public boolean isTop();
 
 	public boolean isBottom();

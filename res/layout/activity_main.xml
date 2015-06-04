@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:text="listview刷新" />
+
     <Button
         android:id="@+id/bt_gridview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:text="gridview刷新" />
+
     <Button
         android:id="@+id/bt_webView"
         android:layout_width="wrap_content"

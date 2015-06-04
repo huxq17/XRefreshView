@@ -19,10 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class XRefreshViewFooter extends LinearLayout {
-	public final static int STATE_NORMAL = 0;
-	public final static int STATE_READY = 1;
-	public final static int STATE_LOADING = 2;
-
 	private Context mContext;
 
 	private View mContentView;
@@ -39,14 +35,14 @@ public class XRefreshViewFooter extends LinearLayout {
 		initView(context);
 	}
 
-	public void setState(int state) {
+	public void setState(XRefreshViewState state) {
 		mHintView.setVisibility(View.INVISIBLE);
 		mProgressBar.setVisibility(View.INVISIBLE);
 		mHintView.setVisibility(View.INVISIBLE);
-		if (state == STATE_READY) {
+		if (state == XRefreshViewState.STATE_READY) {
 //			mHintView.setVisibility(View.VISIBLE);
 //			mHintView.setText(R.string.xrefreshview_footer_hint_ready);
-		} else if (state == STATE_LOADING) {
+		} else if (state == XRefreshViewState.STATE_LOADING) {
 			mProgressBar.setVisibility(View.VISIBLE);
 		} else {
 //			mHintView.setVisibility(View.VISIBLE);

@@ -1,6 +1,5 @@
 package com.andview.refreshview;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -19,22 +18,20 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class XRefreshViewHeader extends LinearLayout {
+public class XRefreshViewHeader extends LinearLayout implements
+		XRefreshHeaderViewBase {
 	private RelativeLayout mContainer;
 	private ImageView mArrowImageView;
 	private ProgressBar mProgressBar;
 	private TextView mHintTextView;
 	private TextView mHeaderTimeTextView;
-	private int mState = STATE_NORMAL;
+	private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
 
 	private Animation mRotateUpAnim;
 	private Animation mRotateDownAnim;
 
 	private final int ROTATE_ANIM_DURATION = 180;
-
-	public final static int STATE_NORMAL = 0;
-	public final static int STATE_READY = 1;
-	public final static int STATE_REFRESHING = 2;
+	private RelativeLayout mHeaderViewContent;
 
 	public XRefreshViewHeader(Context context) {
 		super(context);
@@ -60,7 +57,9 @@ public class XRefreshViewHeader extends LinearLayout {
 		this.getViewTreeObserver().addOnGlobalLayoutListener(
 				new OnGlobalLayoutListener() {
 
-					@SuppressLint("NewApi") @Override
+					@SuppressWarnings("deprecation")
+					@SuppressLint("NewApi")
+					@Override
 					public void onGlobalLayout() {
 						// 移除视图树监听器
 						if (Build.VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN) {
@@ -75,7 +74,7 @@ public class XRefreshViewHeader extends LinearLayout {
 								+ height);
 					}
 				});
-
+		mHeaderViewContent = (RelativeLayout) findViewById(R.id.xrefreshview_header_content);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
 		mHeaderTimeTextView = (TextView) findViewById(R.id.xrefreshview_header_time);
@@ -92,27 +91,16 @@ public class XRefreshViewHeader extends LinearLayout {
 		mRotateDownAnim.setDuration(ROTATE_ANIM_DURATION);
 		mRotateDownAnim.setFillAfter(true);
 	}
-	public void setRefreshTime(String time){
+
+	public void setRefreshTime(String time) {
 		mHeaderTimeTextView.setText(time);
 	}
-	/**
-	 * 获取view的屏幕上的坐标
-	 * 
-	 * @param view
-	 * @return 整型数组，存放了view的左上角坐标（x,y）
-	 */
-	public int[] getViewLocationOnView(View view) {
-		int[] l = { 0, 0 };
-		view.getLocationInWindow(l);
-		// view.getLocationOnScreen(location)
-		return l;
-	}
 
-	public void setState(int state) {
+	public void setState(XRefreshViewState state) {
 		if (state == mState)
 			return;
 
-		if (state == STATE_REFRESHING) {
+		if (state == XRefreshViewState.STATE_REFRESHING) {
 			mArrowImageView.clearAnimation();
 			mArrowImageView.setVisibility(View.GONE);
 			mProgressBar.setVisibility(View.VISIBLE);
@@ -123,16 +111,16 @@ public class XRefreshViewHeader extends LinearLayout {
 
 		switch (state) {
 		case STATE_NORMAL:
-			if (mState == STATE_READY) {
+			if (mState == XRefreshViewState.STATE_READY) {
 				mArrowImageView.startAnimation(mRotateDownAnim);
 			}
-			if (mState == STATE_REFRESHING) {
+			if (mState == XRefreshViewState.STATE_REFRESHING) {
 				mArrowImageView.clearAnimation();
 			}
 			mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
 			break;
 		case STATE_READY:
-			if (mState != STATE_READY) {
+			if (mState != XRefreshViewState.STATE_READY) {
 				mArrowImageView.clearAnimation();
 				mArrowImageView.startAnimation(mRotateUpAnim);
 				mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
@@ -140,7 +128,6 @@ public class XRefreshViewHeader extends LinearLayout {
 			break;
 		case STATE_REFRESHING:
 			mHintTextView.setText(R.string.xrefreshview_header_hint_loading);
-			int[] l = getViewLocationOnView(mProgressBar);
 			break;
 		default:
 		}
@@ -148,17 +135,13 @@ public class XRefreshViewHeader extends LinearLayout {
 		mState = state;
 	}
 
-	public void setVisiableHeight(int height) {
-		if (height < 0)
-			height = 0;
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContainer
-				.getLayoutParams();
-		lp.height = height;
-		mContainer.setLayoutParams(lp);
-	}
-
 	public int getVisiableHeight() {
 		return mContainer.getHeight();
+	}
+
+	@Override
+	public int getHeaderContentHeight() {
+		return mHeaderViewContent.getMeasuredHeight();
 	}
 
 }

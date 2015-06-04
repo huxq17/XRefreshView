@@ -4,6 +4,6 @@ package com.andview.refreshview;
  * @author huxq17@163.com
  *
  */
-public enum RefreshViewType {
+public enum XRefreshViewType {
 	NOSCROLLVIEW, ABSLISTVIEW, SCROLLVIEW, WEBVIEW,NONE
 }

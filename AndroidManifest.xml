@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.andview.refreshview.example.ListViewActivity"></activity>
+        <activity android:name="com.andview.refreshview.example.ListViewActivity" />
+        <activity android:name="com.andview.refreshview.example.GridViewActivity" />
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.andview.refreshview;
 
+import com.andview.refreshview.example.GridViewActivity;
 import com.andview.refreshview.example.ListViewActivity;
 
 import android.app.Activity;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.GridView;
 
 public class MainActivity extends Activity {
 	private Intent intent = null;
@@ -28,7 +30,8 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			break;
 		case R.id.bt_gridview:
-			
+			intent = new Intent(this,GridViewActivity.class);
+			startActivity(intent);
 			break;
 		case R.id.bt_webView:
 			
