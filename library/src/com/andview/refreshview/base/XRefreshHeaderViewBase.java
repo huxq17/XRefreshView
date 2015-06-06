@@ -1,4 +1,6 @@
-package com.andview.refreshview;
+package com.andview.refreshview.base;
+
+import com.andview.refreshview.XRefreshViewState;
 
 public interface XRefreshHeaderViewBase {
 	/**
@@ -7,5 +9,5 @@ public interface XRefreshHeaderViewBase {
 	 */
 	public int getHeaderContentHeight();
 	public void setState(XRefreshViewState state);
-	public void setRefreshTime(String time);
+	public void setRefreshTime(long lastRefreshTime);
 }

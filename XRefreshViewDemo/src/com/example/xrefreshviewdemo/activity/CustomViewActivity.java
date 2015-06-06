@@ -11,7 +11,7 @@ import android.widget.AbsListView.OnScrollListener;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
-import com.andview.refreshview.XRefreshViewBase;
+import com.andview.refreshview.base.XRefreshContentViewBase;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.StickyListBean;
 import com.example.xrefreshviewdemo.StickylistAdapter;
@@ -35,7 +35,7 @@ public class CustomViewActivity extends Activity {
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
 		outView.setAutoRefresh(true);
-		outView.setRefreshBase(new XRefreshViewBase() {
+		outView.setRefreshBase(new XRefreshContentViewBase() {
 
 			@Override
 			public boolean isTop() {

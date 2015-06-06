@@ -1,4 +1,4 @@
-package com.andview.refreshview;
+package com.andview.refreshview.base;
 
 public interface XRefreshFooterViewBase {
 
