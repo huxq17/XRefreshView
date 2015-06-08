@@ -17,7 +17,7 @@ import com.example.xrefreshviewdemo.R;
 public class ListViewActivity extends Activity {
 	private ListView lv;
 	private List<String> str_name = new ArrayList<String>();
-	private XRefreshView outView;
+	private XRefreshView refreshView;
 	private ArrayAdapter<String> adapter;
 	public static long lastRefreshTime;
 
@@ -29,46 +29,45 @@ public class ListViewActivity extends Activity {
 			str_name.add("数据" + i);
 		}
 		lv = (ListView) findViewById(R.id.lv);
-		outView = (XRefreshView) findViewById(R.id.custom_view);
-		outView.setPullLoadEnable(true);
-		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
+		refreshView = (XRefreshView) findViewById(R.id.custom_view);
+
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, str_name);
 		lv.setAdapter(adapter);
-		outView.setXRefreshViewListener(new XRefreshViewListener() {
+		
+		// 设置是否可以上拉刷新
+//		refreshView.setPullLoadEnable(true);
+		// 设置刷新view的类型
+		refreshView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
+		//设置上次刷新的时间
+		refreshView.restoreLastRefreshTime(lastRefreshTime);
+		//设置时候可以自动刷新
+		refreshView.setAutoRefresh(true);
+		refreshView.setXRefreshViewListener(new XRefreshViewListener() {
 
 			@Override
 			public void onRefresh() {
-				
+
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						outView.stopRefresh();
-						lastRefreshTime = outView.getLastRefreshTime();
+						refreshView.stopRefresh();
+						lastRefreshTime = refreshView.getLastRefreshTime();
 					}
 				}, 2000);
 			}
 
 			@Override
 			public void onLoadMore() {
-//				final List<String> addlist = new ArrayList<String>();
-//				for (int i = 0; i < 20; i++) {
-//					addlist.add("数据" + (i+str_name.size()));
-//				}
-				
 				new Handler().postDelayed(new Runnable() {
 
 					@Override
 					public void run() {
-//						str_name.addAll(addlist);
-//						adapter.addAll(addlist);
-						outView.stopLoadMore();
+						refreshView.stopLoadMore();
 					}
 				}, 2000);
 			}
 		});
-		outView.restoreLastRefreshTime(lastRefreshTime);
-		outView.setAutoRefresh(true);
 	}
 
 }

@@ -26,7 +26,8 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			break;
 		case R.id.bt_webView:
-			
+			intent = new Intent(this,WebViewActivity.class);
+			startActivity(intent);
 			break;
 		case R.id.bt_customview:
 			intent = new Intent(this,CustomViewActivity.class);

@@ -20,7 +20,7 @@ import com.example.xrefreshviewdemo.stickyListHeaders.StickyListHeadersListView;
 public class CustomViewActivity extends Activity {
 	private StickyListHeadersListView stickyLv;
 	private List<StickyListBean> list = new ArrayList<StickyListBean>();
-	private XRefreshView outView;
+	private XRefreshView refreshView;
 	private int mTotalItemCount;
 	private StickylistAdapter adapter;
 
@@ -32,10 +32,10 @@ public class CustomViewActivity extends Activity {
 		stickyLv = (StickyListHeadersListView) findViewById(R.id.sticky_list);
 		adapter = new StickylistAdapter(getApplicationContext(), list);
 		stickyLv.setAdapter(adapter);
-		outView = (XRefreshView) findViewById(R.id.custom_view);
-		outView.setPullLoadEnable(true);
-		outView.setAutoRefresh(true);
-		outView.setRefreshBase(new XRefreshContentViewBase() {
+		refreshView = (XRefreshView) findViewById(R.id.custom_view);
+		refreshView.setPullLoadEnable(true);
+		refreshView.setAutoRefresh(true);
+		refreshView.setRefreshBase(new XRefreshContentViewBase() {
 
 			@Override
 			public boolean isTop() {
@@ -60,7 +60,7 @@ public class CustomViewActivity extends Activity {
 				mTotalItemCount = totalItemCount;
 			}
 		});
-		outView.setXRefreshViewListener(new XRefreshViewListener() {
+		refreshView.setXRefreshViewListener(new XRefreshViewListener() {
 
 			@Override
 			public void onRefresh() {
@@ -68,7 +68,7 @@ public class CustomViewActivity extends Activity {
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						outView.stopRefresh();
+						refreshView.stopRefresh();
 					}
 				}, 2000);
 			}
@@ -80,7 +80,7 @@ public class CustomViewActivity extends Activity {
 
 					@Override
 					public void run() {
-						outView.stopLoadMore();
+						refreshView.stopLoadMore();
 					}
 				}, 2000);
 			}

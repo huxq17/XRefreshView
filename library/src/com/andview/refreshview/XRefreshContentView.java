@@ -3,6 +3,7 @@ package com.andview.refreshview;
 import com.andview.refreshview.base.XRefreshContentViewBase;
 
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
@@ -59,8 +60,8 @@ public class XRefreshContentView implements OnScrollListener,
 			AbsListView absListView = (AbsListView) child;
 			return absListView.getFirstVisiblePosition() == 0;
 		case WEBVIEW:
-
-			break;
+			WebView webView = (WebView) child;
+			return webView.getScrollY() == 0;
 		case SCROLLVIEW:
 
 			break;
@@ -86,8 +87,8 @@ public class XRefreshContentView implements OnScrollListener,
 			AbsListView absListView = (AbsListView) child;
 			return absListView.getLastVisiblePosition() == mTotalItemCount - 1;
 		case WEBVIEW:
-
-			break;
+			WebView webView = (WebView) child;
+			return webView.getContentHeight()*webView.getScale()==(webView.getHeight()+webView.getScrollY());
 		case SCROLLVIEW:
 
 			break;

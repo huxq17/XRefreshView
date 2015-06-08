@@ -4,6 +4,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="21" />
@@ -22,9 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity  android:name=".activity.CustomViewActivity"/>
-        <activity  android:name=".activity.GridViewActivity"/>
-        <activity  android:name=".activity.ListViewActivity"/>
+        <activity android:name=".activity.CustomViewActivity" />
+        <activity android:name=".activity.GridViewActivity" />
+        <activity android:name=".activity.ListViewActivity" />
+        <activity android:name=".activity.WebViewActivity" />
     </application>
 
 </manifest>

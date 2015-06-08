@@ -33,6 +33,7 @@ public class XRefreshViewHeader extends LinearLayout implements
 
 	private final int ROTATE_ANIM_DURATION = 180;
 	private RelativeLayout mHeaderViewContent;
+	private long lastRefreshTime;
 
 	public XRefreshViewHeader(Context context) {
 		super(context);
@@ -53,7 +54,7 @@ public class XRefreshViewHeader extends LinearLayout implements
 				R.layout.xrefreshview_header, null);
 		addView(mContainer);
 		setGravity(Gravity.BOTTOM);
-	
+
 		mHeaderViewContent = (RelativeLayout) findViewById(R.id.xrefreshview_header_content);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
@@ -73,6 +74,8 @@ public class XRefreshViewHeader extends LinearLayout implements
 	}
 
 	public void setRefreshTime(long lastRefreshTime) {
+		this.lastRefreshTime = lastRefreshTime;
+		//获取当前时间
 		Calendar mCalendar = Calendar.getInstance();
 		long refreshTime = mCalendar.getTimeInMillis();
 		long howLong = refreshTime - lastRefreshTime;
@@ -101,7 +104,7 @@ public class XRefreshViewHeader extends LinearLayout implements
 	public void setState(XRefreshViewState state) {
 		if (state == mState)
 			return;
-
+//		setRefreshTime(lastRefreshTime);
 		if (state == XRefreshViewState.STATE_REFRESHING) {
 			mArrowImageView.clearAnimation();
 			mArrowImageView.setVisibility(View.GONE);
