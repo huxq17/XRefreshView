@@ -38,7 +38,7 @@ public class ListViewActivity extends Activity {
 		// 设置是否可以上拉刷新
 //		refreshView.setPullLoadEnable(true);
 		// 设置刷新view的类型
-		refreshView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
+//		refreshView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
 		//设置上次刷新的时间
 		refreshView.restoreLastRefreshTime(lastRefreshTime);
 		//设置时候可以自动刷新

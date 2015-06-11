@@ -4,11 +4,8 @@ import java.util.Calendar;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
@@ -18,13 +15,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 
 import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
-import com.andview.refreshview.base.XRefreshContentViewBase;
+import com.andview.refreshview.listener.OnBottomListener;
+import com.andview.refreshview.listener.OnTopListener;
 import com.andview.refreshview.utils.Utils;
 import com.lidroid.xutils.util.LogUtils;
 
@@ -101,12 +98,21 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * 设置自定义的刷新规则
+	 * 设置顶部监听
+	 * 
+	 * @param topListener
+	 */
+	public void setOnTopListener(OnTopListener topListener) {
+		mContentView.setTopListener(topListener);
+	}
+
+	/**
+	 * 设置底部监听
 	 * 
 	 * @param mRefreshBase
 	 */
-	public void setRefreshBase(XRefreshContentViewBase mRefreshBase) {
-		mContentView.setRefreshBase(mRefreshBase);
+	public void setOnBottomListener(OnBottomListener bottomListener) {
+		mContentView.setBottomListener(bottomListener);
 	}
 
 	@Override

@@ -33,6 +33,10 @@ public class MainActivity extends Activity {
 			intent = new Intent(this,CustomViewActivity.class);
 			startActivity(intent);
 			break;
+		case R.id.bt_recylerView:
+			intent = new Intent(this,RecylerViewActivity.class);
+			startActivity(intent);
+			break;
 
 		default:
 			break;

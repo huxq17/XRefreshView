@@ -30,7 +30,8 @@ public class GridViewActivity extends Activity {
 		gv = (GridView) findViewById(R.id.gv);
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
-		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
+		//XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
+//		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, str_name);
 		gv.setAdapter(adapter);
