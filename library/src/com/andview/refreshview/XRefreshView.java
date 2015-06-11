@@ -253,7 +253,7 @@ public class XRefreshView extends LinearLayout {
 		switch (action) {
 
 		case MotionEvent.ACTION_DOWN:
-			mLastY = (int) ev.getRawY();
+			mLastY = ev.getRawY();
 			break;
 
 		case MotionEvent.ACTION_MOVE:
