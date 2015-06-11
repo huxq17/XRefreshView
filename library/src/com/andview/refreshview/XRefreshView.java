@@ -20,8 +20,8 @@ import android.widget.LinearLayout;
 
 import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
-import com.andview.refreshview.listener.OnBottomListener;
-import com.andview.refreshview.listener.OnTopListener;
+import com.andview.refreshview.listener.OnBottomLoadMoreTime;
+import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.utils.Utils;
 import com.lidroid.xutils.util.LogUtils;
 
@@ -98,21 +98,24 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * 设置顶部监听
+	 * 设置顶部刷新时机
 	 * 
 	 * @param topListener
 	 */
-	public void setOnTopListener(OnTopListener topListener) {
-		mContentView.setTopListener(topListener);
+	public void setOnTopRefreshTime(OnTopRefreshTime topListener) {
+		mContentView.setOnTopRefreshTime(topListener);
 	}
 
 	/**
-	 * 设置底部监听
+	 * 设置底部加载更多时机
 	 * 
+	 * 
+	 *  现阶段XRefreshView对于上拉加载时机的判断仅支持api14也就是安卓4.0 以上的版本，
+		如果想要兼容4.0以下，得调用此方法自己设置上拉加载的时机
 	 * @param mRefreshBase
 	 */
-	public void setOnBottomListener(OnBottomListener bottomListener) {
-		mContentView.setBottomListener(bottomListener);
+	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomListener) {
+		mContentView.setOnBottomLoadMoreTime(bottomListener);
 	}
 
 	@Override

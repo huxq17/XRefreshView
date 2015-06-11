@@ -9,18 +9,18 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.andview.refreshview.listener.OnBottomListener;
-import com.andview.refreshview.listener.OnTopListener;
+import com.andview.refreshview.listener.OnBottomLoadMoreTime;
+import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.lidroid.xutils.util.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener,
-		OnTopListener,OnBottomListener {
+		OnTopRefreshTime,OnBottomLoadMoreTime {
 	private View child;
 	private XRefreshViewType childType = XRefreshViewType.NONE;
 	// total list items, used to detect is at the bottom of listview.
 	private int mTotalItemCount;
-	private OnTopListener mTopListener;
-	private OnBottomListener mBottomListener;
+	private OnTopRefreshTime mTopRefreshTime;
+	private OnBottomLoadMoreTime mBottomLoadMoreTime;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -57,8 +57,8 @@ public class XRefreshContentView implements OnScrollListener,
 	}
 
 	public boolean isTop() {
-		if (mTopListener != null) {
-			return mTopListener.isTop();
+		if (mTopRefreshTime != null) {
+			return mTopRefreshTime.isTop();
 		}
 		if (Build.VERSION.SDK_INT < 14) {
 			if (child.getScrollY() == 0) {
@@ -93,8 +93,8 @@ public class XRefreshContentView implements OnScrollListener,
 	}
 
 	public boolean isBottom() {
-		if (mBottomListener != null) {
-			return mBottomListener.isBottom();
+		if (mBottomLoadMoreTime != null) {
+			return mBottomLoadMoreTime.isBottom();
 		}
 		if (Build.VERSION.SDK_INT < 14) {
 			if (child.getScrollY() == 0) {
@@ -135,16 +135,16 @@ public class XRefreshContentView implements OnScrollListener,
 	 * 
 	 * @param topListener
 	 */
-	public void setTopListener(OnTopListener topListener) {
-		this.mTopListener = topListener;
+	public void setOnTopRefreshTime(OnTopRefreshTime topRefreshTime) {
+		this.mTopRefreshTime = topRefreshTime;
 	}
 	/**
 	 * 设置底部监听
 	 * 
 	 * @param mRefreshBase
 	 */
-	public void setBottomListener(OnBottomListener bottomListener) {
-		this.mBottomListener = bottomListener;
+	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomLoadMoreTime) {
+		this.mBottomLoadMoreTime = bottomLoadMoreTime;
 	}
 
 	public void setRefreshViewType(XRefreshViewType type) {
