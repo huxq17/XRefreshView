@@ -3,7 +3,6 @@ package com.andview.refreshview;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
@@ -13,8 +12,8 @@ import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.lidroid.xutils.util.LogUtils;
 
-public class XRefreshContentView implements OnScrollListener,
-		OnTopRefreshTime,OnBottomLoadMoreTime {
+public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
+		OnBottomLoadMoreTime {
 	private View child;
 	private XRefreshViewType childType = XRefreshViewType.NONE;
 	// total list items, used to detect is at the bottom of listview.
@@ -60,37 +59,7 @@ public class XRefreshContentView implements OnScrollListener,
 		if (mTopRefreshTime != null) {
 			return mTopRefreshTime.isTop();
 		}
-		if (Build.VERSION.SDK_INT < 14) {
-			if (child.getScrollY() == 0) {
-				return true;
-			}
-		} else {
-			if (!ViewCompat.canScrollVertically(child, -1)) {
-				LogUtils.i("isTop child.getScrollY() == 0 "+(child.getScrollY() == 0)+"");
-				return true;
-			}
-		}
-		// switch (childType) {
-		// case ABSLISTVIEW:
-		// AbsListView absListView = (AbsListView) child;
-		// return absListView.getFirstVisiblePosition() == 0;
-		// case WEBVIEW:
-		// WebView webView = (WebView) child;
-		// return webView.getScrollY() == 0;
-		// case SCROLLVIEW:
-		//
-		// break;
-		// case NOSCROLLVIEW:
-		//
-		// break;
-		// case NONE:
-		//
-		// break;
-		//
-		// default:
-		// break;
-		// }
-		return false;
+		return !canChildScrollUp();
 	}
 
 	public boolean isBottom() {
@@ -98,33 +67,12 @@ public class XRefreshContentView implements OnScrollListener,
 			return mBottomLoadMoreTime.isBottom();
 		}
 		if (Build.VERSION.SDK_INT < 14) {
-			//
+			// 现阶段，为了兼容android4.0以下的版本，你自己得设置view到达底部的时机
 		} else {
-			if (!ViewCompat.canScrollVertically(child, 1)) {
+			if (!canChildScrollDown()) {
 				LogUtils.i("isBottom");
 				return true;
 			}
-		}
-		switch (childType) {
-		case ABSLISTVIEW:
-			AbsListView absListView = (AbsListView) child;
-			return absListView.getLastVisiblePosition() == mTotalItemCount - 1;
-		case WEBVIEW:
-			WebView webView = (WebView) child;
-			return webView.getContentHeight() * webView.getScale() == (webView
-					.getHeight() + webView.getScrollY());
-		case SCROLLVIEW:
-
-			break;
-		case NOSCROLLVIEW:
-
-			break;
-		case NONE:
-
-			break;
-
-		default:
-			break;
 		}
 		return false;
 	}
@@ -137,6 +85,7 @@ public class XRefreshContentView implements OnScrollListener,
 	public void setOnTopRefreshTime(OnTopRefreshTime topRefreshTime) {
 		this.mTopRefreshTime = topRefreshTime;
 	}
+
 	/**
 	 * 设置底部监听
 	 * 
@@ -163,5 +112,30 @@ public class XRefreshContentView implements OnScrollListener,
 
 	public int getTotalItemCount() {
 		return mTotalItemCount;
+	}
+
+	/**
+	 * @return Whether it is possible for the child view of this layout to
+	 *         scroll up. Override this if the child view is a custom view.
+	 */
+	public boolean canChildScrollUp() {
+		if (android.os.Build.VERSION.SDK_INT < 14) {
+			LogUtils.i("child.getScrollY()=" + child.getScrollY()
+					+ "ViewCompat.canScrollVertically(child, -1)="
+					+ ViewCompat.canScrollVertically(child, -1));
+			return ViewCompat.canScrollVertically(child, -1)
+					|| child.getScrollY() > 0;
+		} else {
+			return ViewCompat.canScrollVertically(child, -1);
+		}
+	}
+
+	public boolean canChildScrollDown() {
+		if (android.os.Build.VERSION.SDK_INT < 14) {
+			//
+		} else {
+			return ViewCompat.canScrollVertically(child, 1);
+		}
+		return true;
 	}
 }

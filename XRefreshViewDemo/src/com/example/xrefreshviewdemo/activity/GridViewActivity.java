@@ -2,13 +2,13 @@ package com.example.xrefreshviewdemo.activity;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.XRefreshViewType;
@@ -30,6 +30,7 @@ public class GridViewActivity extends Activity {
 		gv = (GridView) findViewById(R.id.gv);
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
+		outView.setAutoRefresh(false);
 		//XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
 //		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
 		adapter = new ArrayAdapter<String>(this,
@@ -57,10 +58,12 @@ public class GridViewActivity extends Activity {
 				
 				new Handler().postDelayed(new Runnable() {
 
-					@Override
+					@SuppressLint("NewApi") @Override
 					public void run() {
-						str_name.addAll(addlist);
-						adapter.addAll(addlist);
+						if(Build.VERSION.SDK_INT>=11){
+							str_name.addAll(addlist);
+							adapter.addAll(addlist);
+						}
 						outView.stopLoadMore();
 					}
 				}, 2000);
