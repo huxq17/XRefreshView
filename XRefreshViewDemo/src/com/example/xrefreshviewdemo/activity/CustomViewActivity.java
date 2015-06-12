@@ -12,6 +12,7 @@ import android.widget.AbsListView.OnScrollListener;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
+import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.StickyListBean;
 import com.example.xrefreshviewdemo.StickylistAdapter;
@@ -35,13 +36,13 @@ public class CustomViewActivity extends Activity {
 		refreshView = (XRefreshView) findViewById(R.id.custom_view);
 		refreshView.setPullLoadEnable(true);
 		refreshView.setAutoRefresh(true);
-		// refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
-		//
-		// @Override
-		// public boolean isTop() {
-		// return stickyLv.getFirstVisiblePosition() == 0;
-		// }
-		// });
+		refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
+
+			@Override
+			public boolean isTop() {
+				return stickyLv.getFirstVisiblePosition() == 0;
+			}
+		});
 		refreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
 
 			@Override

@@ -66,6 +66,7 @@ public class XRefreshContentView implements OnScrollListener,
 			}
 		} else {
 			if (!ViewCompat.canScrollVertically(child, -1)) {
+				LogUtils.i("isTop child.getScrollY() == 0 "+(child.getScrollY() == 0)+"");
 				return true;
 			}
 		}
@@ -97,9 +98,7 @@ public class XRefreshContentView implements OnScrollListener,
 			return mBottomLoadMoreTime.isBottom();
 		}
 		if (Build.VERSION.SDK_INT < 14) {
-			if (child.getScrollY() == 0) {
-				return true;
-			}
+			//
 		} else {
 			if (!ViewCompat.canScrollVertically(child, 1)) {
 				LogUtils.i("isBottom");
