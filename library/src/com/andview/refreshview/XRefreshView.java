@@ -277,6 +277,9 @@ public class XRefreshView extends LinearLayout {
 			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
 			if (mContentView.isTop() && deltaY > 0) {
 				mInitialMotionY = mLastY;
+				if(mInitialMotionY<=0){
+					mInitialMotionY=ev.getRawY();
+				}
 				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
 						+ ev.getRawY());
 				setRefreshTime();
@@ -380,6 +383,7 @@ public class XRefreshView extends LinearLayout {
 				}
 			}
 			mLastY = -1; // reset
+			mInitialMotionY = 0;
 			// mChildY = -1;
 			// mFootY = -1;
 			break;
