@@ -37,6 +37,10 @@ public class MainActivity extends Activity {
 			intent = new Intent(this,RecylerViewActivity.class);
 			startActivity(intent);
 			break;
+		case R.id.bt_scrollview:
+			intent = new Intent(this,ScrollViewActivity.class);
+			startActivity(intent);
+			break;
 
 		default:
 			break;

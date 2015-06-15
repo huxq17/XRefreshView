@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
-import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;
 import com.example.xrefreshviewdemo.recylerview.PersonAdapter;

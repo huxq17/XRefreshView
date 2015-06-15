@@ -40,6 +40,12 @@
             android:onClick="onClick"
             android:text="webView刷新" />
         <Button
+            android:id="@+id/bt_scrollview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="ScrollView刷新" />
+        <Button
             android:id="@+id/bt_recylerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

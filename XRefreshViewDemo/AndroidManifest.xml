@@ -29,6 +29,7 @@
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.WebViewActivity" />
         <activity android:name=".activity.RecylerViewActivity" />
+        <activity android:name=".activity.ScrollViewActivity" />
     </application>
 
 </manifest>
