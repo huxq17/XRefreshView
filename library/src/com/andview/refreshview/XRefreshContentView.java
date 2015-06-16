@@ -1,19 +1,17 @@
 package com.andview.refreshview;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
-import android.widget.ScrollView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
-import com.lidroid.xutils.util.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		OnBottomLoadMoreTime {

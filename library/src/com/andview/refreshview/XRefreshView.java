@@ -21,8 +21,8 @@ import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
+import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
-import com.lidroid.xutils.util.LogUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 
