@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;
 import com.example.xrefreshviewdemo.recylerview.PersonAdapter;
@@ -67,14 +68,14 @@ public class RecylerViewActivity extends Activity implements
 			}
 		});
 		// 现阶段XRefreshView对于上拉加载时机的判断仅支持api14也就是安卓4.0 以上的版本，
-		// 如果想要兼容4.0以下，得自己设置上拉加载的时机,就像下面这样
-//		xRefreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
-//
-//			@Override
-//			public boolean isBottom() {
-//				return isBottom;
-//			}
-//		});
+//		 如果想要兼容4.0以下，得自己设置上拉加载的时机,就像下面这样
+		xRefreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
+
+			@Override
+			public boolean isBottom() {
+				return isBottom;
+			}
+		});
 	}
 
 	private void initData() {

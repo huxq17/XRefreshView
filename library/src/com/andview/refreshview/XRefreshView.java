@@ -88,7 +88,6 @@ public class XRefreshView extends LinearLayout {
 	private float lastChidY;
 	private float lastFootY;
 	private float lastHeaderY;
-	
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -164,12 +163,12 @@ public class XRefreshView extends LinearLayout {
 
 					@Override
 					public void onGlobalLayout() {
-						
+
 						mOriginChildY = child.getTop();
 						mOriginHeadY = mHeaderView.getTop();
 						lastChidY = mOriginChildY;
 						lastHeaderY = mOriginHeadY;
-						
+
 						mHeaderViewHeight = mHeaderView
 								.getHeaderContentHeight();
 						LogUtils.i("onGlobalLayout mHeaderViewHeight="
@@ -272,13 +271,18 @@ public class XRefreshView extends LinearLayout {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			final float deltaY = ev.getRawY() - mLastY;
+			
+			//intercept the MotionEvent only when user is not scrolling
+			if (deltaY < mTouchSlop) {
+				return super.onInterceptTouchEvent(ev);
+			}
 			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
 			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
 			if (mContentView.isTop() && deltaY > 0) {
 				mInitialMotionY = mLastY;
-				if(mInitialMotionY<=0){
-					mInitialMotionY=ev.getRawY();
+				if (mInitialMotionY <= 0) {
+					mInitialMotionY = ev.getRawY();
 				}
 				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
 						+ ev.getRawY());
@@ -459,7 +463,7 @@ public class XRefreshView extends LinearLayout {
 		if (mRefreshViewListener != null) {
 			mRefreshViewListener.onRefresh();
 		}
-		updateHeaderHeight(0,mHeaderViewHeight, SCROLL_DURATION);
+		updateHeaderHeight(0, mHeaderViewHeight, SCROLL_DURATION);
 	}
 
 	/**
