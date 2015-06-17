@@ -273,7 +273,7 @@ public class XRefreshView extends LinearLayout {
 			final float deltaY = ev.getRawY() - mLastY;
 			
 			//intercept the MotionEvent only when user is not scrolling
-			if (deltaY < mTouchSlop) {
+			if (Math.abs(deltaY) < mTouchSlop) {
 				return super.onInterceptTouchEvent(ev);
 			}
 			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="

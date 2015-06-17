@@ -6,7 +6,7 @@
 
 二、效果图
 
-![ABC](http://img.my.csdn.net/uploads/201506/08/1433777184_9809.gif) 
+![效果图](http://img.my.csdn.net/uploads/201506/08/1433777184_9809.gif) 
 
 gif上看的效果可能不是很好有点卡卡的，但是在真机上面，还是挺流畅的。
 
