@@ -16,6 +16,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
@@ -363,6 +364,7 @@ public class XRefreshView extends LinearLayout {
 				}
 			}
 			break;
+		case MotionEvent.ACTION_CANCEL:
 		case MotionEvent.ACTION_UP:
 			if (mContentView.isTop() && mCurrentHeadY > 0) {
 				// invoke refresh
@@ -385,6 +387,9 @@ public class XRefreshView extends LinearLayout {
 					lastFootY = mOriginFootY - mFootHeight;
 					startLoadMore();
 				}
+			}
+			if (mRefreshViewListener != null) {
+				mRefreshViewListener.onRelease(mCurrentHeadY);
 			}
 			mLastY = -1; // reset
 			mInitialMotionY = 0;
@@ -574,8 +579,30 @@ public class XRefreshView extends LinearLayout {
 		public void onRefresh();
 
 		public void onLoadMore();
+		/**
+		 * 用户手指释放的监听回调
+		 * direction >0: 下拉释放，<0:上拉释放	
+		 */
+		public void onRelease(float direction);
 	}
 
+	public static class SimpleXRefreshListener implements XRefreshViewListener{
+
+		@Override
+		public void onRefresh() {
+			
+		}
+
+		@Override
+		public void onLoadMore() {
+			
+		}
+
+		@Override
+		public void onRelease(float direction) {
+		}
+
+	}
 	public class AnimaListener implements AnimatorListener {
 
 		@Override

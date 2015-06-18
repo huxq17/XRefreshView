@@ -7,7 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.andview.refreshview.XRefreshView;
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewType;
 import com.example.xrefreshviewdemo.R;
 
@@ -38,7 +38,7 @@ public class WebViewActivity extends Activity {
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
 		outView.setRefreshViewType(XRefreshViewType.WEBVIEW);
-		outView.setXRefreshViewListener(new XRefreshViewListener() {
+		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
 			public void onRefresh() {

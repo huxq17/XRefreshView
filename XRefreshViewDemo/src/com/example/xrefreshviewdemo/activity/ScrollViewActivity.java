@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView;
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.example.xrefreshviewdemo.R;
 
 public class ScrollViewActivity extends Activity {
@@ -24,7 +24,7 @@ public class ScrollViewActivity extends Activity {
 		outView.setAutoRefresh(false);
 		//XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
 //		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
-		outView.setXRefreshViewListener(new XRefreshViewListener() {
+		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
 			public void onRefresh() {

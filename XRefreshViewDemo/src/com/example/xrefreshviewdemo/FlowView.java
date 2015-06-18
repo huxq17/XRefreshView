@@ -7,17 +7,17 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FollowView extends ViewGroup {
+public class FlowView extends ViewGroup {
 
-	public FollowView(Context context) {
+	public FlowView(Context context) {
 		super(context);
 	}
 
-	public FollowView(Context context, AttributeSet attrs) {
+	public FlowView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public FollowView(Context context, AttributeSet attrs, int defStyle) {
+	public FlowView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
@@ -39,7 +39,7 @@ public class FollowView extends ViewGroup {
 
 	@Override
 	public LayoutParams generateLayoutParams(AttributeSet attrs) {
-		return new FollowView.LayoutParams(getContext(), attrs);
+		return new FlowView.LayoutParams(getContext(), attrs);
 	}
 
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -54,7 +54,7 @@ public class FollowView extends ViewGroup {
 			int width = childView.getMeasuredWidth();
 			int height = childView.getMeasuredHeight();
 
-			FollowView.LayoutParams margins = (LayoutParams) childView
+			FlowView.LayoutParams margins = (LayoutParams) childView
 					.getLayoutParams();
 			int topMargin = margins.topMargin;
 			int bottomMargin = margins.bottomMargin;

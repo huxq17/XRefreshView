@@ -10,7 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.andview.refreshview.XRefreshView;
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;
@@ -44,7 +44,7 @@ public class RecylerViewActivity extends Activity implements
 		adapter.setOnBottomListener(this);
 		recyclerView.setAdapter(adapter);
 
-		xRefreshView.setXRefreshViewListener(new XRefreshViewListener() {
+		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
 			public void onRefresh() {

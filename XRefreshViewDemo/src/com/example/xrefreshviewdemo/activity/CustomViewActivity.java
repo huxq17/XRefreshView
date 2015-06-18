@@ -10,7 +10,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 import com.andview.refreshview.XRefreshView;
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.example.xrefreshviewdemo.R;
@@ -63,7 +62,7 @@ public class CustomViewActivity extends Activity {
 				mTotalItemCount = totalItemCount;
 			}
 		});
-		refreshView.setXRefreshViewListener(new XRefreshViewListener() {
+		refreshView.setXRefreshViewListener(new XRefreshView.SimpleXRefreshListener() {
 
 			@Override
 			public void onRefresh() {
