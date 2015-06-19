@@ -16,7 +16,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
@@ -245,7 +244,7 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		if (mPullLoading || mPullRefreshing || animaDoing) {
+		if (mPullLoading || mPullRefreshing || animaDoing||!isEnabled()) {
 			return super.dispatchTouchEvent(ev);
 		}
 		final int action = MotionEventCompat.getActionMasked(ev);
@@ -255,8 +254,14 @@ public class XRefreshView extends LinearLayout {
 		case MotionEvent.ACTION_DOWN:
 			mLastY = ev.getRawY();
 			mInitialMotionY = mLastY;
-			break;
+			return true;
+//			break;
 		case MotionEvent.ACTION_MOVE:
+			if(mLastY==-1||mInitialMotionY==-1){
+				mLastY = ev.getRawY();
+				mInitialMotionY = mLastY;
+			}
+			
 			float currentY = ev.getRawY();
 			deltaY = currentY - mLastY;
 			mLastY = currentY;
@@ -270,8 +275,8 @@ public class XRefreshView extends LinearLayout {
 					+ mContentView.isBottom());
 			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
 			if (mContentView.isTop() && (deltaY > 0 || mCurrentHeadY > 0)) {
-				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-						+ ev.getRawY());
+//				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+//						+ ev.getRawY());
 				setRefreshTime();
 				updateHeaderHeight(currentY, deltaY / OFFSET_RADIO);
 				return true;
@@ -316,6 +321,7 @@ public class XRefreshView extends LinearLayout {
 			isIntercepted = true;
 			break;
 		}
+		LogUtils.i("end of dispatchEvent");
 		return super.dispatchTouchEvent(ev);
 	}
 
