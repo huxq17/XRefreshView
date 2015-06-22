@@ -129,6 +129,9 @@ public class XRefreshView extends LinearLayout {
 		child = mContentView.setContentView(XRefreshView.this.getChildAt(1));
 		mContentView.setContentViewLayoutParams(isHeightMatchParent,
 				isWidthMatchParent);
+		// if (mHeaderView != null) {
+		// mHeaderView.bringToFront();
+		// }
 		super.onFinishInflate();
 	}
 
@@ -244,7 +247,7 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		if (mPullLoading || mPullRefreshing || animaDoing||!isEnabled()) {
+		if (mPullLoading || mPullRefreshing || animaDoing || !isEnabled()) {
 			return super.dispatchTouchEvent(ev);
 		}
 		final int action = MotionEventCompat.getActionMasked(ev);
@@ -254,29 +257,32 @@ public class XRefreshView extends LinearLayout {
 		case MotionEvent.ACTION_DOWN:
 			mLastY = ev.getRawY();
 			mInitialMotionY = mLastY;
-			return true;
-//			break;
+			break;
 		case MotionEvent.ACTION_MOVE:
-			if(mLastY==-1||mInitialMotionY==-1){
+			if (mLastY == -1 || mInitialMotionY == -1) {
 				mLastY = ev.getRawY();
 				mInitialMotionY = mLastY;
 			}
-			
+
 			float currentY = ev.getRawY();
 			deltaY = currentY - mLastY;
 			mLastY = currentY;
 
 			// intercept the MotionEvent only when user is not scrolling
+			LogUtils.i("Math.abs(deltaY)="+Math.abs(deltaY)+";mTouchSlop="+mTouchSlop);
 			if (!isIntercepted && Math.abs(deltaY) < mTouchSlop) {
+				LogUtils.i("no isIntercepted");
+				dispatchTouchEventSuper(ev);
+			}else{
+				LogUtils.i("isIntercepted");
 				isIntercepted = true;
-				return super.dispatchTouchEvent(ev);
 			}
-			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
+			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
 			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
 			if (mContentView.isTop() && (deltaY > 0 || mCurrentHeadY > 0)) {
-//				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-//						+ ev.getRawY());
+				// LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+				// + ev.getRawY());
 				setRefreshTime();
 				updateHeaderHeight(currentY, deltaY / OFFSET_RADIO);
 				return true;
@@ -318,10 +324,14 @@ public class XRefreshView extends LinearLayout {
 			mInitialMotionY = 0;
 			// mChildY = -1;
 			// mFootY = -1;
-			isIntercepted = true;
+			isIntercepted = false;
 			break;
 		}
 		LogUtils.i("end of dispatchEvent");
+		return super.dispatchTouchEvent(ev);
+	}
+
+	public boolean dispatchTouchEventSuper(MotionEvent ev) {
 		return super.dispatchTouchEvent(ev);
 	}
 
