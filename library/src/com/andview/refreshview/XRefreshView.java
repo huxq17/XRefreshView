@@ -252,9 +252,6 @@ public class XRefreshView extends LinearLayout {
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		if (mPullLoading || mPullRefreshing || animaDoing) {
-			return super.onInterceptTouchEvent(ev);
-		}
 		/*
 		 * This method JUST determines whether we want to intercept the motion.
 		 * If we return true, onTouchEvent will be called and we do the actual
@@ -267,13 +264,16 @@ public class XRefreshView extends LinearLayout {
 			mLastY = ev.getRawY();
 			break;
 		case MotionEvent.ACTION_MOVE:
+			if (mPullLoading || mPullRefreshing || animaDoing) {
+				return super.onInterceptTouchEvent(ev);
+			}
 			final float deltaY = ev.getRawY() - mLastY;
 
 			// intercept the MotionEvent only when user is not scrolling
 			if (Math.abs(deltaY) < mTouchSlop) {
 				return super.onInterceptTouchEvent(ev);
 			}
-			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
+			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
 			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
 			if (mContentView.isTop() && deltaY > 0) {
@@ -281,13 +281,13 @@ public class XRefreshView extends LinearLayout {
 				if (mInitialMotionY <= 0) {
 					mInitialMotionY = ev.getRawY();
 				}
-				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+				LogUtils.d("mInitialMotionY=" + mInitialMotionY + ";getrawY="
 						+ ev.getRawY());
 				setRefreshTime();
 				return true;
 			} else if (mContentView.isBottom() && deltaY < 0) {
 				mInitialMotionY = mLastY;
-				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+				LogUtils.d("mInitialMotionY=" + mInitialMotionY + ";getrawY="
 						+ ev.getRawY());
 				return true;
 			}
@@ -341,16 +341,17 @@ public class XRefreshView extends LinearLayout {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		float deltaY = 0;
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float currentY = ev.getRawY();
-			deltaY = currentY - mLastY;
+			float deltaY = currentY - mLastY;
+			LogUtils.i("deltaY="+deltaY+";mLastY="+mLastY+";currentY="+currentY);
 			mLastY = currentY;
 			if (mContentView.isTop() && (deltaY > 0 || mCurrentHeadY > 0)) {
 				if (!mPullRefreshing) {
+					
 					updateHeaderHeight(currentY, deltaY / OFFSET_RADIO);
 					// invokeOnScrolling();
 				}
