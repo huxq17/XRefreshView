@@ -250,51 +250,51 @@ public class XRefreshView extends LinearLayout {
 	 * @see
 	 * android.view.ViewGroup#onInterceptTouchEvent(android.view.MotionEvent)
 	 */
-	// @Override
-	// public boolean onInterceptTouchEvent(MotionEvent ev) {
-	// if (mPullLoading || mPullRefreshing || animaDoing) {
-	// return super.onInterceptTouchEvent(ev);
-	// }
-	// /*
-	// * This method JUST determines whether we want to intercept the motion.
-	// * If we return true, onTouchEvent will be called and we do the actual
-	// * scrolling there.
-	// */
-	// final int action = MotionEventCompat.getActionMasked(ev);
-	// switch (action) {
-	//
-	// case MotionEvent.ACTION_DOWN:
-	// mLastY = ev.getRawY();
-	// break;
-	// case MotionEvent.ACTION_MOVE:
-	// final float deltaY = ev.getRawY() - mLastY;
-	//
-	// // intercept the MotionEvent only when user is not scrolling
-	// if (Math.abs(deltaY) < mTouchSlop) {
-	// return super.onInterceptTouchEvent(ev);
-	// }
-	// LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
-	// + mContentView.isBottom());
-	// // 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
-	// if (mContentView.isTop() && deltaY > 0) {
-	// mInitialMotionY = mLastY;
-	// if (mInitialMotionY <= 0) {
-	// mInitialMotionY = ev.getRawY();
-	// }
-	// LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-	// + ev.getRawY());
-	// setRefreshTime();
-	// return true;
-	// } else if (mContentView.isBottom() && deltaY < 0) {
-	// mInitialMotionY = mLastY;
-	// LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-	// + ev.getRawY());
-	// return true;
-	// }
-	// break;
-	// }
-	// return super.onInterceptTouchEvent(ev);
-	// }
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		if (mPullLoading || mPullRefreshing || animaDoing) {
+			return super.onInterceptTouchEvent(ev);
+		}
+		/*
+		 * This method JUST determines whether we want to intercept the motion.
+		 * If we return true, onTouchEvent will be called and we do the actual
+		 * scrolling there.
+		 */
+		final int action = MotionEventCompat.getActionMasked(ev);
+		switch (action) {
+
+		case MotionEvent.ACTION_DOWN:
+			mLastY = ev.getRawY();
+			break;
+		case MotionEvent.ACTION_MOVE:
+			final float deltaY = ev.getRawY() - mLastY;
+
+			// intercept the MotionEvent only when user is not scrolling
+			if (Math.abs(deltaY) < mTouchSlop) {
+				return super.onInterceptTouchEvent(ev);
+			}
+			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
+					+ mContentView.isBottom());
+			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
+			if (mContentView.isTop() && deltaY > 0) {
+				mInitialMotionY = mLastY;
+				if (mInitialMotionY <= 0) {
+					mInitialMotionY = ev.getRawY();
+				}
+				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+						+ ev.getRawY());
+				setRefreshTime();
+				return true;
+			} else if (mContentView.isBottom() && deltaY < 0) {
+				mInitialMotionY = mLastY;
+				LogUtils.i("mInitialMotionY=" + mInitialMotionY + ";getrawY="
+						+ ev.getRawY());
+				return true;
+			}
+			break;
+		}
+		return super.onInterceptTouchEvent(ev);
+	}
 
 	/**
 	 * 在初始化的时候调用
