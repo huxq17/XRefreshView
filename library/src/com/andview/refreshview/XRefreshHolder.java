@@ -16,11 +16,37 @@ public class XRefreshHolder {
 	public float lastChidY;
 	public float lastFootY;
 	public float lastHeaderY;
-	public boolean isHeaderVisible(){
-		return lastHeaderY>=mOriginHeadY;
+
+	public float mOffsetY;
+
+	public boolean isHeaderVisible() {
+		return lastHeaderY >= mOriginHeadY;
 	}
+
 	public boolean isFooterVisible() {
 		return lastFootY <= mOriginFootY;
 	}
 
+	public void setOriginHeadY(float headY) {
+		mOriginHeadY = headY;
+		lastHeaderY = mOriginHeadY;
+	}
+
+	public void setOriginChildY(float childY) {
+		mOriginChildY = childY;
+		lastChidY = mOriginChildY;
+	}
+
+	public float getCurrentHeadY() {
+		return mOffsetY + mOriginHeadY;
+	}
+
+	public float getCurrentChildY() {
+		return mOffsetY + mOriginChildY;
+	}
+
+	public void setLastY() {
+		lastHeaderY = mOffsetY + mOriginHeadY;
+		lastChidY = mOffsetY + mOriginChildY;
+	}
 }
