@@ -105,7 +105,7 @@ public class XRefreshView extends LinearLayout {
 		animaListener = new AnimaListener();
 		mContentView = new XRefreshContentView();
 		mHolder = new XRefreshHolder();
-		
+
 		initWithContext(context, attrs);
 		setOrientation(VERTICAL);
 	}
@@ -177,10 +177,10 @@ public class XRefreshView extends LinearLayout {
 						mOriginChildY = getTop();
 						lastChidY = mOriginChildY;
 						lastHeaderY = mOriginHeadY;
-						
+
 						mHolder.setOriginChildY(getTop());
 						mHolder.setOriginHeadY(getTop() - mHeaderViewHeight);
-						
+
 						LogUtils.i("onGlobalLayout mHeaderViewHeight="
 								+ mHeaderViewHeight);
 						mContentView.setScrollListener();
@@ -283,10 +283,11 @@ public class XRefreshView extends LinearLayout {
 				isIntercepted = true;
 				return super.dispatchTouchEvent(ev);
 			}
-			LogUtils.i("isTop=" + mContentView.isTop() + ";isBottom="
+			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
-			mHolder.mOffsetY = (currentY + deltaY - mInitialMotionY) / OFFSET_RADIO;
-			if (mContentView.isTop() && (deltaY > 0 || mHolder.mOffsetY > 0)) {
+			mHolder.mOffsetY = (currentY + deltaY - mInitialMotionY)
+					/ OFFSET_RADIO;
+			if (mContentView.isTop() && (deltaY > 0 || (deltaY<0&&lastHeaderY>mOriginHeadY))) {
 				sendCancelEvent();
 				updateHeaderHeight(currentY, mHolder.mOffsetY);
 			} else if (mContentView.isBottom() && (deltaY < 0)
@@ -310,7 +311,7 @@ public class XRefreshView extends LinearLayout {
 					}
 				}
 				resetHeaderHeight();
-			} else if (mContentView.isBottom()) {
+			} else if (mContentView.isBottom()&&lastFootY<mOriginFootY) {
 				if (!mPullLoading && mEnablePullLoad) {
 					Utils.moveChildAndAddedView(child, mFooterView, lastChidY,
 							mOriginChildY - mFootHeight, lastFootY,
@@ -420,12 +421,11 @@ public class XRefreshView extends LinearLayout {
 		mCurrentHeadY = mOriginHeadY + offsetY;
 		LogUtils.i("offsetY=" + offsetY + ";lastHeaderY=" + lastHeaderY
 				+ "mOriginHeadY=" + mOriginHeadY);
-		// if (mCurrentHeadY <= mOriginHeadY) {
-		// mCurrentHeadY = mOriginHeadY;
-		// sendDownEvent();
-		// LogUtils.i("sendDownEvent");
-		// return;
-		// }
+		if (mCurrentHeadY <= mOriginHeadY) {
+			mCurrentHeadY = mOriginHeadY;
+			sendDownEvent();
+			LogUtils.i("sendDownEvent");
+		}
 		if (during != null && during.length > 0) {
 			mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
 			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
@@ -447,7 +447,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	private void updateFooterHeight(float currentY, float offsetY) {
-		if (mOriginFootY == -1) {
+		if (mOriginChildY == -1 || mOriginFootY == -1) {
 			mOriginFootY = mFooterView.getTop();
 			lastFootY = mOriginFootY;
 		}

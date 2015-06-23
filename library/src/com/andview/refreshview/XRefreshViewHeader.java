@@ -52,9 +52,9 @@ public class XRefreshViewHeader extends LinearLayout implements
 	private void initView(Context context) {
 		mContainer = (RelativeLayout) LayoutInflater.from(context).inflate(
 				R.layout.xrefreshview_header, null);
+		mContainer.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
 		addView(mContainer);
 		setGravity(Gravity.BOTTOM);
-
 		mHeaderViewContent = (RelativeLayout) findViewById(R.id.xrefreshview_header_content);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
