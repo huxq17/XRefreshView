@@ -22,10 +22,11 @@ public class Utils {
 	public static void moveChildAndAddedView(View child, View addView,
 			float startChildY, float endChildY, float startAddY, float endAddY,
 			int during, AnimatorListener... listener) {
-		if(startAddY==endAddY||startChildY==endChildY){
+		if (startAddY == endAddY || startChildY == endChildY) {
 			return;
 		}
-		LogUtils.i("startChildY="+startChildY+";endChildY="+endChildY+";startAddY="+startAddY+";endAddY="+endAddY);
+		LogUtils.i("startChildY=" + startChildY + ";endChildY=" + endChildY
+				+ ";startAddY=" + startAddY + ";endAddY=" + endAddY);
 		// 属性动画移动
 		ObjectAnimator y = ObjectAnimator.ofFloat(child, "y", startChildY,
 				endChildY);
@@ -38,6 +39,12 @@ public class Utils {
 		if (listener.length > 0)
 			animatorSet.addListener(listener[0]);
 		animatorSet.start();
+	}
+
+	public static void moveView(View child, int childOffset, View addview,
+			int addOffset) {
+		child.offsetTopAndBottom(childOffset);
+		addview.offsetTopAndBottom(addOffset);
 	}
 
 	/**

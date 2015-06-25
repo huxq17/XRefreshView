@@ -215,7 +215,7 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		if (mOriginHeadY > 0) {
+		if (mHolder.mOffsetY != 0) {
 			return;
 		}
 		int width = MeasureSpec.getSize(widthMeasureSpec);
@@ -232,7 +232,7 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
-		if (mOriginHeadY > 0) {
+		if (mHolder.mOffsetY != 0) {
 			return;
 		}
 		mFootHeight = mFooterView.getMeasuredHeight();
@@ -255,13 +255,9 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		if (mPullLoading || mPullRefreshing || animaDoing || !isEnabled()) {
-			return super.dispatchTouchEvent(ev);
-		}
 		final int action = MotionEventCompat.getActionMasked(ev);
 		int deltaY = 0;
 		switch (action) {
-
 		case MotionEvent.ACTION_DOWN:
 			mHasSendCancelEvent = false;
 			mHasSendDownEvent = false;
@@ -269,15 +265,13 @@ public class XRefreshView extends LinearLayout {
 			mInitialMotionY = mLastY;
 			break;
 		case MotionEvent.ACTION_MOVE:
+			if (mPullLoading || mPullRefreshing || animaDoing || !isEnabled()) {
+				return super.dispatchTouchEvent(ev);
+			}
 			mLastMoveEvent = ev;
 			int currentY = (int) ev.getRawY();
 			deltaY = currentY - mLastY;
 			mLastY = currentY;
-			if(deltaY<0){
-				LogUtils.e("deltaY="+deltaY);
-			}else{
-				LogUtils.i("deltaY="+deltaY);
-			}
 			// intercept the MotionEvent only when user is not scrolling
 			if (!isIntercepted && Math.abs(deltaY) < mTouchSlop) {
 				isIntercepted = true;
@@ -285,11 +279,13 @@ public class XRefreshView extends LinearLayout {
 			}
 			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
-			mHolder.mOffsetY = (int) ((currentY + deltaY - mInitialMotionY)
-					/ OFFSET_RADIO);
-			if (mContentView.isTop() && (deltaY > 0 || (deltaY<0&&lastHeaderY>mOriginHeadY))) {
+//			mHolder.mOffsetY = (int) ((currentY + deltaY - mInitialMotionY) / OFFSET_RADIO);
+			deltaY = (int) (deltaY / OFFSET_RADIO);
+			mHolder.mOffsetY += deltaY;
+			if (mContentView.isTop()
+					&& (deltaY > 0 || (deltaY < 0 && lastHeaderY > mOriginHeadY))) {
 				sendCancelEvent();
-				updateHeaderHeight(currentY, mHolder.mOffsetY);
+				updateHeaderHeight(currentY, deltaY);
 			} else if (mContentView.isBottom() && (deltaY < 0)
 					&& mEnablePullLoad) {
 				sendCancelEvent();
@@ -311,7 +307,7 @@ public class XRefreshView extends LinearLayout {
 					}
 				}
 				resetHeaderHeight();
-			} else if (mContentView.isBottom()&&lastFootY<mOriginFootY) {
+			} else if (mContentView.isBottom() && lastFootY < mOriginFootY) {
 				if (!mPullLoading && mEnablePullLoad) {
 					Utils.moveChildAndAddedView(child, mFooterView, lastChidY,
 							mOriginChildY - mFootHeight, lastFootY,
@@ -415,10 +411,9 @@ public class XRefreshView extends LinearLayout {
 	 * @param delta
 	 * @param during
 	 */
-	private void updateHeaderHeight(int currentY, int offsetY,
-			int... during) {
-		mCurrentChildY = mOriginChildY + offsetY;
-		mCurrentHeadY = mOriginHeadY + offsetY;
+	private void updateHeaderHeight(int currentY, int offsetY, int... during) {
+		mCurrentChildY = mOriginChildY + mHolder.mOffsetY;
+		mCurrentHeadY = mOriginHeadY + mHolder.mOffsetY;
 		LogUtils.d("offsetY=" + offsetY + ";lastHeaderY=" + lastHeaderY
 				+ "mOriginHeadY=" + mOriginHeadY);
 		if (mCurrentHeadY <= mOriginHeadY) {
@@ -431,10 +426,11 @@ public class XRefreshView extends LinearLayout {
 			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
 					mCurrentChildY, lastHeaderY, mCurrentHeadY, during[0]);
 		} else {
-			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
-					mCurrentChildY, lastHeaderY, mCurrentHeadY, 0);
+			// Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
+			// mCurrentChildY, lastHeaderY, mCurrentHeadY, 0);
+			Utils.moveView(child, offsetY, mHeaderView, offsetY);
 			if (mEnablePullRefresh && !mPullRefreshing) {
-				if (offsetY > mHeaderViewHeight) {
+				if (mHolder.mOffsetY > mHeaderViewHeight) {
 					mHeaderView.setState(XRefreshViewState.STATE_READY);
 				} else {
 					mHeaderView.setState(XRefreshViewState.STATE_NORMAL);
@@ -503,6 +499,7 @@ public class XRefreshView extends LinearLayout {
 			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
 					mOriginChildY, lastHeaderY, mOriginHeadY, SCROLL_DURATION,
 					animaListener);
+//			Utils.moveView(child, mOriginChildY-lastChidY, mHeaderView, addOffset);
 			lastChidY = mOriginChildY;
 			lastHeaderY = mOriginHeadY;
 		}
