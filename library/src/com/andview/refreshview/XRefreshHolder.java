@@ -4,20 +4,20 @@ public class XRefreshHolder {
 	/**
 	 * 在开始上拉加载更多的时候，记录下childView一开始的Y轴坐标
 	 */
-	public float mOriginChildY = -1;
+	public int mOriginChildY = -1;
 	/**
 	 * 在开始上拉加载更多的时候，记录下FootView一开始的Y轴坐标
 	 */
-	public float mOriginFootY = -1;
+	public int mOriginFootY = -1;
 	/**
 	 * 在开始上拉加载更多的时候，记录下HeadView一开始的Y轴坐标
 	 */
-	public float mOriginHeadY = -1;
-	public float lastChidY;
-	public float lastFootY;
-	public float lastHeaderY;
+	public int mOriginHeadY = -1;
+	public int lastChidY;
+	public int lastFootY;
+	public int lastHeaderY;
 
-	public float mOffsetY;
+	public int mOffsetY;
 
 	public boolean isHeaderVisible() {
 		return lastHeaderY >= mOriginHeadY;
@@ -27,21 +27,21 @@ public class XRefreshHolder {
 		return lastFootY <= mOriginFootY;
 	}
 
-	public void setOriginHeadY(float headY) {
+	public void setOriginHeadY(int headY) {
 		mOriginHeadY = headY;
 		lastHeaderY = mOriginHeadY;
 	}
 
-	public void setOriginChildY(float childY) {
+	public void setOriginChildY(int childY) {
 		mOriginChildY = childY;
 		lastChidY = mOriginChildY;
 	}
 
-	public float getCurrentHeadY() {
+	public int getCurrentHeadY() {
 		return mOffsetY + mOriginHeadY;
 	}
 
-	public float getCurrentChildY() {
+	public int getCurrentChildY() {
 		return mOffsetY + mOriginChildY;
 	}
 

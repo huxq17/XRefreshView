@@ -1,8 +1,8 @@
 package com.andview.refreshview.utils;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.view.View;
-
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -22,6 +22,10 @@ public class Utils {
 	public static void moveChildAndAddedView(View child, View addView,
 			float startChildY, float endChildY, float startAddY, float endAddY,
 			int during, AnimatorListener... listener) {
+		if(startAddY==endAddY||startChildY==endChildY){
+			return;
+		}
+		LogUtils.i("startChildY="+startChildY+";endChildY="+endChildY+";startAddY="+startAddY+";endAddY="+endAddY);
 		// 属性动画移动
 		ObjectAnimator y = ObjectAnimator.ofFloat(child, "y", startChildY,
 				endChildY);
@@ -52,6 +56,7 @@ public class Utils {
 	 * @param view
 	 * @return
 	 */
+	@SuppressLint("NewApi")
 	public static float getY(View view) {
 		float y = 0;
 		// view.getY()在api10之后才有

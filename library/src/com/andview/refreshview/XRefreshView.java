@@ -36,7 +36,7 @@ public class XRefreshView extends LinearLayout {
 	 * 最初的滚动位置.第一次布局时滚动header的高度的距离
 	 */
 	protected int mInitScrollY = 0;
-	private float mLastY = -1; // save event y
+	private int mLastY = -1; // save event y
 	private boolean mEnablePullRefresh = true;
 	public boolean mPullRefreshing = false; // is refreashing.
 	private final static float OFFSET_RADIO = 1.8f; // support iOS like pull
@@ -51,15 +51,15 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * 在开始上拉加载更多的时候，记录下childView一开始的Y轴坐标
 	 */
-	private float mOriginChildY = -1;
+	private int mOriginChildY = -1;
 	/**
 	 * 在开始上拉加载更多的时候，记录下FootView一开始的Y轴坐标
 	 */
-	private float mOriginFootY = -1;
+	private int mOriginFootY = -1;
 	/**
 	 * 在开始上拉加载更多的时候，记录下HeadView一开始的Y轴坐标
 	 */
-	private float mOriginHeadY = -1;
+	private int mOriginHeadY = -1;
 
 	/**
 	 * 自定义header布局
@@ -83,11 +83,11 @@ public class XRefreshView extends LinearLayout {
 	private XRefreshContentView mContentView;
 	private boolean isHeightMatchParent = true;
 	private boolean isWidthMatchParent = true;
-	private float mInitialMotionY;
+	private int mInitialMotionY;
 	private int mTouchSlop;
-	private float lastChidY;
-	private float lastFootY;
-	private float lastHeaderY;
+	private int lastChidY;
+	private int lastFootY;
+	private int lastHeaderY;
 	private XRefreshHolder mHolder;
 
 	private MotionEvent mLastMoveEvent;
@@ -259,25 +259,25 @@ public class XRefreshView extends LinearLayout {
 			return super.dispatchTouchEvent(ev);
 		}
 		final int action = MotionEventCompat.getActionMasked(ev);
-		float deltaY = 0;
+		int deltaY = 0;
 		switch (action) {
 
 		case MotionEvent.ACTION_DOWN:
 			mHasSendCancelEvent = false;
 			mHasSendDownEvent = false;
-			mLastY = ev.getRawY();
+			mLastY = (int) ev.getRawY();
 			mInitialMotionY = mLastY;
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (mLastY == -1 || mInitialMotionY == -1) {
-				mLastY = ev.getRawY();
-				mInitialMotionY = mLastY;
-			}
 			mLastMoveEvent = ev;
-			float currentY = ev.getRawY();
+			int currentY = (int) ev.getRawY();
 			deltaY = currentY - mLastY;
 			mLastY = currentY;
-
+			if(deltaY<0){
+				LogUtils.e("deltaY="+deltaY);
+			}else{
+				LogUtils.i("deltaY="+deltaY);
+			}
 			// intercept the MotionEvent only when user is not scrolling
 			if (!isIntercepted && Math.abs(deltaY) < mTouchSlop) {
 				isIntercepted = true;
@@ -285,8 +285,8 @@ public class XRefreshView extends LinearLayout {
 			}
 			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
-			mHolder.mOffsetY = (currentY + deltaY - mInitialMotionY)
-					/ OFFSET_RADIO;
+			mHolder.mOffsetY = (int) ((currentY + deltaY - mInitialMotionY)
+					/ OFFSET_RADIO);
 			if (mContentView.isTop() && (deltaY > 0 || (deltaY<0&&lastHeaderY>mOriginHeadY))) {
 				sendCancelEvent();
 				updateHeaderHeight(currentY, mHolder.mOffsetY);
@@ -406,8 +406,8 @@ public class XRefreshView extends LinearLayout {
 		}
 	}
 
-	float mCurrentChildY;
-	public float mCurrentHeadY;
+	int mCurrentChildY;
+	public int mCurrentHeadY;
 
 	/**
 	 * 如果第二个可变参数不为空，则代表是自动刷新
@@ -415,11 +415,11 @@ public class XRefreshView extends LinearLayout {
 	 * @param delta
 	 * @param during
 	 */
-	private void updateHeaderHeight(float currentY, float offsetY,
+	private void updateHeaderHeight(int currentY, int offsetY,
 			int... during) {
 		mCurrentChildY = mOriginChildY + offsetY;
 		mCurrentHeadY = mOriginHeadY + offsetY;
-		LogUtils.i("offsetY=" + offsetY + ";lastHeaderY=" + lastHeaderY
+		LogUtils.d("offsetY=" + offsetY + ";lastHeaderY=" + lastHeaderY
 				+ "mOriginHeadY=" + mOriginHeadY);
 		if (mCurrentHeadY <= mOriginHeadY) {
 			mCurrentHeadY = mOriginHeadY;
@@ -446,13 +446,13 @@ public class XRefreshView extends LinearLayout {
 		mHolder.setLastY();
 	}
 
-	private void updateFooterHeight(float currentY, float offsetY) {
+	private void updateFooterHeight(int currentY, int offsetY) {
 		if (mOriginChildY == -1 || mOriginFootY == -1) {
 			mOriginFootY = mFooterView.getTop();
 			lastFootY = mOriginFootY;
 		}
-		float childY = mOriginChildY + offsetY;
-		float footY = mOriginFootY + offsetY;
+		int childY = mOriginChildY + offsetY;
+		int footY = mOriginFootY + offsetY;
 		LogUtils.i("mOriginFootY=" + mOriginFootY + ";footY=" + footY);
 		Utils.moveChildAndAddedView(child, mFooterView, lastChidY, childY,
 				lastFootY, footY, 0);
