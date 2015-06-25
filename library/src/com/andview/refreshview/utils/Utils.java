@@ -41,12 +41,6 @@ public class Utils {
 		animatorSet.start();
 	}
 
-	public static void moveView(View child, int childOffset, View addview,
-			int addOffset) {
-		child.offsetTopAndBottom(childOffset);
-		addview.offsetTopAndBottom(addOffset);
-	}
-
 	/**
 	 * 格式化字符串
 	 * 
