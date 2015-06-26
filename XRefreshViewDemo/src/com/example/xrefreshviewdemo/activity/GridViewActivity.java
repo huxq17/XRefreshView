@@ -76,13 +76,5 @@ public class GridViewActivity extends Activity {
 				}, 2000);
 			}
 		});
-		gv.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				LogUtils.i("gv onTouch");
-				return false;
-			}
-		});
 	}
 }

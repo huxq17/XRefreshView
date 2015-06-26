@@ -22,11 +22,11 @@ public class Utils {
 	public static void moveChildAndAddedView(View child, View addView,
 			float startChildY, float endChildY, float startAddY, float endAddY,
 			int during, AnimatorListener... listener) {
+		LogUtils.i("startChildY=" + startChildY + ";endChildY=" + endChildY
+				+ ";startAddY=" + startAddY + ";endAddY=" + endAddY);
 		if (startAddY == endAddY || startChildY == endChildY) {
 			return;
 		}
-		LogUtils.i("startChildY=" + startChildY + ";endChildY=" + endChildY
-				+ ";startAddY=" + startAddY + ";endAddY=" + endAddY);
 		// 属性动画移动
 		ObjectAnimator y = ObjectAnimator.ofFloat(child, "y", startChildY,
 				endChildY);

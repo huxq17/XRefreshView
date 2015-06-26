@@ -42,7 +42,7 @@ public class ListViewActivity extends Activity {
 		// 设置上次刷新的时间
 		refreshView.restoreLastRefreshTime(lastRefreshTime);
 		// 设置时候可以自动刷新
-		refreshView.setAutoRefresh(true);
+		refreshView.setAutoRefresh(false);
 		refreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
