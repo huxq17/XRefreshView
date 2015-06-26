@@ -49,4 +49,7 @@ public class XRefreshHolder {
 		lastHeaderY = mOffsetY + mOriginHeadY;
 		lastChidY = mOffsetY + mOriginChildY;
 	}
+	public void move(int deltaY){
+		mOffsetY +=deltaY;
+	}
 }
