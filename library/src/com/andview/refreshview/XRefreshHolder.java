@@ -49,7 +49,15 @@ public class XRefreshHolder {
 		lastHeaderY = mOffsetY + mOriginHeadY;
 		lastChidY = mOffsetY + mOriginChildY;
 	}
-	public void move(int deltaY){
-		mOffsetY +=deltaY;
+
+	public void move(int deltaY) {
+		mOffsetY += deltaY;
+	}
+
+	public boolean hasHeaderPullDown() {
+		return mOffsetY > 0;
+	}
+	public boolean hasFooterPullUp() {
+		return mOffsetY < 0;
 	}
 }
