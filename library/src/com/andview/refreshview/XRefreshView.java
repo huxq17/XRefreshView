@@ -236,9 +236,13 @@ public class XRefreshView extends LinearLayout {
 			mHasSendDownEvent = false;
 			mLastY = (int) ev.getRawY();
 			mInitialMotionY = mLastY;
+
+			if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading) {
+				mScroller.forceFinished(true);
+			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (mPullLoading || mPullRefreshing || animaDoing || !isEnabled()) {
+			if (mPullLoading || mPullRefreshing || !isEnabled()) {
 				return super.dispatchTouchEvent(ev);
 			}
 			mLastMoveEvent = ev;
@@ -261,14 +265,19 @@ public class XRefreshView extends LinearLayout {
 			} else if (mEnablePullLoad && mContentView.isBottom()
 					&& (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
 				sendCancelEvent();
-				updateFooterHeight(currentY, deltaY);
-			} else if ((mContentView.isTop() && !mHolder.hasHeaderPullDown())
-					|| (mContentView.isBottom() && !mHolder.hasFooterPullUp())) {
-				sendDownEvent();
+				updateFooterHeight(deltaY);
+			} else if (mContentView.isTop() && !mHolder.hasHeaderPullDown()
+					|| mContentView.isBottom() && !mHolder.hasFooterPullUp()) {
+				if (deltaY > 0)
+					sendDownEvent();
 			}
 			break;
 		case MotionEvent.ACTION_CANCEL:
 		case MotionEvent.ACTION_UP:
+			// if (mHolder.mOffsetY != 0 && mRefreshViewListener != null
+			// && !mPullRefreshing && !mPullLoading) {
+			// mRefreshViewListener.onRelease(mHolder.mOffsetY);
+			// }
 			if (mContentView.isTop() && mHolder.hasHeaderPullDown()) {
 				// invoke refresh
 				if (!mPullRefreshing && mEnablePullRefresh
@@ -287,9 +296,6 @@ public class XRefreshView extends LinearLayout {
 					startLoadMore();
 				}
 			}
-			if (mRefreshViewListener != null) {
-				mRefreshViewListener.onRelease(mHolder.mOffsetY);
-			}
 			mLastY = -1; // reset
 			mInitialMotionY = 0;
 			isIntercepted = true;
@@ -300,6 +306,7 @@ public class XRefreshView extends LinearLayout {
 
 	private void sendCancelEvent() {
 		if (!mHasSendCancelEvent) {
+			setRefreshTime();
 			mHasSendCancelEvent = true;
 			mHasSendDownEvent = false;
 			MotionEvent last = mLastMoveEvent;
@@ -383,10 +390,6 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private void updateHeaderHeight(int currentY, int deltaY, int... during) {
 		boolean isAutoRefresh = during != null && during.length > 0;
-		if (!mHolder.hasHeaderPullDown() && !isAutoRefresh) {
-			sendDownEvent();
-			LogUtils.i("updateHeaderHeight sendDownEvent");
-		}
 		if (isAutoRefresh) {
 			mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
 			startScroll(deltaY, during[0]);
@@ -403,7 +406,7 @@ public class XRefreshView extends LinearLayout {
 		mHolder.setLastY();
 	}
 
-	private void updateFooterHeight(int currentY, int deltaY) {
+	private void updateFooterHeight(int deltaY) {
 		moveView(deltaY);
 	}
 
@@ -517,6 +520,9 @@ public class XRefreshView extends LinearLayout {
 		return lastRefreshTime;
 	}
 
+	/**
+	 * 设置并显示上次刷新的时间
+	 */
 	private void setRefreshTime() {
 		if (lastRefreshTime <= 0) {
 			return;
@@ -589,5 +595,4 @@ public class XRefreshView extends LinearLayout {
 		}
 
 	}
-
 }
