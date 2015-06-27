@@ -123,7 +123,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	private void initWithContext(Context context, AttributeSet attrs) {
-		LogUtils.i("initWithContext");
+		LogUtils.d("initWithContext");
 
 		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 		// 根据属性设置参数
@@ -159,7 +159,7 @@ public class XRefreshView extends LinearLayout {
 						mHolder.setOriginChildY(getTop());
 						mHolder.setOriginHeadY(getTop() - mHeaderViewHeight);
 
-						LogUtils.i("onGlobalLayout mHeaderViewHeight="
+						LogUtils.d("onGlobalLayout mHeaderViewHeight="
 								+ mHeaderViewHeight);
 						mContentView.setScrollListener();
 						if (mEnablePullLoad) {
@@ -207,7 +207,7 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
-		LogUtils.i("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
+		LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
 		mFootHeight = mFooterView.getMeasuredHeight();
 		int childCount = getChildCount();
 		int top = getPaddingTop() + mHolder.mOffsetY;
@@ -322,7 +322,7 @@ public class XRefreshView extends LinearLayout {
 
 	private void sendDownEvent() {
 		if (!mHasSendDownEvent) {
-			LogUtils.i("sendDownEvent");
+			LogUtils.d("sendDownEvent");
 			mHasSendCancelEvent = false;
 			mHasSendDownEvent = true;
 			isIntercepted = false;
@@ -355,7 +355,7 @@ public class XRefreshView extends LinearLayout {
 	 * @param enable
 	 */
 	public void setPullLoadEnable(boolean enable) {
-		LogUtils.i("setPullLoadEnable");
+		LogUtils.d("setPullLoadEnable");
 		mEnablePullLoad = enable;
 		if (!mEnablePullLoad) {
 			mFooterView.hide();
@@ -448,7 +448,7 @@ public class XRefreshView extends LinearLayout {
 			offsetY = 0 - mHolder.mOffsetY;
 			startScroll(offsetY, SCROLL_DURATION);
 		}
-		LogUtils.i("resetHeaderHeight offsetY=" + offsetY);
+		LogUtils.d("resetHeaderHeight offsetY=" + offsetY);
 	}
 
 	public void moveView(int deltaY) {
@@ -471,11 +471,11 @@ public class XRefreshView extends LinearLayout {
 			lastScrollY = currentY;
 			moveView(offsetY);
 
-			LogUtils.i("currentY=" + currentY + ";finalY=" + finalY
+			LogUtils.d("currentY=" + currentY + ";finalY=" + finalY
 					+ ";mHolder.mOffsetY=" + mHolder.mOffsetY);
 		} else {
 			animaDoing = false;
-			LogUtils.i("scroll end mOffsetY=" + mHolder.mOffsetY);
+			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
 		}
 	}
 
@@ -492,7 +492,7 @@ public class XRefreshView extends LinearLayout {
 	 * stop refresh, reset header view.
 	 */
 	public void stopRefresh() {
-		LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
+		LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
 		if (mPullRefreshing == true) {
 			mPullRefreshing = false;
 			resetHeaderHeight();
