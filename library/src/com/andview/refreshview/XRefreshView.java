@@ -426,7 +426,7 @@ public class XRefreshView extends LinearLayout {
 		if (mRefreshViewListener != null) {
 			mRefreshViewListener.onRefresh();
 		}
-		updateHeaderHeight(0, mHeaderViewHeight, SCROLL_DURATION);
+		updateHeaderHeight(0, mHeaderViewHeight, 0);
 	}
 
 	/**
@@ -536,7 +536,7 @@ public class XRefreshView extends LinearLayout {
 	public void stopLoadMore() {
 		if (mPullLoading == true) {
 			mPullLoading = false;
-			startScroll(-mHolder.mOffsetY, SCROLL_DURATION);
+			startScroll(-mHolder.mOffsetY, 0);
 		}
 	}
 
