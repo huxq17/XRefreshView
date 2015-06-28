@@ -473,10 +473,12 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void startRefresh() {
+		this.autoRefresh = true;
 		mPullRefreshing = true;
 		if (mRefreshViewListener != null) {
 			mRefreshViewListener.onRefresh();
 		}
+		mContentView.scrollToTop();
 		updateHeaderHeight(0, mHeaderViewHeight, SCROLL_DURATION);
 	}
 

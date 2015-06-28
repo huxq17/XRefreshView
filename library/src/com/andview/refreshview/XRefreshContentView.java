@@ -44,6 +44,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		return child;
 	}
 
+	public void scrollToTop() {
+		child.scrollTo(0, 0);
+	}
+
 	public void setScrollListener() {
 		if (child instanceof AbsListView) {
 			AbsListView absListView = (AbsListView) child;
