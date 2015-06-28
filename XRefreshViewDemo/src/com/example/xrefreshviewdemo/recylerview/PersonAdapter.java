@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.andview.refreshview.utils.LogUtils;
 import com.example.xrefreshviewdemo.R;
 
 public class PersonAdapter extends RecyclerView.Adapter {
@@ -51,13 +52,14 @@ public class PersonAdapter extends RecyclerView.Adapter {
 		Person person = list.get(position);
 		holder.nameTv.setText(person.getName());
 		holder.ageTv.setText(person.getAge() + "岁");
-		if(bottomListener!=null){
-			if (position == list.size() - 1) {
-				bottomListener.isOnBottom(true);
-			} else {
-				bottomListener.isOnBottom(false);
-			}
-		}
+		LogUtils.i("position="+position+";size="+list.size());
+//		if(bottomListener!=null){
+//			if (position == list.size() - 1) {
+//				bottomListener.isOnBottom(true);
+//			} else {
+//				bottomListener.isOnBottom(false);
+//			}
+//		}
 	}
 
 	@Override

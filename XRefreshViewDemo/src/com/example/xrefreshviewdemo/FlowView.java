@@ -1,5 +1,7 @@
 package com.example.xrefreshviewdemo;
 
+import com.andview.refreshview.utils.LogUtils;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;

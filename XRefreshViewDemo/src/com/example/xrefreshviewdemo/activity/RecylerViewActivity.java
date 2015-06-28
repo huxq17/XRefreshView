@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
@@ -23,7 +24,7 @@ public class RecylerViewActivity extends Activity implements
 	List<Person> personList = new ArrayList<Person>();
 	XRefreshView xRefreshView;
 	int lastVisibleItem = 0;
-	RecyclerView.LayoutManager layoutManager;
+	LinearLayoutManager layoutManager;
 	private boolean isBottom = false;
 
 	@Override
@@ -43,7 +44,7 @@ public class RecylerViewActivity extends Activity implements
 		// adapter.setOnRecyclerViewListener(this);
 		adapter.setOnBottomListener(this);
 		recyclerView.setAdapter(adapter);
-
+		
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -67,15 +68,27 @@ public class RecylerViewActivity extends Activity implements
 				}, 2000);
 			}
 		});
-		// 现阶段XRefreshView对于上拉加载时机的判断仅支持api14也就是安卓4.0 以上的版本，
-//		 如果想要兼容4.0以下，得自己设置上拉加载的时机,就像下面这样
-		xRefreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
+		recyclerView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
-			public boolean isBottom() {
-				return isBottom;
+			public void onScrolled(int dx, int dy) {
+				int lastPosition = layoutManager.findLastVisibleItemPosition();
+				isBottom=adapter.getItemCount()-1==lastPosition;
+			}
+
+			@Override
+			public void onScrollStateChanged(int newState) {
 			}
 		});
+		// 现阶段XRefreshView对于上拉加载时机的判断仅支持api14也就是安卓4.0 以上的版本，
+		// 如果想要兼容4.0以下，得自己设置上拉加载的时机,就像下面这样
+//		 xRefreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
+//		
+//		 @Override
+//		 public boolean isBottom() {
+//		 return isBottom;
+//		 }
+//		 });
 	}
 
 	private void initData() {

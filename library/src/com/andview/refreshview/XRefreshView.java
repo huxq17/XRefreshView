@@ -14,20 +14,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 
 import com.andview.refreshview.base.XRefreshFooterViewBase;
 import com.andview.refreshview.base.XRefreshHeaderViewBase;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.utils.LogUtils;
-import com.andview.refreshview.utils.Utils;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
 
 public class XRefreshView extends LinearLayout {
-	private View child;
+	private View mChild;
 	// -- header view
 	private XRefreshViewHeader mHeaderView;
 
@@ -36,7 +36,7 @@ public class XRefreshView extends LinearLayout {
 	 * 最初的滚动位置.第一次布局时滚动header的高度的距离
 	 */
 	protected int mInitScrollY = 0;
-	private float mLastY = -1; // save event y
+	private int mLastY = -1; // save event y
 	private boolean mEnablePullRefresh = true;
 	public boolean mPullRefreshing = false; // is refreashing.
 	private final static float OFFSET_RADIO = 1.8f; // support iOS like pull
@@ -49,19 +49,6 @@ public class XRefreshView extends LinearLayout {
 	private boolean mEnablePullLoad;
 	public boolean mPullLoading;
 	/**
-	 * 在开始上拉加载更多的时候，记录下childView一开始的Y轴坐标
-	 */
-	private float mOriginChildY = -1;
-	/**
-	 * 在开始上拉加载更多的时候，记录下FootView一开始的Y轴坐标
-	 */
-	private float mOriginFootY = -1;
-	/**
-	 * 在开始上拉加载更多的时候，记录下HeadView一开始的Y轴坐标
-	 */
-	private float mOriginHeadY = -1;
-
-	/**
 	 * 自定义header布局
 	 */
 	private XRefreshHeaderViewBase mCustomHeaderView;
@@ -70,8 +57,6 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private XRefreshFooterViewBase mCustomFooterView;
 
-	private static boolean animaDoing = false;
-	private AnimaListener animaListener;
 	/**
 	 * 默认不自动刷新
 	 */
@@ -83,11 +68,14 @@ public class XRefreshView extends LinearLayout {
 	private XRefreshContentView mContentView;
 	private boolean isHeightMatchParent = true;
 	private boolean isWidthMatchParent = true;
-	private float mInitialMotionY;
+	private int mInitialMotionY;
 	private int mTouchSlop;
-	private float lastChidY;
-	private float lastFootY;
-	private float lastHeaderY;
+	private XRefreshHolder mHolder;
+
+	private MotionEvent mLastMoveEvent;
+	private boolean mHasSendCancelEvent = false;
+	private boolean mHasSendDownEvent = false;
+	private Scroller mScroller;
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -97,8 +85,10 @@ public class XRefreshView extends LinearLayout {
 		super(context, attrs);
 		setClickable(true);
 		setLongClickable(true);
-		animaListener = new AnimaListener();
 		mContentView = new XRefreshContentView();
+		mHolder = new XRefreshHolder();
+		mScroller = new Scroller(getContext(), new LinearInterpolator());
+
 		initWithContext(context, attrs);
 		setOrientation(VERTICAL);
 	}
@@ -126,14 +116,15 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	protected void onFinishInflate() {
-		child = mContentView.setContentView(XRefreshView.this.getChildAt(1));
+		mChild = mContentView.setContentView(XRefreshView.this.getChildAt(1));
 		mContentView.setContentViewLayoutParams(isHeightMatchParent,
 				isWidthMatchParent);
 		super.onFinishInflate();
 	}
 
 	private void initWithContext(Context context, AttributeSet attrs) {
-		LogUtils.i("initWithContext");
+		LogUtils.d("initWithContext");
+
 		mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 		// 根据属性设置参数
 		if (attrs != null) {
@@ -153,7 +144,9 @@ public class XRefreshView extends LinearLayout {
 			}
 		}
 		mHeaderView = new XRefreshViewHeader(context);
+
 		addView(mHeaderView);
+
 		mFooterView = new XRefreshViewFooter(context);
 		this.getViewTreeObserver().addOnGlobalLayoutListener(
 				new OnGlobalLayoutListener() {
@@ -163,12 +156,7 @@ public class XRefreshView extends LinearLayout {
 						mHeaderViewHeight = mHeaderView
 								.getHeaderContentHeight();
 
-						mOriginHeadY = getTop() - mHeaderViewHeight;
-						mOriginChildY = getTop();
-						lastChidY = mOriginChildY;
-						lastHeaderY = mOriginHeadY;
-
-						LogUtils.i("onGlobalLayout mHeaderViewHeight="
+						LogUtils.d("onGlobalLayout mHeaderViewHeight="
 								+ mHeaderViewHeight);
 						mContentView.setScrollListener();
 						if (mEnablePullLoad) {
@@ -195,16 +183,13 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/*
-	 * 丈量视图的宽、高。宽度为用户设置的宽度，高度则为header, content view, footer这三个子控件的高度只和。
+	 * 丈量视图的宽、高。宽度为用户设置的宽度，高度则为header, content view, footer这三个子控件的高度之和。
 	 * 
 	 * @see android.view.View#onMeasure(int, int)
 	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		if (mOriginHeadY > 0) {
-			return;
-		}
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int childCount = getChildCount();
 		int finalHeight = 0;
@@ -219,15 +204,14 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
-		if (mOriginHeadY > 0) {
-			return;
-		}
+		LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
 		mFootHeight = mFooterView.getMeasuredHeight();
 		int childCount = getChildCount();
-		int top = getPaddingTop();
+		int top = getPaddingTop() + mHolder.mOffsetY;
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
 			if (child == mHeaderView) {
+				// 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
 				child.layout(0, top - mHeaderViewHeight,
 						child.getMeasuredWidth(), top);
 			} else {
@@ -240,52 +224,120 @@ public class XRefreshView extends LinearLayout {
 
 	private boolean isIntercepted;
 
-	/*
-	 * 在适当的时候拦截触摸事件，这里指的适当的时候是当mContentView滑动到顶部，并且是下拉时拦截触摸事件，否则不拦截，交给其child
-	 * view 来处理。
-	 * 
-	 * @see
-	 * android.view.ViewGroup#onInterceptTouchEvent(android.view.MotionEvent)
-	 */
 	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
+	public boolean dispatchTouchEvent(MotionEvent ev) {
 		final int action = MotionEventCompat.getActionMasked(ev);
+		int deltaY = 0;
 		switch (action) {
-
 		case MotionEvent.ACTION_DOWN:
-			mLastY = ev.getRawY();
+			mHasSendCancelEvent = false;
+			mHasSendDownEvent = false;
+			mLastY = (int) ev.getRawY();
+			mInitialMotionY = mLastY;
+
+			if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading) {
+				mScroller.forceFinished(true);
+			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (mPullLoading || mPullRefreshing || animaDoing) {
-				return super.onInterceptTouchEvent(ev);
+			if (mPullLoading || mPullRefreshing || !isEnabled()) {
+				return super.dispatchTouchEvent(ev);
 			}
-			final float deltaY = ev.getRawY() - mLastY;
-
+			mLastMoveEvent = ev;
+			int currentY = (int) ev.getRawY();
+			deltaY = currentY - mLastY;
+			mLastY = currentY;
 			// intercept the MotionEvent only when user is not scrolling
-			if (Math.abs(deltaY) < mTouchSlop) {
-				return super.onInterceptTouchEvent(ev);
+			if (!isIntercepted && Math.abs(deltaY) < mTouchSlop) {
+				isIntercepted = true;
+				return super.dispatchTouchEvent(ev);
 			}
 			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
 					+ mContentView.isBottom());
-			// 如果拉到了顶部, 并且是下拉,则拦截触摸事件,从而转到onTouchEvent来处理下拉刷新事件
-			if (mContentView.isTop() && deltaY > 0) {
-				mInitialMotionY = mLastY;
-				if (mInitialMotionY <= 0) {
-					mInitialMotionY = ev.getRawY();
-				}
-				LogUtils.d("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-						+ ev.getRawY());
-				setRefreshTime();
-				return true;
-			} else if (mContentView.isBottom() && deltaY < 0) {
-				mInitialMotionY = mLastY;
-				LogUtils.d("mInitialMotionY=" + mInitialMotionY + ";getrawY="
-						+ ev.getRawY());
-				return true;
+			deltaY = (int) (deltaY / OFFSET_RADIO);
+			if (mContentView.isTop()
+					&& (deltaY > 0 || (deltaY < 0 && mHolder
+							.hasHeaderPullDown()))) {
+				sendCancelEvent();
+				updateHeaderHeight(currentY, deltaY);
+			} else if (mContentView.isBottom()
+					&& (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
+				sendCancelEvent();
+				updateFooterHeight(deltaY);
+			} else if (mContentView.isTop() && !mHolder.hasHeaderPullDown()
+					|| mContentView.isBottom() && !mHolder.hasFooterPullUp()) {
+				if (deltaY > 0)
+					sendDownEvent();
 			}
 			break;
+		case MotionEvent.ACTION_CANCEL:
+		case MotionEvent.ACTION_UP:
+			// if (mHolder.mOffsetY != 0 && mRefreshViewListener != null
+			// && !mPullRefreshing && !mPullLoading) {
+			// mRefreshViewListener.onRelease(mHolder.mOffsetY);
+			// }
+			if (mContentView.isTop() && mHolder.hasHeaderPullDown()) {
+				// invoke refresh
+				if (mEnablePullRefresh && mHolder.mOffsetY > mHeaderViewHeight) {
+					mPullRefreshing = true;
+					mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
+					if (mRefreshViewListener != null) {
+						mRefreshViewListener.onRefresh();
+					}
+				}
+				resetHeaderHeight();
+			} else if (mContentView.isBottom() && mHolder.hasFooterPullUp()) {
+				if (mEnablePullLoad) {
+					int offset = 0 - mHolder.mOffsetY - mFootHeight;
+					startScroll(offset, SCROLL_DURATION);
+					startLoadMore();
+				} else {
+					int offset = 0 - mHolder.mOffsetY;
+					startScroll(offset, SCROLL_DURATION);
+				}
+			}
+			mLastY = -1; // reset
+			mInitialMotionY = 0;
+			isIntercepted = true;
+			break;
 		}
-		return super.onInterceptTouchEvent(ev);
+		return super.dispatchTouchEvent(ev);
+	}
+
+	private void sendCancelEvent() {
+		if (!mHasSendCancelEvent) {
+			setRefreshTime();
+			mHasSendCancelEvent = true;
+			mHasSendDownEvent = false;
+			MotionEvent last = mLastMoveEvent;
+			MotionEvent e = MotionEvent.obtain(
+					last.getDownTime(),
+					last.getEventTime()
+							+ ViewConfiguration.getLongPressTimeout(),
+					MotionEvent.ACTION_CANCEL, last.getX(), last.getY(),
+					last.getMetaState());
+			dispatchTouchEventSupper(e);
+		}
+	}
+
+	private void sendDownEvent() {
+		if (!mHasSendDownEvent) {
+			LogUtils.d("sendDownEvent");
+			mHasSendCancelEvent = false;
+			mHasSendDownEvent = true;
+			isIntercepted = false;
+			final MotionEvent last = mLastMoveEvent;
+			if (last == null)
+				return;
+			MotionEvent e = MotionEvent.obtain(last.getDownTime(),
+					last.getEventTime(), MotionEvent.ACTION_DOWN, last.getX(),
+					last.getY(), last.getMetaState());
+			dispatchTouchEventSupper(e);
+		}
+	}
+
+	public boolean dispatchTouchEventSupper(MotionEvent e) {
+		return super.dispatchTouchEvent(e);
 	}
 
 	/**
@@ -303,7 +355,7 @@ public class XRefreshView extends LinearLayout {
 	 * @param enable
 	 */
 	public void setPullLoadEnable(boolean enable) {
-		LogUtils.i("setPullLoadEnable");
+		LogUtils.d("setPullLoadEnable");
 		mEnablePullLoad = enable;
 		if (!mEnablePullLoad) {
 			mFooterView.hide();
@@ -312,6 +364,20 @@ public class XRefreshView extends LinearLayout {
 			mPullLoading = false;
 			mFooterView.show();
 			mFooterView.setState(XRefreshViewState.STATE_LOADING);
+		}
+	}
+
+	/**
+	 * enable or disable pull down refresh feature.
+	 * 
+	 * @param enable
+	 */
+	public void setPullRefreshEnable(boolean enable) {
+		mEnablePullRefresh = enable;
+		if (!mEnablePullRefresh) {
+			mHeaderView.hide();
+		} else {
+			mHeaderView.show();
 		}
 	}
 
@@ -330,111 +396,31 @@ public class XRefreshView extends LinearLayout {
 		}
 	}
 
-	float mOffsetY;
-
-	@SuppressLint("ClickableViewAccessibility")
-	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
-		switch (ev.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			break;
-		case MotionEvent.ACTION_MOVE:
-			float currentY = ev.getRawY();
-			float deltaY = currentY - mLastY;
-			mLastY = currentY;
-			mOffsetY = (currentY + deltaY - mInitialMotionY) / OFFSET_RADIO;
-			if (mContentView.isTop() && (deltaY > 0 || mOffsetY > 0)) {
-				updateHeaderHeight(currentY, mOffsetY);
-			} else if (mContentView.isBottom() && deltaY < 0 && mEnablePullLoad) {
-				updateFooterHeight(currentY, mOffsetY);
-			}
-			break;
-		case MotionEvent.ACTION_CANCEL:
-		case MotionEvent.ACTION_UP:
-			if (mContentView.isTop() && mOffsetY > 0) {
-				// invoke refresh
-				if (!mPullRefreshing && mEnablePullRefresh
-						&& mOffsetY > mHeaderViewHeight) {
-					mPullRefreshing = true;
-					mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
-					if (mRefreshViewListener != null) {
-						mRefreshViewListener.onRefresh();
-					}
-				}
-				resetHeaderHeight();
-			} else if (mContentView.isBottom()) {
-				if (!mPullLoading && mEnablePullLoad) {
-					Utils.moveChildAndAddedView(child, mFooterView, lastChidY,
-							mOriginChildY - mFootHeight, lastFootY,
-							mOriginFootY - mFootHeight, SCROLL_DURATION);
-					lastChidY = mOriginChildY - mFootHeight;
-					lastFootY = mOriginFootY - mFootHeight;
-					startLoadMore();
-				}
-			}
-			if (mRefreshViewListener != null) {
-				mRefreshViewListener.onRelease(mOffsetY);
-			}
-			mLastY = -1; // reset
-			mInitialMotionY = 0;
-			// mChildY = -1;
-			// mFootY = -1;
-			break;
-		}
-		return super.onTouchEvent(ev);
-	}
-
-	float mCurrentChildY;
-	public float mCurrentHeadY;
-
 	/**
 	 * 如果第二个可变参数不为空，则代表是自动刷新
 	 * 
 	 * @param delta
 	 * @param during
 	 */
-	private void updateHeaderHeight(float currentY, float offsetY,
-			int... during) {
-		mCurrentChildY = mOriginChildY + offsetY;
-		mCurrentHeadY = mOriginHeadY + offsetY;
-		if (mCurrentHeadY <= mOriginHeadY) {
-			mCurrentHeadY = mOriginHeadY;
-			return;
-		}
-		LogUtils.i("offsetY=" + offsetY + ";lastHeaderY=" + lastHeaderY
-				+ "mOriginHeadY=" + mOriginHeadY);
-		if (during != null && during.length > 0) {
+	private void updateHeaderHeight(int currentY, int deltaY, int... during) {
+		boolean isAutoRefresh = during != null && during.length > 0;
+		if (isAutoRefresh) {
 			mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
-			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
-					mCurrentChildY, lastHeaderY, mCurrentHeadY, during[0]);
+			startScroll(deltaY, during[0]);
 		} else {
-			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
-					mCurrentChildY, lastHeaderY, mCurrentHeadY, 0);
+			moveView(deltaY);
 			if (mEnablePullRefresh && !mPullRefreshing) {
-				if (offsetY > mHeaderViewHeight) {
+				if (mHolder.mOffsetY > mHeaderViewHeight) {
 					mHeaderView.setState(XRefreshViewState.STATE_READY);
 				} else {
 					mHeaderView.setState(XRefreshViewState.STATE_NORMAL);
 				}
 			}
 		}
-		lastChidY = mCurrentChildY;
-		lastHeaderY = mCurrentHeadY;
 	}
 
-	private void updateFooterHeight(float currentY, float offsetY) {
-		if (mOriginChildY == -1 || mOriginFootY == -1) {
-			mOriginFootY = mFooterView.getTop();
-			lastFootY = mOriginFootY;
-		}
-		float childY = mOriginChildY + offsetY;
-		float footY = mOriginFootY + offsetY;
-		LogUtils.i("mOriginFootY=" + mOriginFootY + ";footY=" + footY);
-		Utils.moveChildAndAddedView(child, mFooterView, lastChidY, childY,
-				lastFootY, footY, 0);
-		lastChidY = childY;
-		lastFootY = footY;
-		// mFooterView.setState(XRefreshViewState.STATE_LOADING);
+	private void updateFooterHeight(int deltaY) {
+		moveView(deltaY);
 	}
 
 	/**
@@ -449,59 +435,70 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void startRefresh() {
+		this.autoRefresh = true;
 		mPullRefreshing = true;
 		if (mRefreshViewListener != null) {
 			mRefreshViewListener.onRefresh();
 		}
-		mOffsetY = mHeaderViewHeight;
-		updateHeaderHeight(0, mOffsetY, SCROLL_DURATION);
+		mContentView.scrollToTop();
+		updateHeaderHeight(0, mHeaderViewHeight, 0);
 	}
 
 	/**
 	 * reset header view's height.
 	 */
 	private void resetHeaderHeight() {
-		float height = mOffsetY;
+		float height = mHolder.mOffsetY;
 		if (height == 0) // not visible.
 			return;
 		// refreshing and header isn't shown fully. do nothing.
 		if (mPullRefreshing && height <= mHeaderViewHeight) {
 			return;
 		}
-		int headHeight = mHeaderViewHeight;
+		int offsetY = 0;
 		if (mPullRefreshing) {
-			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
-					mOriginChildY + headHeight, lastHeaderY, mOriginHeadY
-							+ headHeight, SCROLL_DURATION);
-			lastChidY = mOriginChildY + headHeight;
-			lastHeaderY = mOriginHeadY + headHeight;
+			offsetY = mHeaderViewHeight - mHolder.mOffsetY;
+			startScroll(offsetY, SCROLL_DURATION);
 		} else {
-			Utils.moveChildAndAddedView(child, mHeaderView, lastChidY,
-					mOriginChildY, lastHeaderY, mOriginHeadY, SCROLL_DURATION,
-					animaListener);
-			lastChidY = mOriginChildY;
-			lastHeaderY = mOriginHeadY;
+			offsetY = 0 - mHolder.mOffsetY;
+			startScroll(offsetY, SCROLL_DURATION);
 		}
+		LogUtils.d("resetHeaderHeight offsetY=" + offsetY);
 	}
 
-	/**
-	 * enable or disable pull down refresh feature.
-	 * 
-	 * @param enable
-	 */
-	public void setPullRefreshEnable(boolean enable) {
-		mEnablePullRefresh = enable;
+	public void moveView(int deltaY) {
+		mHolder.move(deltaY);
+		mChild.offsetTopAndBottom(deltaY);
+		mHeaderView.offsetTopAndBottom(deltaY);
+		mFooterView.offsetTopAndBottom(deltaY);
+		invalidate();
+	}
+
+	@Override
+	public void computeScroll() {
+		super.computeScroll();
+		if (mScroller.computeScrollOffset()) {
+			int lastScrollY = mHolder.mOffsetY;
+			int currentY = mScroller.getCurrY();
+			int offsetY = currentY - lastScrollY;
+			lastScrollY = currentY;
+			moveView(offsetY);
+
+			LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY="
+					+ mHolder.mOffsetY);
+		} else {
+			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
+		}
 	}
 
 	/**
 	 * stop refresh, reset header view.
 	 */
 	public void stopRefresh() {
-		LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
+		LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
 		if (mPullRefreshing == true) {
 			mPullRefreshing = false;
 			resetHeaderHeight();
-			mCurrentHeadY = mOriginHeadY;
 			lastRefreshTime = Calendar.getInstance().getTimeInMillis();
 		}
 	}
@@ -526,6 +523,9 @@ public class XRefreshView extends LinearLayout {
 		return lastRefreshTime;
 	}
 
+	/**
+	 * 设置并显示上次刷新的时间
+	 */
 	private void setRefreshTime() {
 		if (lastRefreshTime <= 0) {
 			return;
@@ -539,11 +539,20 @@ public class XRefreshView extends LinearLayout {
 	public void stopLoadMore() {
 		if (mPullLoading == true) {
 			mPullLoading = false;
-			Utils.moveChildAndAddedView(child, mFooterView, lastChidY,
-					mOriginChildY, lastFootY, mOriginFootY, 0, animaListener);
-			lastChidY = mOriginChildY;
-			lastFootY = mOriginFootY;
+			startScroll(-mHolder.mOffsetY, 0);
 		}
+	}
+
+	/**
+	 * 
+	 * @param offsetY
+	 *            滑动偏移量，负数向上滑，正数反之
+	 * @param duration
+	 *            滑动持续时间
+	 */
+	public void startScroll(int offsetY, int duration) {
+		mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
+		invalidate();
 	}
 
 	/**
@@ -586,30 +595,6 @@ public class XRefreshView extends LinearLayout {
 
 		@Override
 		public void onRelease(float direction) {
-		}
-
-	}
-
-	public class AnimaListener implements AnimatorListener {
-
-		@Override
-		public void onAnimationStart(Animator animation) {
-			animaDoing = true;
-		}
-
-		@Override
-		public void onAnimationEnd(Animator animation) {
-			animaDoing = false;
-		}
-
-		@Override
-		public void onAnimationCancel(Animator animation) {
-			animaDoing = false;
-		}
-
-		@Override
-		public void onAnimationRepeat(Animator animation) {
-
 		}
 
 	}
