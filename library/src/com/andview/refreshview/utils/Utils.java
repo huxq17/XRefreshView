@@ -1,6 +1,5 @@
 package com.andview.refreshview.utils;
 
-
 public class Utils {
 
 	/**

@@ -22,13 +22,13 @@ public class ScrollViewActivity extends Activity {
 		ll = (LinearLayout) findViewById(R.id.ll);
 		outView.setPullLoadEnable(true);
 		outView.setAutoRefresh(false);
-		//XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
-//		outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
+		// XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
+		// outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
 			public void onRefresh() {
-				
+
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -49,8 +49,14 @@ public class ScrollViewActivity extends Activity {
 		});
 		for (int i = 0; i < 50; i++) {
 			TextView tv = new TextView(this);
-			tv.setText("数据"+i);
+			tv.setText("数据" + i);
 			ll.addView(tv);
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		outView.startRefresh();
 	}
 }

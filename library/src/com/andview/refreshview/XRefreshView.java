@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
@@ -56,7 +57,6 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private XRefreshFooterViewBase mCustomFooterView;
 
-	private static boolean animaDoing = false;
 	/**
 	 * 默认不自动刷新
 	 */
@@ -87,7 +87,7 @@ public class XRefreshView extends LinearLayout {
 		setLongClickable(true);
 		mContentView = new XRefreshContentView();
 		mHolder = new XRefreshHolder();
-		mScroller = new Scroller(getContext(), new AccelerateInterpolator());
+		mScroller = new Scroller(getContext(), new LinearInterpolator());
 
 		initWithContext(context, attrs);
 		setOrientation(VERTICAL);
@@ -156,9 +156,6 @@ public class XRefreshView extends LinearLayout {
 						mHeaderViewHeight = mHeaderView
 								.getHeaderContentHeight();
 
-						mHolder.setOriginChildY(getTop());
-						mHolder.setOriginHeadY(getTop() - mHeaderViewHeight);
-
 						LogUtils.d("onGlobalLayout mHeaderViewHeight="
 								+ mHeaderViewHeight);
 						mContentView.setScrollListener();
@@ -186,7 +183,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/*
-	 * 丈量视图的宽、高。宽度为用户设置的宽度，高度则为header, content view, footer这三个子控件的高度只和。
+	 * 丈量视图的宽、高。宽度为用户设置的宽度，高度则为header, content view, footer这三个子控件的高度之和。
 	 * 
 	 * @see android.view.View#onMeasure(int, int)
 	 */
@@ -214,6 +211,7 @@ public class XRefreshView extends LinearLayout {
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
 			if (child == mHeaderView) {
+				// 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
 				child.layout(0, top - mHeaderViewHeight,
 						child.getMeasuredWidth(), top);
 			} else {
@@ -262,7 +260,7 @@ public class XRefreshView extends LinearLayout {
 							.hasHeaderPullDown()))) {
 				sendCancelEvent();
 				updateHeaderHeight(currentY, deltaY);
-			} else if (mEnablePullLoad && mContentView.isBottom()
+			} else if (mContentView.isBottom()
 					&& (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
 				sendCancelEvent();
 				updateFooterHeight(deltaY);
@@ -280,8 +278,7 @@ public class XRefreshView extends LinearLayout {
 			// }
 			if (mContentView.isTop() && mHolder.hasHeaderPullDown()) {
 				// invoke refresh
-				if (!mPullRefreshing && mEnablePullRefresh
-						&& mHolder.mOffsetY > mHeaderViewHeight) {
+				if (mEnablePullRefresh && mHolder.mOffsetY > mHeaderViewHeight) {
 					mPullRefreshing = true;
 					mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
 					if (mRefreshViewListener != null) {
@@ -290,10 +287,13 @@ public class XRefreshView extends LinearLayout {
 				}
 				resetHeaderHeight();
 			} else if (mContentView.isBottom() && mHolder.hasFooterPullUp()) {
-				if (!mPullLoading && mEnablePullLoad) {
+				if (mEnablePullLoad) {
 					int offset = 0 - mHolder.mOffsetY - mFootHeight;
 					startScroll(offset, SCROLL_DURATION);
 					startLoadMore();
+				} else {
+					int offset = 0 - mHolder.mOffsetY;
+					startScroll(offset, SCROLL_DURATION);
 				}
 			}
 			mLastY = -1; // reset
@@ -367,6 +367,20 @@ public class XRefreshView extends LinearLayout {
 		}
 	}
 
+	/**
+	 * enable or disable pull down refresh feature.
+	 * 
+	 * @param enable
+	 */
+	public void setPullRefreshEnable(boolean enable) {
+		mEnablePullRefresh = enable;
+		if (!mEnablePullRefresh) {
+			mHeaderView.hide();
+		} else {
+			mHeaderView.show();
+		}
+	}
+
 	public void setmCustomHeaderView(XRefreshHeaderViewBase mCustomHeaderView) {
 		this.mCustomHeaderView = mCustomHeaderView;
 	}
@@ -403,7 +417,6 @@ public class XRefreshView extends LinearLayout {
 				}
 			}
 		}
-		mHolder.setLastY();
 	}
 
 	private void updateFooterHeight(int deltaY) {
@@ -465,29 +478,17 @@ public class XRefreshView extends LinearLayout {
 	public void computeScroll() {
 		super.computeScroll();
 		if (mScroller.computeScrollOffset()) {
-			animaDoing = true;
 			int lastScrollY = mHolder.mOffsetY;
 			int currentY = mScroller.getCurrY();
-			int finalY = mScroller.getFinalY();
 			int offsetY = currentY - lastScrollY;
 			lastScrollY = currentY;
 			moveView(offsetY);
 
-			LogUtils.d("currentY=" + currentY + ";finalY=" + finalY
-					+ ";mHolder.mOffsetY=" + mHolder.mOffsetY);
+			LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY="
+					+ mHolder.mOffsetY);
 		} else {
-			animaDoing = false;
 			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
 		}
-	}
-
-	/**
-	 * enable or disable pull down refresh feature.
-	 * 
-	 * @param enable
-	 */
-	public void setPullRefreshEnable(boolean enable) {
-		mEnablePullRefresh = enable;
 	}
 
 	/**
@@ -545,7 +546,7 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * 
 	 * @param offsetY
-	 *            滑动偏移量，负数向上滑，整数反之
+	 *            滑动偏移量，负数向上滑，正数反之
 	 * @param duration
 	 *            滑动持续时间
 	 */

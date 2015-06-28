@@ -74,7 +74,7 @@ public class XRefreshViewHeader extends LinearLayout implements
 
 	public void setRefreshTime(long lastRefreshTime) {
 		this.lastRefreshTime = lastRefreshTime;
-		//获取当前时间
+		// 获取当前时间
 		Calendar mCalendar = Calendar.getInstance();
 		long refreshTime = mCalendar.getTimeInMillis();
 		long howLong = refreshTime - lastRefreshTime;
@@ -103,7 +103,7 @@ public class XRefreshViewHeader extends LinearLayout implements
 	public void setState(XRefreshViewState state) {
 		if (state == mState)
 			return;
-//		setRefreshTime(lastRefreshTime);
+		// setRefreshTime(lastRefreshTime);
 		if (state == XRefreshViewState.STATE_REFRESHING) {
 			mArrowImageView.clearAnimation();
 			mArrowImageView.setVisibility(View.GONE);
@@ -148,4 +148,13 @@ public class XRefreshViewHeader extends LinearLayout implements
 		return mHeaderViewContent.getMeasuredHeight();
 	}
 
+	/**
+	 * hide footer when disable pull load more
+	 */
+	public void hide() {
+		setVisibility(View.GONE);
+	}
+	public void show() {
+		setVisibility(View.VISIBLE);
+	}
 }

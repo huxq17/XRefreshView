@@ -8,17 +8,11 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
-import com.andview.refreshview.utils.LogUtils;
 import com.example.xrefreshviewdemo.R;
 
 public class GridViewActivity extends Activity {
@@ -76,6 +70,7 @@ public class GridViewActivity extends Activity {
 			}
 		});
 	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
