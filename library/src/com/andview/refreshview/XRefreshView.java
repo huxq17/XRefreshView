@@ -102,14 +102,6 @@ public class XRefreshView extends LinearLayout {
 		mContentView.setOnTopRefreshTime(topListener);
 	}
 
-	/**
-	 * 设置底部加载更多时机
-	 * 
-	 * 现阶段XRefreshView对于上拉加载时机的判断仅支持api14也就是安卓4.0 以上的版本，
-	 * 如果想要兼容4.0以下，得调用此方法自己设置上拉加载的时机
-	 * 
-	 * @param bottomListener
-	 */
 	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomListener) {
 		mContentView.setOnBottomLoadMoreTime(bottomListener);
 	}
