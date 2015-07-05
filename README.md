@@ -1,5 +1,9 @@
 # XRefreshView
 
+
+<font size=5>最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46678521 "description")</font>
+
+
 一、写在开头的话
 
 之所以写这个东西是因为项目中有用到，需要给stickylistheaders加个刷新，其实就是个framelayout里面有个listview的自定义view布局，但是一些知名的刷新框架我试了下都不支持，pulltoRefresh和XListView都是自己实现了一个可刷新的view，然后让我们来直接使用这个可刷新的view，从而达到可以上拉下拉刷新的目的。我这个需求需要的是一个我告诉他什么时候需要刷新他就能帮我刷新的框架，也就是说不管什么view，只要能告诉框架自己什么时候需要刷新，框架就可以给你在什么时候刷新，从这个角度上来说，这个框架是万能的，适用于所有的view，他就是我接下来要介绍的——XRefreshView。
