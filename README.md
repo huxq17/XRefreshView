@@ -1,7 +1,7 @@
 # XRefreshView
 
 
-<font size=5>最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46678521 "description")</font>
+<font size=8>最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46678521 "description")</font>
 
 
 一、写在开头的话
