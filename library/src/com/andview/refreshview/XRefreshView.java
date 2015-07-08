@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
@@ -37,6 +36,7 @@ public class XRefreshView extends LinearLayout {
 	 */
 	protected int mInitScrollY = 0;
 	private int mLastY = -1; // save event y
+	private int mLastX = -1; // save event x
 	private boolean mEnablePullRefresh = true;
 	public boolean mPullRefreshing = false; // is refreashing.
 	private final static float OFFSET_RADIO = 1.8f; // support iOS like pull
@@ -76,6 +76,8 @@ public class XRefreshView extends LinearLayout {
 	private boolean mHasSendCancelEvent = false;
 	private boolean mHasSendDownEvent = false;
 	private Scroller mScroller;
+	private boolean mMoveForHorizontal = false;
+	private boolean isForHorizontalMove = false;
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -112,6 +114,13 @@ public class XRefreshView extends LinearLayout {
 		mContentView.setContentViewLayoutParams(isHeightMatchParent,
 				isWidthMatchParent);
 		super.onFinishInflate();
+	}
+	/**
+	 * if need use for Horizontal move,pass true, or false
+	 * @param isDisableMoveForHorizontal default false
+	 */
+	public void setMoveForHorizontal(boolean isForHorizontalMove) {
+		this.isForHorizontalMove = isForHorizontalMove;
 	}
 
 	private void initWithContext(Context context, AttributeSet attrs) {
@@ -220,11 +229,13 @@ public class XRefreshView extends LinearLayout {
 	public boolean dispatchTouchEvent(MotionEvent ev) {
 		final int action = MotionEventCompat.getActionMasked(ev);
 		int deltaY = 0;
+		int deltaX = 0;
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			mHasSendCancelEvent = false;
 			mHasSendDownEvent = false;
 			mLastY = (int) ev.getRawY();
+			mLastX = (int) ev.getRawX();
 			mInitialMotionY = mLastY;
 
 			if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading) {
@@ -237,11 +248,21 @@ public class XRefreshView extends LinearLayout {
 			}
 			mLastMoveEvent = ev;
 			int currentY = (int) ev.getRawY();
+			int currentX = (int) ev.getRawX();
 			deltaY = currentY - mLastY;
+			deltaX = currentX - mLastX;
 			mLastY = currentY;
 			// intercept the MotionEvent only when user is not scrolling
-			if (!isIntercepted && Math.abs(deltaY) < mTouchSlop) {
+			if (!isIntercepted && (Math.abs(deltaY) < mTouchSlop)) {
 				isIntercepted = true;
+				return super.dispatchTouchEvent(ev);
+			}
+			if (isForHorizontalMove&&!mMoveForHorizontal && Math.abs(deltaX) > Math.abs(deltaY)) {
+				if (mHolder.mOffsetY == 0) {
+					mMoveForHorizontal = true;
+				}
+			}
+			if (mMoveForHorizontal) {
 				return super.dispatchTouchEvent(ev);
 			}
 			LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
@@ -258,7 +279,7 @@ public class XRefreshView extends LinearLayout {
 				updateFooterHeight(deltaY);
 			} else if (mContentView.isTop() && !mHolder.hasHeaderPullDown()
 					|| mContentView.isBottom() && !mHolder.hasFooterPullUp()) {
-				if (deltaY > 0)
+				if (Math.abs(deltaY) > 0)
 					sendDownEvent();
 			}
 			break;
@@ -291,6 +312,7 @@ public class XRefreshView extends LinearLayout {
 			mLastY = -1; // reset
 			mInitialMotionY = 0;
 			isIntercepted = true;
+			mMoveForHorizontal = false;
 			break;
 		}
 		return super.dispatchTouchEvent(ev);
@@ -400,6 +422,9 @@ public class XRefreshView extends LinearLayout {
 			mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
 			startScroll(deltaY, during[0]);
 		} else {
+			if(mHolder.isOverHeader(deltaY)){
+				deltaY = -mHolder.mOffsetY;
+			}
 			moveView(deltaY);
 			if (mEnablePullRefresh && !mPullRefreshing) {
 				if (mHolder.mOffsetY > mHeaderViewHeight) {

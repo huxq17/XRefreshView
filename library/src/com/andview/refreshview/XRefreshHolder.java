@@ -15,4 +15,8 @@ public class XRefreshHolder {
 	public boolean hasFooterPullUp() {
 		return mOffsetY < 0;
 	}
+	public boolean isOverHeader(int deltaY){
+		return mOffsetY<-deltaY;
+		
+	}
 }
