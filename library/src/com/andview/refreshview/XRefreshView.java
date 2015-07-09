@@ -115,9 +115,12 @@ public class XRefreshView extends LinearLayout {
 				isWidthMatchParent);
 		super.onFinishInflate();
 	}
+
 	/**
 	 * if need use for Horizontal move,pass true, or false
-	 * @param isDisableMoveForHorizontal default false
+	 * 
+	 * @param isDisableMoveForHorizontal
+	 *            default false
 	 */
 	public void setMoveForHorizontal(boolean isForHorizontalMove) {
 		this.isForHorizontalMove = isForHorizontalMove;
@@ -257,7 +260,8 @@ public class XRefreshView extends LinearLayout {
 				isIntercepted = true;
 				return super.dispatchTouchEvent(ev);
 			}
-			if (isForHorizontalMove&&!mMoveForHorizontal && Math.abs(deltaX) > Math.abs(deltaY)) {
+			if (isForHorizontalMove && !mMoveForHorizontal
+					&& Math.abs(deltaX) > Math.abs(deltaY)) {
 				if (mHolder.mOffsetY == 0) {
 					mMoveForHorizontal = true;
 				}
@@ -422,7 +426,7 @@ public class XRefreshView extends LinearLayout {
 			mHeaderView.setState(XRefreshViewState.STATE_REFRESHING);
 			startScroll(deltaY, during[0]);
 		} else {
-			if(mHolder.isOverHeader(deltaY)){
+			if (mHolder.isOverHeader(deltaY)) {
 				deltaY = -mHolder.mOffsetY;
 			}
 			moveView(deltaY);
@@ -573,11 +577,12 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * you can listen ListView.OnScrollListener or this one. it will invoke
-	 * onXScrolling when header/footer scroll back.
+	 * you can listener the child scroll state by invoking this method
+	 * 
+	 * @param listener
 	 */
-	public interface OnXScrollListener extends OnScrollListener {
-		public void onXScrolling(View view);
+	public void setOnScrollListener(OnScrollListener listener) {
+		mContentView.setOnScrollListener(listener);
 	}
 
 	public void setXRefreshViewListener(XRefreshViewListener l) {

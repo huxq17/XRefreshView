@@ -6,12 +6,15 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.utils.LogUtils;
 import com.example.xrefreshviewdemo.R;
 
 public class ListViewActivity extends Activity {
@@ -25,7 +28,7 @@ public class ListViewActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_listview);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			str_name.add("数据" + i);
 		}
 		lv = (ListView) findViewById(R.id.lv);
@@ -36,9 +39,9 @@ public class ListViewActivity extends Activity {
 		lv.setAdapter(adapter);
 
 		// 设置是否可以下拉刷新
-		refreshView.setPullRefreshEnable(false);
+		refreshView.setPullRefreshEnable(true);
 		// 设置是否可以上拉加载
-		refreshView.setPullLoadEnable(false);
+		refreshView.setPullLoadEnable(true);
 		// 设置上次刷新的时间
 		refreshView.restoreLastRefreshTime(lastRefreshTime);
 		// 设置时候可以自动刷新
@@ -78,6 +81,20 @@ public class ListViewActivity extends Activity {
 				}
 			}
 		});
+		refreshView.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				LogUtils.i("onScrollStateChanged");
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				LogUtils.i("onScroll");
+			}
+		});
+
 	}
 
 	public void toast(String msg) {

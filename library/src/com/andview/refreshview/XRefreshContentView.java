@@ -21,6 +21,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private int mTotalItemCount;
 	private OnTopRefreshTime mTopRefreshTime;
 	private OnBottomLoadMoreTime mBottomLoadMoreTime;
+	private OnScrollListener mScrollListener;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -58,6 +59,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			AbsListView absListView = (AbsListView) child;
 			absListView.setOnScrollListener(this);
 		}
+	}
+
+	public void setOnScrollListener(OnScrollListener listener) {
+		mScrollListener = listener;
 	}
 
 	public boolean isTop() {
@@ -98,13 +103,19 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+		if (mScrollListener != null) {
+			mScrollListener.onScrollStateChanged(view, scrollState);
+		}
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		mTotalItemCount = totalItemCount;
+		if (mScrollListener != null) {
+			mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount,
+					totalItemCount);
+		}
 	}
 
 	public int getTotalItemCount() {
@@ -154,7 +165,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 						|| scrollView.getScrollY() != childView.getHeight()
 								- scrollView.getHeight();
 			}
-		}else{
+		} else {
 			return canScrollVertically(child, 1);
 		}
 		return true;
@@ -162,8 +173,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 用来判断view在竖直方向上能不能向上或者向下滑动
-	 * @param view v
-	 * @param direction 方向    负数代表向上滑动 ，正数则反之
+	 * 
+	 * @param view
+	 *            v
+	 * @param direction
+	 *            方向 负数代表向上滑动 ，正数则反之
 	 * @return
 	 */
 	public boolean canScrollVertically(View view, int direction) {
