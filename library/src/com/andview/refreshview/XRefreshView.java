@@ -611,11 +611,12 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * you can listen ListView.OnScrollListener or this one. it will invoke
-	 * onXScrolling when header/footer scroll back.
+	 * you can listener the child scroll state by invoking this method
+	 * 
+	 * @param listener
 	 */
-	public interface OnXScrollListener extends OnScrollListener {
-		public void onXScrolling(View view);
+	public void setOnScrollListener(OnScrollListener listener) {
+		mContentView.setOnScrollListener(listener);
 	}
 
 	public void setXRefreshViewListener(XRefreshViewListener l) {
