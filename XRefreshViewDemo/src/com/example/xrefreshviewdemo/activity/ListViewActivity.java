@@ -3,15 +3,18 @@ package com.example.xrefreshviewdemo.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R.integer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.utils.LogUtils;
 import com.example.xrefreshviewdemo.R;
 
 public class ListViewActivity extends Activity {
@@ -82,5 +85,19 @@ public class ListViewActivity extends Activity {
 
 	public void toast(String msg) {
 		Toast.makeText(getApplicationContext(), msg, 0).show();
+	}
+	int downX,downY;
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		
+		 downX = (int) ev.getX();
+         downY = (int) ev.getY();
+		int position = lv.pointToPosition(downX, downY);
+		LogUtils.i("position = "+position);
+		if(position==2){
+			LogUtils.i("viewpager is here, and request parent do not intercept the touch event now!");
+			refreshView.disallowInterceptTouchEvent(true);
+		}
+		return super.dispatchTouchEvent(ev);
 	}
 }

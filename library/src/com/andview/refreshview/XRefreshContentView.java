@@ -21,6 +21,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private int mTotalItemCount;
 	private OnTopRefreshTime mTopRefreshTime;
 	private OnBottomLoadMoreTime mBottomLoadMoreTime;
+	private XRefreshView mContainer;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -42,6 +43,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	public View getContentView() {
 		return child;
+	}
+
+	public void setContainer(XRefreshView container) {
+		mContainer = container;
 	}
 
 	public void scrollToTop() {
@@ -98,7 +103,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+		if (mContainer!=null&&scrollState == OnScrollListener.SCROLL_STATE_IDLE
+				&& mTotalItemCount - 1 == view.getLastVisiblePosition()) {
+			mContainer.invoketLoadMore();
+		}
 	}
 
 	@Override
@@ -154,7 +162,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 						|| scrollView.getScrollY() != childView.getHeight()
 								- scrollView.getHeight();
 			}
-		}else{
+		} else {
 			return canScrollVertically(child, 1);
 		}
 		return true;
@@ -162,8 +170,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 用来判断view在竖直方向上能不能向上或者向下滑动
-	 * @param view v
-	 * @param direction 方向    负数代表向上滑动 ，正数则反之
+	 * 
+	 * @param view
+	 *            v
+	 * @param direction
+	 *            方向 负数代表向上滑动 ，正数则反之
 	 * @return
 	 */
 	public boolean canScrollVertically(View view, int direction) {
