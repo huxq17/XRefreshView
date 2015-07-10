@@ -40,9 +40,9 @@ public class ListViewActivity extends Activity {
 		lv.setAdapter(adapter);
 
 		// 设置是否可以下拉刷新
-		refreshView.setPullRefreshEnable(true);
+		refreshView.setPullRefreshEnable(false);
 		// 设置是否可以上拉加载
-		refreshView.setPullLoadEnable(true);
+		refreshView.setPullLoadEnable(false);
 		// 设置上次刷新的时间
 		refreshView.restoreLastRefreshTime(lastRefreshTime);
 		// 设置时候可以自动刷新
@@ -110,8 +110,10 @@ public class ListViewActivity extends Activity {
 		downX = (int) ev.getX();
 		downY = (int) ev.getY();
 		int position = lv.pointToPosition(downX, downY);
+		int headerViewPosition=2;
+//		headerViewPosition = lv.getPositionForView(你添加的HeaderView);
 		LogUtils.i("position = " + position);
-		if (position == 2) {
+		if (position == headerViewPosition) {
 			LogUtils.i("viewpager is here, and request parent do not intercept the touch event now!");
 			refreshView.disallowInterceptTouchEvent(true);
 		}

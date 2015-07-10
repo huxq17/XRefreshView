@@ -606,8 +606,10 @@ public class XRefreshView extends LinearLayout {
 	 *            滑动持续时间
 	 */
 	public void startScroll(int offsetY, int duration) {
-		mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-		invalidate();
+		if (offsetY != 0) {
+			mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
+			invalidate();
+		}
 	}
 
 	/**
