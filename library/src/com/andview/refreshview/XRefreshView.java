@@ -165,7 +165,7 @@ public class XRefreshView extends LinearLayout {
 						mContentView.setScrollListener();
 						if (mEnablePullLoad) {
 							Log.i("CustomView", "add footView");
-							addView(mFooterView);
+							addFooterView();
 						}
 						// 移除视图树监听器
 						removeViewTreeObserver(this);
@@ -184,6 +184,10 @@ public class XRefreshView extends LinearLayout {
 		} else {
 			getViewTreeObserver().removeOnGlobalLayoutListener(listener);
 		}
+	}
+
+	public void addFooterView() {
+		addView(mFooterView);
 	}
 
 	/*
