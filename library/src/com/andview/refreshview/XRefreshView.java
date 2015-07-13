@@ -61,6 +61,10 @@ public class XRefreshView extends LinearLayout {
 	 * 默认不自动刷新
 	 */
 	private boolean autoRefresh = false;
+	/**
+	 * 默认自动加载更多
+	 */
+	private boolean autoLoadMore = true;
 	private int mFootHeight;
 	/**
 	 * 被刷新的view
@@ -78,6 +82,7 @@ public class XRefreshView extends LinearLayout {
 	private Scroller mScroller;
 	private boolean mMoveForHorizontal = false;
 	private boolean isForHorizontalMove = false;
+	private boolean mIsIntercept = false;
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -111,6 +116,9 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onFinishInflate() {
 		mChild = mContentView.setContentView(XRefreshView.this.getChildAt(1));
+		if (autoLoadMore) {
+			mContentView.setContainer(this);
+		}
 		mContentView.setContentViewLayoutParams(isHeightMatchParent,
 				isWidthMatchParent);
 		super.onFinishInflate();
@@ -141,6 +149,8 @@ public class XRefreshView extends LinearLayout {
 						R.styleable.XRefreshView_isHeightMatchParent, true);
 				autoRefresh = a.getBoolean(
 						R.styleable.XRefreshView_autoRefresh, false);
+				autoLoadMore = a.getBoolean(
+						R.styleable.XRefreshView_autoLoadMore, true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -250,7 +260,7 @@ public class XRefreshView extends LinearLayout {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (mPullLoading || mPullRefreshing || !isEnabled()) {
+			if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept) {
 				return super.dispatchTouchEvent(ev);
 			}
 			mLastMoveEvent = ev;
@@ -309,9 +319,7 @@ public class XRefreshView extends LinearLayout {
 				resetHeaderHeight();
 			} else if (mHolder.hasFooterPullUp()) {
 				if (mEnablePullLoad) {
-					int offset = 0 - mHolder.mOffsetY - mFootHeight;
-					startScroll(offset, SCROLL_DURATION);
-					startLoadMore();
+					invoketLoadMore();
 				} else {
 					int offset = 0 - mHolder.mOffsetY;
 					startScroll(offset, SCROLL_DURATION);
@@ -321,9 +329,25 @@ public class XRefreshView extends LinearLayout {
 			mInitialMotionY = 0;
 			isIntercepted = true;
 			mMoveForHorizontal = false;
+			mIsIntercept = false;
 			break;
 		}
 		return super.dispatchTouchEvent(ev);
+	}
+
+	public void invoketLoadMore() {
+		if (!mPullLoading) {
+			int offset = 0 - mHolder.mOffsetY - mFootHeight;
+			startScroll(offset, SCROLL_DURATION);
+			startLoadMore();
+		}
+	}
+
+	/**
+	 * if child need the touch event,pass true
+	 */
+	public void disallowInterceptTouchEvent(boolean isIntercept) {
+		mIsIntercept = isIntercept;
 	}
 
 	private void sendCancelEvent() {
@@ -459,6 +483,16 @@ public class XRefreshView extends LinearLayout {
 		setRefreshTime();
 	}
 
+	/**
+	 * 设置是否自动加载更多，默认是
+	 * 
+	 * @param autoLoadMore
+	 *            true则自动刷新
+	 */
+	public void setAutoLoadMore(boolean autoLoadMore) {
+		this.autoLoadMore = autoLoadMore;
+	}
+
 	public void startRefresh() {
 		this.autoRefresh = true;
 		mPullRefreshing = true;
@@ -576,8 +610,10 @@ public class XRefreshView extends LinearLayout {
 	 *            滑动持续时间
 	 */
 	public void startScroll(int offsetY, int duration) {
-		mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-		invalidate();
+		if (offsetY != 0) {
+			mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
+			invalidate();
+		}
 	}
 
 	/**

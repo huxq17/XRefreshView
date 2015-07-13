@@ -20,6 +20,7 @@
         <attr name="isHeightMatchParent" format="boolean" />
         <attr name="isWidthMatchParent" format="boolean" />
         <attr name="autoRefresh" format="boolean" />
+        <attr name="autoLoadMore" format="boolean" />
     </declare-styleable>
     <declare-styleable name="StickyListHeadersListView">
 

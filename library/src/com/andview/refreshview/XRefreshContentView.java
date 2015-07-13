@@ -21,6 +21,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private int mTotalItemCount;
 	private OnTopRefreshTime mTopRefreshTime;
 	private OnBottomLoadMoreTime mBottomLoadMoreTime;
+	private XRefreshView mContainer;
 	private OnScrollListener mScrollListener;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
@@ -43,6 +44,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	public View getContentView() {
 		return child;
+	}
+
+	public void setContainer(XRefreshView container) {
+		mContainer = container;
 	}
 
 	public void scrollToTop() {
@@ -103,6 +108,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		if (mContainer!=null&&scrollState == OnScrollListener.SCROLL_STATE_IDLE
+				&& mTotalItemCount - 1 == view.getLastVisiblePosition()) {
+			mContainer.invoketLoadMore();
+		}
 		if (mScrollListener != null) {
 			mScrollListener.onScrollStateChanged(view, scrollState);
 		}
