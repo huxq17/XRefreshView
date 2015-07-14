@@ -182,7 +182,7 @@ public class XRefreshView extends LinearLayout {
 						mContentView.setScrollListener();
 						if (mEnablePullLoad && needAddFooterView()) {
 							Log.i("CustomView", "add footView");
-							addView(mFooterView);
+							addFooterView();
 						}
 						// 移除视图树监听器
 						removeViewTreeObserver(this);
@@ -201,6 +201,10 @@ public class XRefreshView extends LinearLayout {
 		} else {
 			getViewTreeObserver().removeOnGlobalLayoutListener(listener);
 		}
+	}
+
+	public void addFooterView() {
+		addView(mFooterView);
 	}
 
 	/*
@@ -247,7 +251,7 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		final int action = ev.getAction();
+		final int action = MotionEventCompat.getActionMasked(ev);
 		int deltaY = 0;
 		int deltaX = 0;
 		switch (action) {
@@ -294,18 +298,15 @@ public class XRefreshView extends LinearLayout {
 							.hasHeaderPullDown()))) {
 				sendCancelEvent();
 				updateHeaderHeight(currentY, deltaY);
-			} else if (needAddFooterView()&&mContentView.isBottom()
+			} else if (needAddFooterView() && mContentView.isBottom()
 					&& (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
 				sendCancelEvent();
 				updateFooterHeight(deltaY);
 			} else if (mContentView.isTop() && !mHolder.hasHeaderPullDown()
-					||  mContentView.isBottom()
-					&& !mHolder.hasFooterPullUp()) {
-				LogUtils.d("other");
+					|| mContentView.isBottom() && !mHolder.hasFooterPullUp()) {
 				if (Math.abs(deltaY) > 0)
 					sendDownEvent();
 			}
-			LogUtils.d("break");
 			break;
 		case MotionEvent.ACTION_CANCEL:
 		case MotionEvent.ACTION_UP:
@@ -329,7 +330,6 @@ public class XRefreshView extends LinearLayout {
 				} else {
 					int offset = 0 - mHolder.mOffsetY;
 					startScroll(offset, SCROLL_DURATION);
-					LogUtils.i("hidden footerView completely");
 				}
 			}
 			mLastY = -1; // reset

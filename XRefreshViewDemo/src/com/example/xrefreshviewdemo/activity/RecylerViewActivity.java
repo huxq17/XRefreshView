@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.view.LayoutInflater;
 
 import com.andview.refreshview.XRefreshView;
-import com.andview.refreshview.XRefreshViewFooter;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;

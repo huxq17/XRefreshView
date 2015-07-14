@@ -5,7 +5,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
@@ -17,7 +16,6 @@ import android.widget.ScrollView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
-import com.andview.refreshview.recyclerview.UltimateViewAdapter;
 import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
@@ -85,17 +83,19 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 			mOnScrollListener = new RecyclerView.OnScrollListener() {
 				private int[] lastPositions;
+
 				@Override
 				public void onScrollStateChanged(RecyclerView recyclerView,
 						int newState) {
 					super.onScrollStateChanged(recyclerView, newState);
 				}
+
 				@Override
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-					final RecyclerView.LayoutManager layoutManager = recyclerView
-							.getLayoutManager();
-					LogUtils.i("layoutManager="+layoutManager);
-					if(layoutManager==null)return;
+					RecyclerView.LayoutManager layoutManager = null;
+					if (layoutManager == null) {
+						layoutManager = recyclerView.getLayoutManager();
+					}
 					if (layoutManagerType == null) {
 						if (layoutManager instanceof GridLayoutManager) {
 							layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
@@ -145,27 +145,30 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 							&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
 						// todo: there are some bugs needs to be adjusted for
 						// admob adapter
-						if(mRefreshViewListener!=null){
-							mRefreshViewListener.onRecyclerViewLoadMore(recyclerView.getAdapter()
-									.getItemCount(), lastVisibleItemPosition);
+						if (mRefreshViewListener != null) {
+							mRefreshViewListener.onRecyclerViewLoadMore(
+									recyclerView.getAdapter().getItemCount(),
+									lastVisibleItemPosition);
 						}
 						mIsLoadingMore = true;
 						previousTotal = mTotalItemCount;
 					}
 				}
 			};
-			
+
 			recyclerView.addOnScrollListener(mOnScrollListener);
-//			UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView.getAdapter();
-//	        if (adapter != null && adapter.getCustomLoadMoreView() == null)
-//	        	adapter.setCustomLoadMoreView(LayoutInflater.from(getContext())
-//	                    .inflate(R.layout.bottom_progressbar, null));
+			// UltimateViewAdapter adapter = (UltimateViewAdapter)
+			// recyclerView.getAdapter();
+			// if (adapter != null && adapter.getCustomLoadMoreView() == null)
+			// adapter.setCustomLoadMoreView(LayoutInflater.from(getContext())
+			// .inflate(R.layout.bottom_progressbar, null));
 		}
 	}
 
 	public void setOnScrollListener(OnScrollListener listener) {
 		mScrollListener = listener;
 	}
+
 	public void setXRefreshViewListener(XRefreshViewListener refreshViewListener) {
 		mRefreshViewListener = refreshViewListener;
 	}
