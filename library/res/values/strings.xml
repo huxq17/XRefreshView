@@ -1,0 +1,17 @@
+<resources>
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="xrefreshview_header_hint_normal">下拉刷新</string>
+    <string name="xrefreshview_header_hint_ready">松开刷新数据</string>
+    <string name="xrefreshview_header_hint_refreshing">正在刷新</string>
+    <string name="xrefreshview_header_hint_loading">正在加载...</string>
+    <string name="xrefreshview_header_last_time">上次更新时间：</string>
+    <string name="xrefreshview_footer_hint_normal">查看更多</string>
+    <string name="xrefreshview_footer_hint_ready">松开载入更多</string>
+    <string name="xrefreshview_never_refresh">从未刷新</string>
+    <string name="xrefreshview_refresh_justnow">刚刚刷新</string>
+    <string name="xrefreshview_refresh_minutes_ago">%1s分钟之前刷新</string>
+    <string name="xrefreshview_refresh_hours_ago">%1s小时之前刷新</string>
+    <string name="xrefreshview_refresh_days_ago">%1s天之前刷新</string>
+
+</resources>
