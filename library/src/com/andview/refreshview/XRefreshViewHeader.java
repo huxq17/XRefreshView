@@ -139,16 +139,13 @@ public class XRefreshViewHeader extends LinearLayout implements
 		mState = state;
 	}
 
-	public int getVisiableHeight() {
-		return mContainer.getHeight();
-	}
-
 	/**
 	 * hide footer when disable pull load more
 	 */
 	public void hide() {
 		setVisibility(View.GONE);
 	}
+
 	public void show() {
 		setVisibility(View.VISIBLE);
 	}
