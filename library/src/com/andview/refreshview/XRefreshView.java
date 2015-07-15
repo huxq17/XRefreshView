@@ -343,7 +343,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void invoketLoadMore() {
-		if (!mPullLoading) {
+		if (mEnablePullLoad&&!mPullLoading) {
 			int offset = 0 - mHolder.mOffsetY - mFootHeight;
 			startScroll(offset, SCROLL_DURATION);
 			startLoadMore();
