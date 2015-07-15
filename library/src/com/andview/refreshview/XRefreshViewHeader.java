@@ -143,11 +143,6 @@ public class XRefreshViewHeader extends LinearLayout implements
 		return mContainer.getHeight();
 	}
 
-	@Override
-	public int getHeaderContentHeight() {
-		return mHeaderViewContent.getMeasuredHeight();
-	}
-
 	/**
 	 * hide footer when disable pull load more
 	 */

@@ -40,8 +40,8 @@ public class RecylerViewActivity extends Activity{
 
 		initData();
 		adapter = new SimpleAdapter(personList);
-		adapter.setCustomLoadMoreView(LayoutInflater.from(this)
-                .inflate(R.layout.custom_footer, null));
+//		adapter.setCustomLoadMoreView(LayoutInflater.from(this)
+//                .inflate(R.layout.custom_footer, null));
 		recyclerView.setAdapter(adapter);
 
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {

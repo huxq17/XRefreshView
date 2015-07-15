@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class XRefreshViewFooter extends LinearLayout {
@@ -100,11 +101,9 @@ public class XRefreshViewFooter extends LinearLayout {
 
 	private void initView(Context context) {
 		mContext = context;
-		LinearLayout moreView = (LinearLayout) LayoutInflater.from(mContext)
-				.inflate(R.layout.xrefreshview_footer, null);
+		RelativeLayout moreView = (RelativeLayout) LayoutInflater
+				.from(mContext).inflate(R.layout.xrefreshview_footer, null);
 		addView(moreView);
-		moreView.setLayoutParams(new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
 		mContentView = moreView.findViewById(R.id.xrefreshview_footer_content);
 		mProgressBar = moreView

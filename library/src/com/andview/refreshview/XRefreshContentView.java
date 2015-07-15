@@ -16,13 +16,13 @@ import android.widget.ScrollView;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
+import com.andview.refreshview.recyclerview.UltimateViewAdapter;
 import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		OnBottomLoadMoreTime {
 	private View child;
 	@SuppressWarnings("unused")
-	private XRefreshViewType childType = XRefreshViewType.NONE;
 	// total list items, used to detect is at the bottom of listview.
 	private int mTotalItemCount;
 	private OnTopRefreshTime mTopRefreshTime;
@@ -157,11 +157,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			};
 
 			recyclerView.addOnScrollListener(mOnScrollListener);
-			// UltimateViewAdapter adapter = (UltimateViewAdapter)
-			// recyclerView.getAdapter();
-			// if (adapter != null && adapter.getCustomLoadMoreView() == null)
-			// adapter.setCustomLoadMoreView(LayoutInflater.from(getContext())
-			// .inflate(R.layout.bottom_progressbar, null));
+			 UltimateViewAdapter adapter = (UltimateViewAdapter)
+			 recyclerView.getAdapter();
+			 if (adapter != null && adapter.getCustomLoadMoreView() == null){
+				 adapter.setCustomLoadMoreView(new XRefreshViewFooter(mContainer.getContext()));
+			 }
 		}
 	}
 
@@ -203,10 +203,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	 */
 	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomLoadMoreTime) {
 		this.mBottomLoadMoreTime = bottomLoadMoreTime;
-	}
-
-	public void setRefreshViewType(XRefreshViewType type) {
-		this.childType = type;
 	}
 
 	@Override
@@ -307,7 +303,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		}
 		return false;
 	}
-
+	
 	private int findMax(int[] lastPositions) {
 		int max = Integer.MIN_VALUE;
 		for (int value : lastPositions) {

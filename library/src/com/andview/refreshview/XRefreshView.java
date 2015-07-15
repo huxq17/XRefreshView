@@ -174,8 +174,7 @@ public class XRefreshView extends LinearLayout {
 
 					@Override
 					public void onGlobalLayout() {
-						mHeaderViewHeight = mHeaderView
-								.getHeaderContentHeight();
+						mHeaderViewHeight = mHeaderView.getMeasuredHeight();
 
 						LogUtils.d("onGlobalLayout mHeaderViewHeight="
 								+ mHeaderViewHeight);
@@ -394,15 +393,6 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * 在初始化的时候调用
-	 * 
-	 * @param type
-	 */
-	public void setRefreshViewType(XRefreshViewType type) {
-		mContentView.setRefreshViewType(type);
-	}
-
-	/**
 	 * enable or disable pull up load more feature.
 	 * 
 	 * @param enable
@@ -605,9 +595,13 @@ public class XRefreshView extends LinearLayout {
 	 * stop load more, reset footer view.
 	 */
 	public void stopLoadMore() {
-		if (mPullLoading == true) {
-			mPullLoading = false;
-			startScroll(-mHolder.mOffsetY, 0);
+		if(needAddFooterView()){
+			if (mPullLoading == true) {
+				mPullLoading = false;
+				startScroll(-mHolder.mOffsetY, 0);
+			}
+		}else{
+			
 		}
 	}
 
