@@ -2,9 +2,6 @@ package com.andview.refreshview;
 
 import java.util.Calendar;
 
-import com.andview.refreshview.base.XRefreshHeaderViewBase;
-import com.andview.refreshview.utils.Utils;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
@@ -19,9 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class XRefreshViewHeader extends LinearLayout implements
-		XRefreshHeaderViewBase {
-	private RelativeLayout mContainer;
+import com.andview.refreshview.callback.IHeaderCallBack;
+import com.andview.refreshview.utils.Utils;
+
+public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack {
+	private RelativeLayout mContent;
 	private ImageView mArrowImageView;
 	private ProgressBar mProgressBar;
 	private TextView mHintTextView;
@@ -32,7 +31,6 @@ public class XRefreshViewHeader extends LinearLayout implements
 	private Animation mRotateDownAnim;
 
 	private final int ROTATE_ANIM_DURATION = 180;
-	private RelativeLayout mHeaderViewContent;
 	private long lastRefreshTime;
 
 	public XRefreshViewHeader(Context context) {
@@ -50,11 +48,10 @@ public class XRefreshViewHeader extends LinearLayout implements
 	}
 
 	private void initView(Context context) {
-		mContainer = (RelativeLayout) LayoutInflater.from(context).inflate(
+		mContent = (RelativeLayout) LayoutInflater.from(context).inflate(
 				R.layout.xrefreshview_header, null);
-		addView(mContainer);
+		addView(mContent);
 		setGravity(Gravity.BOTTOM);
-		mHeaderViewContent = (RelativeLayout) findViewById(R.id.xrefreshview_header_content);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
 		mHeaderTimeTextView = (TextView) findViewById(R.id.xrefreshview_header_time);
@@ -100,44 +97,6 @@ public class XRefreshViewHeader extends LinearLayout implements
 		mHeaderTimeTextView.setText(refreshTimeText);
 	}
 
-	public void setState(XRefreshViewState state) {
-		if (state == mState)
-			return;
-		// setRefreshTime(lastRefreshTime);
-		if (state == XRefreshViewState.STATE_REFRESHING) {
-			mArrowImageView.clearAnimation();
-			mArrowImageView.setVisibility(View.GONE);
-			mProgressBar.setVisibility(View.VISIBLE);
-		} else {
-			mProgressBar.setVisibility(View.GONE);
-			mArrowImageView.setVisibility(View.VISIBLE);
-		}
-
-		switch (state) {
-		case STATE_NORMAL:
-			if (mState == XRefreshViewState.STATE_READY) {
-				mArrowImageView.startAnimation(mRotateDownAnim);
-			}
-			if (mState == XRefreshViewState.STATE_REFRESHING) {
-				mArrowImageView.clearAnimation();
-			}
-			mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
-			break;
-		case STATE_READY:
-			if (mState != XRefreshViewState.STATE_READY) {
-				mArrowImageView.clearAnimation();
-				mArrowImageView.startAnimation(mRotateUpAnim);
-				mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
-			}
-			break;
-		case STATE_REFRESHING:
-			mHintTextView.setText(R.string.xrefreshview_header_hint_loading);
-			break;
-		default:
-		}
-
-		mState = state;
-	}
 
 	/**
 	 * hide footer when disable pull load more
@@ -148,5 +107,53 @@ public class XRefreshViewHeader extends LinearLayout implements
 
 	public void show() {
 		setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onStateNormal() {
+		mProgressBar.setVisibility(View.GONE);
+		mArrowImageView.setVisibility(View.VISIBLE);
+		mProgressBar.setVisibility(View.GONE);
+		mArrowImageView.setVisibility(View.VISIBLE);
+		if (mState == XRefreshViewState.STATE_READY) {
+			mArrowImageView.startAnimation(mRotateDownAnim);
+		}
+		if (mState == XRefreshViewState.STATE_REFRESHING) {
+			mArrowImageView.clearAnimation();
+		}
+		mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
+	}
+
+	@Override
+	public void onStateReady() {
+		mProgressBar.setVisibility(View.GONE);
+		mArrowImageView.setVisibility(View.VISIBLE);
+		if (mState != XRefreshViewState.STATE_READY) {
+			mArrowImageView.clearAnimation();
+			mArrowImageView.startAnimation(mRotateUpAnim);
+			mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
+		}
+	}
+
+	@Override
+	public void onStateRefreshing() {
+		mArrowImageView.clearAnimation();
+		mArrowImageView.setVisibility(View.GONE);
+		mProgressBar.setVisibility(View.VISIBLE);
+		mArrowImageView.clearAnimation();
+		mArrowImageView.setVisibility(View.GONE);
+		mProgressBar.setVisibility(View.VISIBLE);
+		mHintTextView.setText(R.string.xrefreshview_header_hint_loading);
+	}
+
+	@Override
+	public void onStateEnd() {
+		mProgressBar.setVisibility(View.GONE);
+		mHintTextView.setText(R.string.xrefreshview_header_hint_loaded);
+	}
+
+	@Override
+	public void onHeaderMove(double offset) {
+		
 	}
 }

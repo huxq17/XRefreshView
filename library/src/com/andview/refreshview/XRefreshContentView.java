@@ -60,6 +60,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		return child;
 	}
 
+	/**
+	 * 如果自动刷新，设置container, container!=null代表列表到达底部自动加载更多
+	 * 
+	 * @param container
+	 */
 	public void setContainer(XRefreshView container) {
 		mContainer = container;
 	}
@@ -141,7 +146,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 							previousTotal = mTotalItemCount;
 						}
 					}
-					if (!mIsLoadingMore
+					if (mContainer != null
+							&& !mIsLoadingMore
 							&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
 						// todo: there are some bugs needs to be adjusted for
 						// admob adapter
@@ -157,11 +163,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			};
 
 			recyclerView.addOnScrollListener(mOnScrollListener);
-			 UltimateViewAdapter adapter = (UltimateViewAdapter)
-			 recyclerView.getAdapter();
-			 if (adapter != null && adapter.getCustomLoadMoreView() == null){
-				 adapter.setCustomLoadMoreView(new XRefreshViewFooter(mContainer.getContext()));
-			 }
+			UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
+					.getAdapter();
+			if (mContainer != null && adapter != null
+					&& adapter.getCustomLoadMoreView() == null) {
+				adapter.setCustomLoadMoreView(new XRefreshViewFooter(mContainer
+						.getContext()));
+			}
 		}
 	}
 
@@ -303,7 +311,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		}
 		return false;
 	}
-	
+
 	private int findMax(int[] lastPositions) {
 		int max = Integer.MIN_VALUE;
 		for (int value : lastPositions) {
