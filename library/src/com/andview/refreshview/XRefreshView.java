@@ -80,6 +80,7 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private int mPinnedTime;
 	private Handler mHandler = new Handler();
+	private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -312,6 +313,7 @@ public class XRefreshView extends LinearLayout {
 				if (mEnablePullRefresh && mHolder.mOffsetY > mHeaderViewHeight) {
 					mPullRefreshing = true;
 					mHeaderCallBack.onStateRefreshing();
+					mState = XRefreshViewState.STATE_REFRESHING;
 					if (mRefreshViewListener != null) {
 						mRefreshViewListener.onRefresh();
 					}
@@ -448,9 +450,15 @@ public class XRefreshView extends LinearLayout {
 			moveView(deltaY);
 			if (mEnablePullRefresh && !mPullRefreshing) {
 				if (mHolder.mOffsetY > mHeaderViewHeight) {
-					mHeaderCallBack.onStateReady();
+					if(mState!=XRefreshViewState.STATE_READY){
+						mHeaderCallBack.onStateReady();
+					}
+					mState = XRefreshViewState.STATE_READY;
 				} else {
-					mHeaderCallBack.onStateNormal();
+					if(mState!=XRefreshViewState.STATE_NORMAL){
+						mHeaderCallBack.onStateNormal();
+					}
+					mState = XRefreshViewState.STATE_NORMAL;
 				}
 			}
 		}
@@ -559,6 +567,7 @@ public class XRefreshView extends LinearLayout {
 		if (mPullRefreshing == true) {
 			mPullRefreshing = false;
 			mHeaderCallBack.onStateEnd();
+			mState = XRefreshViewState.STATE_COMPLETE;
 			mHandler.postDelayed(new Runnable() {
 
 				@Override

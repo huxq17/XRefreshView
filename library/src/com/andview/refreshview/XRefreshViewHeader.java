@@ -25,13 +25,9 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	private ProgressBar mProgressBar;
 	private TextView mHintTextView;
 	private TextView mHeaderTimeTextView;
-	private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
-
 	private Animation mRotateUpAnim;
 	private Animation mRotateDownAnim;
-
 	private final int ROTATE_ANIM_DURATION = 180;
-	private long lastRefreshTime;
 
 	public XRefreshViewHeader(Context context) {
 		super(context);
@@ -70,7 +66,6 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	}
 
 	public void setRefreshTime(long lastRefreshTime) {
-		this.lastRefreshTime = lastRefreshTime;
 		// 获取当前时间
 		Calendar mCalendar = Calendar.getInstance();
 		long refreshTime = mCalendar.getTimeInMillis();
@@ -97,7 +92,6 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 		mHeaderTimeTextView.setText(refreshTimeText);
 	}
 
-
 	/**
 	 * hide footer when disable pull load more
 	 */
@@ -113,14 +107,8 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	public void onStateNormal() {
 		mProgressBar.setVisibility(View.GONE);
 		mArrowImageView.setVisibility(View.VISIBLE);
-		mProgressBar.setVisibility(View.GONE);
-		mArrowImageView.setVisibility(View.VISIBLE);
-		if (mState == XRefreshViewState.STATE_READY) {
-			mArrowImageView.startAnimation(mRotateDownAnim);
-		}
-		if (mState == XRefreshViewState.STATE_REFRESHING) {
-			mArrowImageView.clearAnimation();
-		}
+		mArrowImageView.setImageResource(R.drawable.xrefreshview_arrow);
+		mArrowImageView.startAnimation(mRotateDownAnim);
 		mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
 	}
 
@@ -128,18 +116,14 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	public void onStateReady() {
 		mProgressBar.setVisibility(View.GONE);
 		mArrowImageView.setVisibility(View.VISIBLE);
-		if (mState != XRefreshViewState.STATE_READY) {
-			mArrowImageView.clearAnimation();
-			mArrowImageView.startAnimation(mRotateUpAnim);
-			mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
-		}
+		mArrowImageView.clearAnimation();
+		mArrowImageView.startAnimation(mRotateUpAnim);
+		mHintTextView.setText(R.string.xrefreshview_header_hint_ready);
+		mHeaderTimeTextView.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void onStateRefreshing() {
-		mArrowImageView.clearAnimation();
-		mArrowImageView.setVisibility(View.GONE);
-		mProgressBar.setVisibility(View.VISIBLE);
 		mArrowImageView.clearAnimation();
 		mArrowImageView.setVisibility(View.GONE);
 		mProgressBar.setVisibility(View.VISIBLE);
@@ -148,12 +132,15 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 
 	@Override
 	public void onStateEnd() {
+		mArrowImageView.setVisibility(View.VISIBLE);
+		mArrowImageView.setImageResource(R.drawable.xrefresh_ok);
 		mProgressBar.setVisibility(View.GONE);
 		mHintTextView.setText(R.string.xrefreshview_header_hint_loaded);
+		mHeaderTimeTextView.setVisibility(View.GONE);
 	}
 
 	@Override
 	public void onHeaderMove(double offset) {
-		
+
 	}
 }
