@@ -304,8 +304,7 @@ public class XRefreshView extends LinearLayout {
 							.hasHeaderPullDown()))) {
 				sendCancelEvent();
 				updateHeaderHeight(currentY, deltaY);
-			} else if (!mHasLoadComplete && needAddFooterView()
-					&& mContentView.isBottom()
+			} else if (needAddFooterView() && mContentView.isBottom()
 					&& (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
 				sendCancelEvent();
 				updateFooterHeight(deltaY);
@@ -333,7 +332,7 @@ public class XRefreshView extends LinearLayout {
 				}
 				resetHeaderHeight();
 			} else if (mHolder.hasFooterPullUp()) {
-				if (mEnablePullLoad && needAddFooterView()) {
+				if (mEnablePullLoad && needAddFooterView() && !mHasLoadComplete) {
 					invoketLoadMore();
 				} else {
 					int offset = 0 - mHolder.mOffsetY;
@@ -351,7 +350,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void invoketLoadMore() {
-		if (mEnablePullLoad && !mPullLoading && !mHasPinned
+		if (mEnablePullLoad && !mPullLoading &&!mPullRefreshing&& !mHasPinned
 				&& !mHasLoadComplete) {
 			int offset = 0 - mHolder.mOffsetY - mFootHeight;
 			startScroll(offset, SCROLL_DURATION);
@@ -658,6 +657,7 @@ public class XRefreshView extends LinearLayout {
 				mFooterCallBack.onStateComplete();
 			} else {
 				mFooterCallBack.onStateRefreshing();
+				mFooterCallBack.show();
 			}
 		} else {
 			mContentView.setLoadComplete(hasComplete);
@@ -671,6 +671,9 @@ public class XRefreshView extends LinearLayout {
 	public void endLoadMore() {
 		startScroll(-mHolder.mOffsetY, 0);
 		mFooterCallBack.onStateRefreshing();
+		if(mHasLoadComplete){
+			mFooterCallBack.hide();
+		}
 	}
 
 	/**
