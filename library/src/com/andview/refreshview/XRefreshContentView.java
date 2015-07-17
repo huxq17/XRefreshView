@@ -45,6 +45,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	 * 当已无更多数据时候，需把这个变量设为true
 	 */
 	private boolean mHasLoadComplete = false;
+	private int mPinnedTime;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -217,13 +218,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		if (mState != XRefreshViewState.STATE_COMPLETE) {
 			mFooterCallBack.onStateComplete();
 			mState = XRefreshViewState.STATE_COMPLETE;
+			mPinnedTime=mPinnedTime<1000?1000:mPinnedTime;
 			mHandler.postDelayed(new Runnable() {
 				
 				@Override
 				public void run() {
 					mFooterCallBack.hide();
 				}
-			}, 1000);
+			}, mPinnedTime);
 		}
 	}
 
@@ -233,7 +235,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			mFooterCallBack.show();
 		}
 	}
-
+	public void setPinnedTime(int pinnedTime){
+		mPinnedTime = pinnedTime;
+	}
 	public void setOnScrollListener(OnScrollListener listener) {
 		mScrollListener = listener;
 	}
