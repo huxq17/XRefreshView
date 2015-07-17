@@ -14,6 +14,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.UltimateViewAdapter;
@@ -38,6 +39,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private int mFirstVisibleItem;
 	private int lastVisibleItemPosition;
 	private boolean mIsLoadingMore;
+	private IFooterCallBack mFooterCallBack;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -148,7 +150,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 					}
 					if (mContainer != null
 							&& !mIsLoadingMore
-							&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem
+							&& !mContainer.hasLoadCompleted()) {
 						// todo: there are some bugs needs to be adjusted for
 						// admob adapter
 						if (mRefreshViewListener != null) {
@@ -159,16 +162,26 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 						mIsLoadingMore = true;
 						previousTotal = mTotalItemCount;
 					}
+					if (null == mContainer) {
+
+					}
 				}
 			};
 
 			recyclerView.addOnScrollListener(mOnScrollListener);
 			UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
 					.getAdapter();
-			if (mContainer != null && adapter != null
-					&& adapter.getCustomLoadMoreView() == null) {
-				adapter.setCustomLoadMoreView(new XRefreshViewFooter(mContainer
-						.getContext()));
+			if (adapter != null) {
+				View footerView = adapter.getCustomLoadMoreView();
+				if (null == footerView) {
+					footerView = new XRefreshViewFooter(child.getContext());
+				}
+				mFooterCallBack = (IFooterCallBack) footerView;
+				adapter.setCustomLoadMoreView(footerView);
+				// 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
+				if (null == mContainer) {
+					mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+				}
 			}
 		}
 	}
@@ -215,7 +228,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		if (mContainer != null
+		if (mContainer != null && !mContainer.hasLoadCompleted()
 				&& scrollState == OnScrollListener.SCROLL_STATE_IDLE
 				&& mTotalItemCount - 1 == view.getLastVisiblePosition()) {
 			mContainer.invoketLoadMore();

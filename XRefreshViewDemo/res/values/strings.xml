@@ -3,6 +3,6 @@
 
     <string name="app_name">XRefreshViewDemo</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">恢复数据</string>
 
 </resources>

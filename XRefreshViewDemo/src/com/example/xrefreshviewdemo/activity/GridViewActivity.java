@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -36,6 +38,7 @@ public class GridViewActivity extends Activity {
 				android.R.layout.simple_list_item_1, str_name);
 		gv.setAdapter(adapter);
 		outView.setPinnedTime(1000);
+//		outView.setAutoLoadMore(false);
 		outView.setCustomHeaderView(new XRefreshViewHeader(this));
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 			@Override
@@ -61,11 +64,15 @@ public class GridViewActivity extends Activity {
 					@SuppressLint("NewApi")
 					@Override
 					public void run() {
-						if (Build.VERSION.SDK_INT >= 11) {
-							str_name.addAll(addlist);
-							adapter.addAll(addlist);
+						if (str_name.size() <= 110) {
+							if (Build.VERSION.SDK_INT >= 11) {
+								str_name.addAll(addlist);
+								adapter.addAll(addlist);
+							}
+							outView.stopLoadMore();
+						} else {
+							outView.setLoadComplete(true);
 						}
-						outView.stopLoadMore();
 					}
 				}, 2000);
 			}
@@ -76,5 +83,24 @@ public class GridViewActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		outView.startRefresh();
+	}
+
+	// 初始化菜单
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// 加载菜单
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		str_name.clear();
+		for (int i = 0; i < 50; i++) {
+			str_name.add("数据" + i);
+		}
+		adapter.notifyDataSetChanged();
+		outView.setLoadComplete(false);
+		return super.onOptionsItemSelected(item);
 	}
 }

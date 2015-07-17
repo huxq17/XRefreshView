@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
@@ -102,21 +101,4 @@ public class ListViewActivity extends Activity {
 		Toast.makeText(getApplicationContext(), msg, 0).show();
 	}
 
-	int downX, downY;
-
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent ev) {
-
-		downX = (int) ev.getX();
-		downY = (int) ev.getY();
-		int position = lv.pointToPosition(downX, downY);
-		int headerViewPosition=2;
-//		headerViewPosition = lv.getPositionForView(你添加的HeaderView);
-		LogUtils.i("position = " + position);
-		if (position == headerViewPosition) {
-			LogUtils.i("viewpager is here, and request parent do not intercept the touch event now!");
-			refreshView.disallowInterceptTouchEvent(true);
-		}
-		return super.dispatchTouchEvent(ev);
-	}
 }

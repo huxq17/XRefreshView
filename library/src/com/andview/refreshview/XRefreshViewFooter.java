@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 
 public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
@@ -15,6 +17,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	private View mContentView;
 	private View mProgressBar;
 	private TextView mHintView;
+	private TextView mClickView;
 
 	public XRefreshViewFooter(Context context) {
 		super(context);
@@ -25,15 +28,46 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 		super(context, attrs);
 		initView(context);
 	}
+	@Override
+	public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+		onStateNormal();
+		mClickView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(listener!=null){
+					listener.onRecyclerViewLoadMore(0, 0);
+					onStateRefreshing();
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onStateNormal() {
+		mHintView.setVisibility(View.GONE);
+		mProgressBar.setVisibility(View.GONE);
+		mClickView.setVisibility(View.VISIBLE);
+	}
 
 	@Override
 	public void onStateRefreshing() {
 		mHintView.setVisibility(View.GONE);
 		mProgressBar.setVisibility(View.VISIBLE);
+		mClickView.setVisibility(View.GONE);
 	}
 
 	@Override
 	public void onStateEnd() {
+		mHintView.setText(R.string.xrefreshview_footer_hint_normal);
+		mHintView.setVisibility(View.VISIBLE);
+		mProgressBar.setVisibility(View.GONE);
+		mClickView.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onStateComplete() {
+		mHintView.setText(R.string.xrefreshview_footer_hint_complete);
 		mHintView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);
 	}
@@ -63,6 +97,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 				.findViewById(R.id.xrefreshview_footer_progressbar);
 		mHintView = (TextView) moreView
 				.findViewById(R.id.xrefreshview_footer_hint_textview);
+		mClickView = (TextView) moreView
+				.findViewById(R.id.xrefreshview_footer_click_textview);
 	}
-
 }

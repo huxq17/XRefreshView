@@ -42,7 +42,7 @@ public class RecylerViewActivity extends Activity{
 //		adapter.setCustomLoadMoreView(LayoutInflater.from(this)
 //                .inflate(R.layout.custom_footer, null));
 		recyclerView.setAdapter(adapter);
-
+		xRefreshView.setAutoLoadMore(false);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -64,7 +64,6 @@ public class RecylerViewActivity extends Activity{
                         adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
                         // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
                         //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
-
                     }
                 }, 1000);
 			}
