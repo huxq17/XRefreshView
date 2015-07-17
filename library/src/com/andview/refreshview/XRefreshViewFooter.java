@@ -30,7 +30,6 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	}
 	@Override
 	public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
-		onStateNormal();
 		mClickView.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -44,7 +43,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	}
 
 	@Override
-	public void onStateNormal() {
+	public void onStateReady() {
 		mHintView.setVisibility(View.GONE);
 		mProgressBar.setVisibility(View.GONE);
 		mClickView.setVisibility(View.VISIBLE);
@@ -73,17 +72,19 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	}
 
 	public void hide() {
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-				.getLayoutParams();
-		lp.height = 0;
-		mContentView.setLayoutParams(lp);
+//		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
+//				.getLayoutParams();
+//		lp.height = 0;
+//		mContentView.setLayoutParams(lp);
+		setVisibility(View.GONE);
 	}
 
 	public void show() {
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-				.getLayoutParams();
-		lp.height = LayoutParams.WRAP_CONTENT;
-		mContentView.setLayoutParams(lp);
+//		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
+//				.getLayoutParams();
+//		lp.height = LayoutParams.WRAP_CONTENT;
+//		mContentView.setLayoutParams(lp);
+		setVisibility(View.VISIBLE);
 	}
 
 	private void initView(Context context) {

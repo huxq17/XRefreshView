@@ -24,6 +24,7 @@ public class RecylerViewActivity extends Activity{
 	int lastVisibleItem = 0;
 	LinearLayoutManager layoutManager;
 	private boolean isBottom = false;
+	private int mLoadCount = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class RecylerViewActivity extends Activity{
 //		adapter.setCustomLoadMoreView(LayoutInflater.from(this)
 //                .inflate(R.layout.custom_footer, null));
 		recyclerView.setAdapter(adapter);
-		xRefreshView.setAutoLoadMore(false);
+//		xRefreshView.setAutoLoadMore(false);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -59,11 +60,15 @@ public class RecylerViewActivity extends Activity{
 					int maxLastVisiblePosition) {
 				new Handler().postDelayed(new Runnable() {
                     public void run() {
+                    	if(mLoadCount>=3){
+                    		xRefreshView.setLoadComplete(true);
+                    	}
                         adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
                         adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
                         adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
                         // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
                         //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
+                        mLoadCount++;
                     }
                 }, 1000);
 			}

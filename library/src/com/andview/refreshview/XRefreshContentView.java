@@ -1,5 +1,6 @@
 package com.andview.refreshview;
 
+import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,12 +19,10 @@ import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.UltimateViewAdapter;
-import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		OnBottomLoadMoreTime {
 	private View child;
-	@SuppressWarnings("unused")
 	// total list items, used to detect is at the bottom of listview.
 	private int mTotalItemCount;
 	private OnTopRefreshTime mTopRefreshTime;
@@ -40,6 +39,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private int lastVisibleItemPosition;
 	private boolean mIsLoadingMore;
 	private IFooterCallBack mFooterCallBack;
+	private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
+	private Handler mHandler = new Handler();
+	/**
+	 * 当已无更多数据时候，需把这个变量设为true
+	 */
+	private boolean mHasLoadComplete = false;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -148,22 +153,40 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 							previousTotal = mTotalItemCount;
 						}
 					}
-					if (mContainer != null
-							&& !mIsLoadingMore
-							&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem
-							&& !mContainer.hasLoadCompleted()) {
-						// todo: there are some bugs needs to be adjusted for
-						// admob adapter
-						if (mRefreshViewListener != null) {
-							mRefreshViewListener.onRecyclerViewLoadMore(
-									recyclerView.getAdapter().getItemCount(),
-									lastVisibleItemPosition);
+					if (mContainer != null) {
+						if (!mIsLoadingMore
+								&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							if (!mContainer.hasLoadCompleted()) {
+								// todo: there are some bugs needs to be
+								// adjusted
+								// for admob adapter
+								if (mRefreshViewListener != null) {
+									mRefreshViewListener
+											.onRecyclerViewLoadMore(
+													recyclerView.getAdapter()
+															.getItemCount(),
+													lastVisibleItemPosition);
+								}
+								mIsLoadingMore = true;
+								previousTotal = mTotalItemCount;
+								mFooterCallBack.onStateRefreshing();
+							} else {
+								loadCompleted();
+							}
 						}
-						mIsLoadingMore = true;
-						previousTotal = mTotalItemCount;
-					}
-					if (null == mContainer) {
-
+					} else if (null == mContainer) {
+						if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							if (!mHasLoadComplete) {
+								if (mState != XRefreshViewState.STATE_READY) {
+									mFooterCallBack.onStateReady();
+									mState = XRefreshViewState.STATE_READY;
+								}
+							} else {
+								loadCompleted();
+							}
+						}else{
+							mState = XRefreshViewState.STATE_NORMAL;
+						}
 					}
 				}
 			};
@@ -180,9 +203,31 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 				adapter.setCustomLoadMoreView(footerView);
 				// 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
 				if (null == mContainer) {
-					mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+					mFooterCallBack
+							.callWhenNotAutoLoadMore(mRefreshViewListener);
 				}
 			}
+		}
+	}
+
+	public void loadCompleted() {
+		if (mState != XRefreshViewState.STATE_COMPLETE) {
+			mFooterCallBack.onStateComplete();
+			mState = XRefreshViewState.STATE_COMPLETE;
+			mHandler.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					mFooterCallBack.hide();
+				}
+			}, 1000);
+		}
+	}
+
+	public void setLoadComplete(boolean hasComplete) {
+		mHasLoadComplete = hasComplete;
+		if(!hasComplete){
+			mFooterCallBack.show();
 		}
 	}
 

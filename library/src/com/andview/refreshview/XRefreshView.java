@@ -656,7 +656,7 @@ public class XRefreshView extends LinearLayout {
 				mFooterCallBack.onStateRefreshing();
 			}
 		}else{
-			
+			mContentView.setLoadComplete(hasComplete);
 		}
 	}
 	public boolean hasLoadCompleted(){
