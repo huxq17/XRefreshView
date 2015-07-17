@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
@@ -16,7 +18,7 @@ import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;
 import com.example.xrefreshviewdemo.recylerview.SimpleAdapter;
 
-public class RecylerViewActivity extends Activity{
+public class RecylerViewActivity extends Activity {
 	RecyclerView recyclerView;
 	SimpleAdapter adapter;
 	List<Person> personList = new ArrayList<Person>();
@@ -40,10 +42,10 @@ public class RecylerViewActivity extends Activity{
 
 		initData();
 		adapter = new SimpleAdapter(personList);
-//		adapter.setCustomLoadMoreView(LayoutInflater.from(this)
-//                .inflate(R.layout.custom_footer, null));
+		// adapter.setCustomLoadMoreView(LayoutInflater.from(this)
+		// .inflate(R.layout.custom_footer, null));
 		recyclerView.setAdapter(adapter);
-//		xRefreshView.setAutoLoadMore(false);
+		// xRefreshView.setAutoLoadMore(false);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -55,22 +57,26 @@ public class RecylerViewActivity extends Activity{
 					}
 				}, 2000);
 			}
+
 			@Override
 			public void onRecyclerViewLoadMore(int itemsCount,
 					int maxLastVisiblePosition) {
 				new Handler().postDelayed(new Runnable() {
-                    public void run() {
-                    	if(mLoadCount>=3){
-                    		xRefreshView.setLoadComplete(true);
-                    	}
-                        adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
-                        adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
-                        adapter.insert(new Person("More ", "21"), adapter.getAdapterItemCount());
-                        // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
-                        //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
-                        mLoadCount++;
-                    }
-                }, 1000);
+					public void run() {
+						if (mLoadCount >= 3) {
+							xRefreshView.setLoadComplete(true);
+						}
+						adapter.insert(new Person("More ", "21"),
+								adapter.getAdapterItemCount());
+						adapter.insert(new Person("More ", "21"),
+								adapter.getAdapterItemCount());
+						adapter.insert(new Person("More ", "21"),
+								adapter.getAdapterItemCount());
+						// linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
+						// linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
+						mLoadCount++;
+					}
+				}, 1000);
 			}
 		});
 		recyclerView.addOnScrollListener(new OnScrollListener() {
@@ -96,4 +102,17 @@ public class RecylerViewActivity extends Activity{
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// 加载菜单
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		mLoadCount=0;
+		xRefreshView.setLoadComplete(false);
+		return super.onOptionsItemSelected(item);
+	}
 }

@@ -72,19 +72,17 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	}
 
 	public void hide() {
-//		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-//				.getLayoutParams();
-//		lp.height = 0;
-//		mContentView.setLayoutParams(lp);
-		setVisibility(View.GONE);
+		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
+				.getLayoutParams();
+		lp.height = 0;
+		mContentView.setLayoutParams(lp);
 	}
 
 	public void show() {
-//		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-//				.getLayoutParams();
-//		lp.height = LayoutParams.WRAP_CONTENT;
-//		mContentView.setLayoutParams(lp);
-		setVisibility(View.VISIBLE);
+		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
+				.getLayoutParams();
+		lp.height = LayoutParams.WRAP_CONTENT;
+		mContentView.setLayoutParams(lp);
 	}
 
 	private void initView(Context context) {

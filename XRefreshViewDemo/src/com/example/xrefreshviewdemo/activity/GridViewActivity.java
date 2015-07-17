@@ -85,7 +85,6 @@ public class GridViewActivity extends Activity {
 		outView.startRefresh();
 	}
 
-	// 初始化菜单
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// 加载菜单

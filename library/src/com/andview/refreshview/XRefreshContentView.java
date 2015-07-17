@@ -170,9 +170,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 								mIsLoadingMore = true;
 								previousTotal = mTotalItemCount;
 								mFooterCallBack.onStateRefreshing();
+								mState = XRefreshViewState.STATE_LOADING;
 							} else {
 								loadCompleted();
 							}
+						}else{
+							mState = XRefreshViewState.STATE_NORMAL;
 						}
 					} else if (null == mContainer) {
 						if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {

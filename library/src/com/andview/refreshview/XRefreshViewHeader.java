@@ -22,6 +22,7 @@ import com.andview.refreshview.utils.Utils;
 public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack {
 	private RelativeLayout mContent;
 	private ImageView mArrowImageView;
+	private ImageView mOkImageView;
 	private ProgressBar mProgressBar;
 	private TextView mHintTextView;
 	private TextView mHeaderTimeTextView;
@@ -49,6 +50,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 		addView(mContent);
 		setGravity(Gravity.BOTTOM);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
+		mOkImageView = (ImageView) findViewById(R.id.xrefreshview_header_ok);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
 		mHeaderTimeTextView = (TextView) findViewById(R.id.xrefreshview_header_time);
 		mProgressBar = (ProgressBar) findViewById(R.id.xrefreshview_header_progressbar);
@@ -107,7 +109,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	public void onStateNormal() {
 		mProgressBar.setVisibility(View.GONE);
 		mArrowImageView.setVisibility(View.VISIBLE);
-		mArrowImageView.setImageResource(R.drawable.xrefreshview_arrow);
+		mOkImageView.setVisibility(View.GONE);
 		mArrowImageView.startAnimation(mRotateDownAnim);
 		mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
 	}
@@ -115,6 +117,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	@Override
 	public void onStateReady() {
 		mProgressBar.setVisibility(View.GONE);
+		mOkImageView.setVisibility(View.GONE);
 		mArrowImageView.setVisibility(View.VISIBLE);
 		mArrowImageView.clearAnimation();
 		mArrowImageView.startAnimation(mRotateUpAnim);
@@ -126,14 +129,15 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	public void onStateRefreshing() {
 		mArrowImageView.clearAnimation();
 		mArrowImageView.setVisibility(View.GONE);
+		mOkImageView.setVisibility(View.GONE);
 		mProgressBar.setVisibility(View.VISIBLE);
 		mHintTextView.setText(R.string.xrefreshview_header_hint_loading);
 	}
 
 	@Override
 	public void onStateEnd() {
-		mArrowImageView.setVisibility(View.VISIBLE);
-		mArrowImageView.setImageResource(R.drawable.xrefresh_ok);
+		mArrowImageView.setVisibility(View.GONE);
+		mOkImageView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);
 		mHintTextView.setText(R.string.xrefreshview_header_hint_loaded);
 		mHeaderTimeTextView.setVisibility(View.GONE);
