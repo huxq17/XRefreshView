@@ -48,4 +48,10 @@ public interface IHeaderCallBack {
 	 * 显示footerview
 	 */
 	public void show();
+	
+	/**
+	 * 获得headerview的高度,如果不想headerview全部被隐藏，就可以只返回一部分的高度
+	 * @return
+	 */
+	public int getHeaderHeight();
 }

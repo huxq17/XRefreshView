@@ -147,4 +147,9 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	public void onHeaderMove(double offset,int offsetY) {
 
 	}
+
+	@Override
+	public int getHeaderHeight() {
+		return getMeasuredHeight();
+	}
 }

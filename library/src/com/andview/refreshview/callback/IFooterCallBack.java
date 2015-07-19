@@ -28,4 +28,9 @@ public interface IFooterCallBack {
 	 * 显示footerview
 	 */
 	public void show();
+	/**
+	 * 获得footerview的高度
+	 * @return
+	 */
+	public int getFooterHeight();
 }

@@ -99,4 +99,10 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 		mClickView = (TextView) moreView
 				.findViewById(R.id.xrefreshview_footer_click_textview);
 	}
+
+	@Override
+	public int getFooterHeight() {
+		return getMeasuredHeight();
+	}
+
 }

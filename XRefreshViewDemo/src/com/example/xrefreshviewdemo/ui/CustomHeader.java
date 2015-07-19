@@ -159,4 +159,9 @@ public class CustomHeader extends View implements IHeaderCallBack {
 	public void show() {
 		setVisibility(View.VISIBLE);
 	}
+
+	@Override
+	public int getHeaderHeight() {
+		return getMeasuredHeight();
+	}
 }

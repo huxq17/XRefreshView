@@ -173,7 +173,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	private void addFooterView(OnGlobalLayoutListener listener) {
-		mHeaderViewHeight = mHeaderView.getMeasuredHeight();
+		mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
 		LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
 		mContentView.setHolder(mHolder);
 		mContentView.setScrollListener();
@@ -235,7 +235,7 @@ public class XRefreshView extends LinearLayout {
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
 		LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
-		mFootHeight = mFooterView.getMeasuredHeight();
+		mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
 		int childCount = getChildCount();
 		int top = getPaddingTop() + mHolder.mOffsetY;
 		for (int i = 0; i < childCount; i++) {
@@ -574,7 +574,8 @@ public class XRefreshView extends LinearLayout {
 					+ mHolder.mOffsetY);
 		} else {
 			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
-			mHasScrollBack = false;
+			if (mHolder.mOffsetY == 0)
+				mHasScrollBack = false;
 		}
 	}
 
@@ -727,7 +728,8 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * 设置阻尼系数，建议使用默认的
 	 * 
-	 * @param ratio 默认 1.8
+	 * @param ratio
+	 *            默认 1.8
 	 */
 	public void setDampingRatio(float ratio) {
 		OFFSET_RADIO = ratio;
