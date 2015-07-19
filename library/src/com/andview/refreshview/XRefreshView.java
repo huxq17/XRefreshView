@@ -274,7 +274,7 @@ public class XRefreshView extends LinearLayout {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept
-					|| mHasPinned||mContentView.isLoading()) {
+					|| mHasPinned || mContentView.isLoading()) {
 				return super.dispatchTouchEvent(ev);
 			}
 			mLastMoveEvent = ev;
@@ -504,7 +504,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void startRefresh() {
-		if (mHolder.mOffsetY!=0||mContentView.isLoading()||!isEnabled()) {
+		if (mHolder.mOffsetY != 0 || mContentView.isLoading() || !isEnabled()) {
 			return;
 		}
 		// 如果条件成立，代表布局还没有初始化完成，改变标记，等待该方法再次调用，完成开始刷新
@@ -554,7 +554,7 @@ public class XRefreshView extends LinearLayout {
 		if (mRefreshViewListener != null && mContentView.isTop()) {
 			double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
 			offset = offset > 1 ? 1 : offset;
-			mRefreshViewListener.onHeaderMove(offset);
+			mRefreshViewListener.onHeaderMove(offset,mHolder.mOffsetY);
 			mHeaderCallBack.onHeaderMove(offset);
 		}
 	}
@@ -650,7 +650,7 @@ public class XRefreshView extends LinearLayout {
 					endLoadMore();
 				}
 			}
-		}else{
+		} else {
 			mContentView.stopLoading();
 		}
 	}
@@ -782,9 +782,12 @@ public class XRefreshView extends LinearLayout {
 		 * 获取headerview显示的高度与headerview高度的比例
 		 * 
 		 * @param offset
-		 *            范围是0~1，0：headerview完全没显示 1：headerview完全显示
+		 *            移动距离和headerview高度的比例，范围是0~1，0：headerview完全没显示
+		 *            1：headerview完全显示
+		 * @param offsetY
+		 *            headerview移动的距离
 		 */
-		public void onHeaderMove(double offset);
+		public void onHeaderMove(double offset, int offsetY);
 	}
 
 	public static class SimpleXRefreshListener implements XRefreshViewListener {
@@ -810,7 +813,7 @@ public class XRefreshView extends LinearLayout {
 		}
 
 		@Override
-		public void onHeaderMove(double offset) {
+		public void onHeaderMove(double offset, int offsetY) {
 
 		}
 
