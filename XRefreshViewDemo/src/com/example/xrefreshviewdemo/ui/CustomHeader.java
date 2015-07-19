@@ -92,17 +92,6 @@ public class CustomHeader extends View implements IHeaderCallBack {
 		canvas.restoreToCount(saveCount);
 	}
 
-	// /**
-	// * perform refreshing UI
-	// *
-	// * @param frame
-	// */
-	// @Override
-	// public void onUIRefreshBegin(PtrFrameLayout frame) {
-	// mDrawable.setAlpha(255);
-	// mDrawable.start();
-	// }
-
 	@Override
 	public void onStateNormal() {
 		mScale = 1f;
@@ -112,7 +101,6 @@ public class CustomHeader extends View implements IHeaderCallBack {
 
 	@Override
 	public void onStateReady() {
-		// TODO Auto-generated method stub
 
 	}
 
