@@ -72,9 +72,8 @@ public class RecylerViewActivity extends Activity {
 								adapter.getAdapterItemCount());
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
-						// linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
-						// linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
 						mLoadCount++;
+						xRefreshView.stopLoadMore();
 					}
 				}, 1000);
 			}
@@ -111,8 +110,16 @@ public class RecylerViewActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		mLoadCount=0;
-		xRefreshView.setLoadComplete(false);
+		int menuId = item.getItemId();
+		switch (menuId) {
+		case R.id.menu_clear:
+			mLoadCount = 0;
+			xRefreshView.setLoadComplete(false);
+			break;
+		case R.id.menu_refresh:
+			xRefreshView.startRefresh();
+			break;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 }

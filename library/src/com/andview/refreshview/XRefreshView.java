@@ -84,7 +84,7 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private boolean mHasPinned;
 	private Handler mHandler = new Handler();
-	private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
+	private XRefreshViewState mState = null;
 	/**
 	 * 当已无更多数据时候，需把这个变量设为true
 	 */
@@ -175,6 +175,7 @@ public class XRefreshView extends LinearLayout {
 	private void addFooterView(OnGlobalLayoutListener listener) {
 		mHeaderViewHeight = mHeaderView.getMeasuredHeight();
 		LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
+		mContentView.setHolder(mHolder);
 		mContentView.setScrollListener();
 		if (mEnablePullLoad && needAddFooterView()) {
 			Log.i("CustomView", "add footView");
@@ -273,7 +274,7 @@ public class XRefreshView extends LinearLayout {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept
-					|| mHasPinned) {
+					|| mHasPinned||mContentView.isLoading()) {
 				return super.dispatchTouchEvent(ev);
 			}
 			mLastMoveEvent = ev;
@@ -350,7 +351,7 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void invoketLoadMore() {
-		if (mEnablePullLoad && !mPullLoading &&!mPullRefreshing&& !mHasPinned
+		if (mEnablePullLoad && !mPullLoading && !mPullRefreshing && !mHasPinned
 				&& !mHasLoadComplete) {
 			int offset = 0 - mHolder.mOffsetY - mFootHeight;
 			startScroll(offset, SCROLL_DURATION);
@@ -503,6 +504,9 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void startRefresh() {
+		if (mHolder.mOffsetY!=0||mContentView.isLoading()||!isEnabled()) {
+			return;
+		}
 		// 如果条件成立，代表布局还没有初始化完成，改变标记，等待该方法再次调用，完成开始刷新
 		if (mHeaderCallBack == null) {
 			this.autoRefresh = true;
@@ -646,6 +650,8 @@ public class XRefreshView extends LinearLayout {
 					endLoadMore();
 				}
 			}
+		}else{
+			mContentView.stopLoading();
 		}
 	}
 
@@ -671,7 +677,7 @@ public class XRefreshView extends LinearLayout {
 	public void endLoadMore() {
 		startScroll(-mHolder.mOffsetY, 0);
 		mFooterCallBack.onStateRefreshing();
-		if(mHasLoadComplete){
+		if (mHasLoadComplete) {
 			mFooterCallBack.hide();
 		}
 	}

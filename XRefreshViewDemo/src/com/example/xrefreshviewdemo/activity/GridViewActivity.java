@@ -94,12 +94,23 @@ public class GridViewActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		str_name.clear();
-		for (int i = 0; i < 50; i++) {
-			str_name.add("数据" + i);
+		int menuId = item.getItemId();
+		switch (menuId) {
+		case R.id.menu_clear:
+			str_name.clear();
+			for (int i = 0; i < 50; i++) {
+				str_name.add("数据" + i);
+			}
+			adapter.notifyDataSetChanged();
+			outView.setLoadComplete(false);
+			break;
+		case R.id.menu_refresh:
+			outView.startRefresh();
+			break;
+
+		default:
+			break;
 		}
-		adapter.notifyDataSetChanged();
-		outView.setLoadComplete(false);
 		return super.onOptionsItemSelected(item);
 	}
 }

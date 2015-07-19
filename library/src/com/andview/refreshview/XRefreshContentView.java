@@ -46,6 +46,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	 */
 	private boolean mHasLoadComplete = false;
 	private int mPinnedTime;
+	private XRefreshHolder mHolder;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
@@ -67,7 +68,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	public View getContentView() {
 		return child;
 	}
-
+	public void setHolder(XRefreshHolder holder){
+		mHolder = holder;
+	}
 	/**
 	 * 如果自动刷新，设置container, container!=null代表列表到达底部自动加载更多
 	 * 
@@ -81,8 +84,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		if (child instanceof AbsListView) {
 			AbsListView absListView = (AbsListView) child;
 			absListView.setSelection(0);
-		} else {
-			child.scrollTo(0, 0);
+		} else if (child instanceof RecyclerView) {
+			RecyclerView recyclerView = (RecyclerView) child;
+			RecyclerView.LayoutManager layoutManager = null;
+			layoutManager = recyclerView.getLayoutManager();
+			layoutManager.scrollToPosition(0);
 		}
 	}
 
@@ -157,6 +163,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 					if (mContainer != null) {
 						if (!mIsLoadingMore
 								&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							layoutManager.scrollToPosition(lastVisibleItemPosition);
 							if (!mContainer.hasLoadCompleted()) {
 								// todo: there are some bugs needs to be
 								// adjusted
@@ -175,11 +182,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 							} else {
 								loadCompleted();
 							}
-						}else{
+						} else {
 							mState = XRefreshViewState.STATE_NORMAL;
 						}
 					} else if (null == mContainer) {
 						if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							layoutManager.scrollToPosition(lastVisibleItemPosition);
 							if (!mHasLoadComplete) {
 								if (mState != XRefreshViewState.STATE_READY) {
 									mFooterCallBack.onStateReady();
@@ -188,7 +196,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 							} else {
 								loadCompleted();
 							}
-						}else{
+						} else {
 							mState = XRefreshViewState.STATE_NORMAL;
 						}
 					}
@@ -218,9 +226,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		if (mState != XRefreshViewState.STATE_COMPLETE) {
 			mFooterCallBack.onStateComplete();
 			mState = XRefreshViewState.STATE_COMPLETE;
-			mPinnedTime=mPinnedTime<1000?1000:mPinnedTime;
+			mPinnedTime = mPinnedTime < 1000 ? 1000 : mPinnedTime;
 			mHandler.postDelayed(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					mFooterCallBack.hide();
@@ -231,13 +239,15 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	public void setLoadComplete(boolean hasComplete) {
 		mHasLoadComplete = hasComplete;
-		if(!hasComplete){
+		if (!hasComplete) {
 			mFooterCallBack.show();
 		}
 	}
-	public void setPinnedTime(int pinnedTime){
+
+	public void setPinnedTime(int pinnedTime) {
 		mPinnedTime = pinnedTime;
 	}
+
 	public void setOnScrollListener(OnScrollListener listener) {
 		mScrollListener = listener;
 	}
@@ -311,7 +321,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	public boolean hasChildOnBottom() {
 		return !canChildPullUp();
 	}
-
+	public boolean isLoading(){
+		return mIsLoadingMore;
+	}
+	public void stopLoading(){
+		mIsLoadingMore = false;
+	}
 	/**
 	 * @return Whether it is possible for the child view of this layout to
 	 *         scroll up. Override this if the child view is a custom view.
