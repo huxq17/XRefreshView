@@ -46,6 +46,7 @@ public class RecylerViewActivity extends Activity {
 		// .inflate(R.layout.custom_footer, null));
 		recyclerView.setAdapter(adapter);
 		// xRefreshView.setAutoLoadMore(false);
+		xRefreshView.setPinnedTime(1000);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override

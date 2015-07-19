@@ -39,9 +39,9 @@ public class XRefreshView extends LinearLayout {
 	private int mLastX = -1; // save event x
 	private boolean mEnablePullRefresh = true;
 	public boolean mPullRefreshing = false; // is refreashing.
-	private final static float OFFSET_RADIO = 1.8f; // support iOS like pull
+	private float OFFSET_RADIO = 1.8f; // support iOS like pull
 
-	private final static int SCROLL_DURATION = 400; // scroll back duration
+	private int SCROLL_DURATION = 400; // scroll back duration
 	private XRefreshViewListener mRefreshViewListener;
 	// -- footer view
 	private View mFooterView;
@@ -80,9 +80,9 @@ public class XRefreshView extends LinearLayout {
 	 */
 	private int mPinnedTime;
 	/**
-	 * 当headerview和footerview被固定的时候不接收用户手势
+	 * 有没有滚回初始位置
 	 */
-	private boolean mHasPinned;
+	private boolean mHasScrollBack;
 	private Handler mHandler = new Handler();
 	private XRefreshViewState mState = null;
 	/**
@@ -274,7 +274,7 @@ public class XRefreshView extends LinearLayout {
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept
-					|| mHasPinned || mContentView.isLoading()) {
+					|| mHasScrollBack || mContentView.isLoading()) {
 				return super.dispatchTouchEvent(ev);
 			}
 			mLastMoveEvent = ev;
@@ -321,7 +321,7 @@ public class XRefreshView extends LinearLayout {
 			// && !mPullRefreshing && !mPullLoading) {
 			// mRefreshViewListener.onRelease(mHolder.mOffsetY);
 			// }
-			if (mHolder.hasHeaderPullDown() && !mHasPinned) {
+			if (mHolder.hasHeaderPullDown() && !mHasScrollBack) {
 				// invoke refresh
 				if (mEnablePullRefresh && mHolder.mOffsetY > mHeaderViewHeight) {
 					mPullRefreshing = true;
@@ -351,8 +351,8 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	public void invoketLoadMore() {
-		if (mEnablePullLoad && !mPullLoading && !mPullRefreshing && !mHasPinned
-				&& !mHasLoadComplete) {
+		if (mEnablePullLoad && !mPullLoading && !mPullRefreshing
+				&& !mHasScrollBack && !mHasLoadComplete) {
 			int offset = 0 - mHolder.mOffsetY - mFootHeight;
 			startScroll(offset, SCROLL_DURATION);
 			startLoadMore();
@@ -551,7 +551,8 @@ public class XRefreshView extends LinearLayout {
 		}
 		invalidate();
 
-		if (mRefreshViewListener != null && mContentView.isTop()) {
+		if (mRefreshViewListener != null
+				&& (mContentView.isTop() || mPullRefreshing)) {
 			double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
 			offset = offset > 1 ? 1 : offset;
 			mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
@@ -573,7 +574,7 @@ public class XRefreshView extends LinearLayout {
 					+ mHolder.mOffsetY);
 		} else {
 			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
-			mHasPinned = false;
+			mHasScrollBack = false;
 		}
 	}
 
@@ -586,7 +587,7 @@ public class XRefreshView extends LinearLayout {
 			mPullRefreshing = false;
 			mHeaderCallBack.onStateEnd();
 			mState = XRefreshViewState.STATE_COMPLETE;
-			mHasPinned = true;
+			mHasScrollBack = true;
 			mHandler.postDelayed(new Runnable() {
 
 				@Override
@@ -637,7 +638,7 @@ public class XRefreshView extends LinearLayout {
 				mPullLoading = false;
 				mFooterCallBack.onStateEnd();
 				if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-					mHasPinned = true;
+					mHasScrollBack = true;
 					mHandler.postDelayed(new Runnable() {
 
 						@Override
@@ -689,7 +690,7 @@ public class XRefreshView extends LinearLayout {
 	 *            滑动持续时间
 	 */
 	public void startScroll(int offsetY, int duration) {
-		mHasPinned = true;
+		mHasScrollBack = true;
 		if (offsetY != 0) {
 			mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
 			invalidate();
@@ -715,6 +716,24 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
+	 * 设置headerview回滚的时间，默认400毫秒
+	 * 
+	 * @param during
+	 */
+	public void setScrollDuring(int during) {
+		SCROLL_DURATION = during;
+	}
+
+	/**
+	 * 设置阻尼系数，建议使用默认的
+	 * 
+	 * @param ratio 默认 1.8
+	 */
+	public void setDampingRatio(float ratio) {
+		OFFSET_RADIO = ratio;
+	}
+
+	/**
 	 * 设置当下拉刷新完成以后，headerview和footerview被固定的时间
 	 * 注:考虑到ui效果，只有时间大于1s的时候，footerview被固定的效果才会生效
 	 * 
@@ -733,6 +752,7 @@ public class XRefreshView extends LinearLayout {
 	 *            headerView必须要实现 IHeaderCallBack接口
 	 */
 	public void setCustomHeaderView(View headerView) {
+		LogUtils.i("setCustomHeaderView");
 		if (headerView instanceof IHeaderCallBack) {
 			mHeaderView = headerView;
 		} else {
@@ -742,10 +762,10 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * 设置自定义headerView
+	 * 设置自定义footerView
 	 * 
-	 * @param headerView
-	 *            headerView必须要实现 IHeaderCallBack接口
+	 * @param footerView
+	 *            footerView必须要实现 IFooterCallBack接口
 	 */
 	public void setCustomFooterView(View footerView) {
 		if (footerView instanceof IFooterCallBack) {

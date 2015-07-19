@@ -17,6 +17,7 @@ import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewHeader;
 import com.example.xrefreshviewdemo.R;
+import com.example.xrefreshviewdemo.ui.CustomHeader;
 
 public class GridViewActivity extends Activity {
 	private GridView gv;
@@ -39,7 +40,9 @@ public class GridViewActivity extends Activity {
 		gv.setAdapter(adapter);
 		outView.setPinnedTime(1000);
 //		outView.setAutoLoadMore(false);
-		outView.setCustomHeaderView(new XRefreshViewHeader(this));
+//		outView.setCustomHeaderView(new CustomHeader(this));
+//		outView.setCustomHeaderView(new XRefreshViewHeader(this));
+		outView.setMoveForHorizontal(true);
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 			@Override
 			public void onRefresh() {
@@ -64,7 +67,7 @@ public class GridViewActivity extends Activity {
 					@SuppressLint("NewApi")
 					@Override
 					public void run() {
-						if (str_name.size() <= 110) {
+						if (str_name.size() <= 70) {
 							if (Build.VERSION.SDK_INT >= 11) {
 								str_name.addAll(addlist);
 								adapter.addAll(addlist);

@@ -16,6 +16,7 @@ import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.StickyListBean;
 import com.example.xrefreshviewdemo.StickylistAdapter;
 import com.example.xrefreshviewdemo.stickyListHeaders.StickyListHeadersListView;
+import com.example.xrefreshviewdemo.ui.CustomHeader;
 
 public class CustomViewActivity extends Activity {
 	private StickyListHeadersListView stickyLv;
@@ -36,6 +37,7 @@ public class CustomViewActivity extends Activity {
 		refreshView.setPullLoadEnable(true);
 		refreshView.setAutoRefresh(true);
 		refreshView.setPinnedTime(1000);
+		refreshView.setCustomHeaderView(new CustomHeader(this));
 		refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
 			@Override
