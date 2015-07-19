@@ -35,7 +35,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 			@Override
 			public void onClick(View v) {
 				if(listener!=null){
-					listener.onRecyclerViewLoadMore(0, 0);
+					listener.onLoadMore();
 					onStateRefreshing();
 				}
 			}
@@ -57,7 +57,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 	}
 
 	@Override
-	public void onStateEnd() {
+	public void onStateFinish() {
 		mHintView.setText(R.string.xrefreshview_footer_hint_normal);
 		mHintView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);

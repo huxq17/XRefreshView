@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -89,6 +90,10 @@ public class XRefreshView extends LinearLayout {
 	 * 当已无更多数据时候，需把这个变量设为true
 	 */
 	private boolean mHasLoadComplete = false;
+	/**
+	 * 在刷新的时候是否可以移动contentView
+	 */
+	private boolean mIsPinnedContentWhenRefreshing = true;
 
 	public XRefreshView(Context context) {
 		this(context, null);
@@ -273,11 +278,16 @@ public class XRefreshView extends LinearLayout {
 			// }
 			break;
 		case MotionEvent.ACTION_MOVE:
+			mLastMoveEvent = ev;
 			if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept
 					|| mHasScrollBack || mContentView.isLoading()) {
-				return super.dispatchTouchEvent(ev);
+				if (mIsPinnedContentWhenRefreshing) {
+					return super.dispatchTouchEvent(ev);
+				} else {
+					sendCancelEvent();
+					return true;
+				}
 			}
-			mLastMoveEvent = ev;
 			int currentY = (int) ev.getRawY();
 			int currentX = (int) ev.getRawX();
 			deltaY = currentY - mLastY;
@@ -349,6 +359,14 @@ public class XRefreshView extends LinearLayout {
 		}
 		return super.dispatchTouchEvent(ev);
 	}
+
+	// @Override
+	// public boolean onInterceptTouchEvent(MotionEvent ev) {
+	// if(mPullRefreshing||mPullLoading){
+	// return !mIsPinnedContentWhenRefreshing;
+	// }
+	// return super.onInterceptTouchEvent(ev);
+	// }
 
 	public void invoketLoadMore() {
 		if (mEnablePullLoad && !mPullLoading && !mPullRefreshing
@@ -586,7 +604,7 @@ public class XRefreshView extends LinearLayout {
 		LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
 		if (mPullRefreshing == true) {
 			mPullRefreshing = false;
-			mHeaderCallBack.onStateEnd();
+			mHeaderCallBack.onStateFinish();
 			mState = XRefreshViewState.STATE_COMPLETE;
 			mHasScrollBack = true;
 			mHandler.postDelayed(new Runnable() {
@@ -637,7 +655,7 @@ public class XRefreshView extends LinearLayout {
 		if (needAddFooterView()) {
 			if (mPullLoading == true) {
 				mPullLoading = false;
-				mFooterCallBack.onStateEnd();
+				mFooterCallBack.onStateFinish();
 				if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
 					mHasScrollBack = true;
 					mHandler.postDelayed(new Runnable() {
@@ -699,12 +717,20 @@ public class XRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * you can listener the child scroll state by invoking this method
+	 * 设置Abslistview的滚动监听事件
 	 * 
 	 * @param listener
 	 */
-	public void setOnScrollListener(OnScrollListener listener) {
-		mContentView.setOnScrollListener(listener);
+	public void setOnAbsListViewScrollListener(OnScrollListener scrollListener) {
+		mContentView.setOnAbsListViewScrollListener(scrollListener);
+	}
+
+	/**
+	 * 设置Recylerview的滚动监听事件
+	 */
+	public void setOnRecyclerViewScrollListener(
+			RecyclerView.OnScrollListener scrollListener) {
+		mContentView.setOnRecyclerViewScrollListener(scrollListener);
 	}
 
 	public void setXRefreshViewListener(XRefreshViewListener l) {
@@ -742,9 +768,18 @@ public class XRefreshView extends LinearLayout {
 	 * @param pinnedTime
 	 */
 	public void setPinnedTime(int pinnedTime) {
-		LogUtils.i("setHeaderPinnedTime");
 		mPinnedTime = pinnedTime;
 		mContentView.setPinnedTime(pinnedTime);
+	}
+
+	/**
+	 * 设置在刷新的时候是否可以移动contentView
+	 * 
+	 * @param isPinned
+	 *            true 固定不移动 反之，可以移动
+	 */
+	public void setPinnedContent(boolean isPinned) {
+		mIsPinnedContentWhenRefreshing = !isPinned;
 	}
 
 	/**
@@ -787,16 +822,10 @@ public class XRefreshView extends LinearLayout {
 		public void onLoadMore();
 
 		/**
-		 * RecyclerView专用的加载更多的监听回调
+		 * 用户手指释放的监听回调
 		 * 
-		 * @param itemsCount
-		 * @param maxLastVisiblePosition
-		 */
-		public void onRecyclerViewLoadMore(int itemsCount,
-				final int maxLastVisiblePosition);
-
-		/**
-		 * 用户手指释放的监听回调 direction >0: 下拉释放，<0:上拉释放
+		 * @param direction
+		 *            >0: 下拉释放，<0:上拉释放 注：暂时没有使用这个方法
 		 */
 		public void onRelease(float direction);
 
@@ -826,12 +855,6 @@ public class XRefreshView extends LinearLayout {
 
 		@Override
 		public void onRelease(float direction) {
-		}
-
-		@Override
-		public void onRecyclerViewLoadMore(int itemsCount,
-				int maxLastVisiblePosition) {
-
 		}
 
 		@Override

@@ -41,6 +41,11 @@ public class MainActivity extends Activity {
 			intent = new Intent(this,ScrollViewActivity.class);
 			startActivity(intent);
 			break;
+		case R.id.bt_headAd:
+			//尚未完成
+//			intent = new Intent(this,HeadAdActivity.class);
+//			startActivity(intent);
+			break;
 
 		default:
 			break;

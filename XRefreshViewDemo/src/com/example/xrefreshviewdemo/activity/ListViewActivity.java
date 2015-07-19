@@ -81,7 +81,7 @@ public class ListViewActivity extends Activity {
 				}
 			}
 		});
-		refreshView.setOnScrollListener(new OnScrollListener() {
+		refreshView.setOnAbsListViewScrollListener(new OnScrollListener() {
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {

@@ -43,6 +43,7 @@ public class GridViewActivity extends Activity {
 //		outView.setCustomHeaderView(new CustomHeader(this));
 //		outView.setCustomHeaderView(new XRefreshViewHeader(this));
 		outView.setMoveForHorizontal(true);
+		outView.setPinnedContent(true);
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 			@Override
 			public void onRefresh() {

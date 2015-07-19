@@ -135,7 +135,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	}
 
 	@Override
-	public void onStateEnd() {
+	public void onStateFinish() {
 		mArrowImageView.setVisibility(View.GONE);
 		mOkImageView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);

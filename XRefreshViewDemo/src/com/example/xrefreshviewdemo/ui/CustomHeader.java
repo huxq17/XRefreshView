@@ -112,7 +112,7 @@ public class CustomHeader extends View implements IHeaderCallBack {
 	}
 
 	@Override
-	public void onStateEnd() {
+	public void onStateFinish() {
 		// mDrawable.stop();
 	}
 

@@ -25,7 +25,7 @@ public interface IHeaderCallBack {
 	/**
 	 * 刷新结束
 	 */
-	public void onStateEnd();
+	public void onStateFinish();
 
 	/**
 	 * 获取headerview显示的高度与headerview高度的比例
@@ -37,6 +37,12 @@ public interface IHeaderCallBack {
 	 */
 	public void onHeaderMove(double offset, int offsetY);
 
+	/**
+	 * 设置显示上一次刷新的时间
+	 * 
+	 * @param lastRefreshTime
+	 *            上一次刷新的时间
+	 */
 	public void setRefreshTime(long lastRefreshTime);
 
 	/**
@@ -48,9 +54,10 @@ public interface IHeaderCallBack {
 	 * 显示footerview
 	 */
 	public void show();
-	
+
 	/**
 	 * 获得headerview的高度,如果不想headerview全部被隐藏，就可以只返回一部分的高度
+	 * 
 	 * @return
 	 */
 	public int getHeaderHeight();

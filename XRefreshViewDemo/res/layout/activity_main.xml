@@ -51,10 +51,12 @@
         android:onClick="onClick"
         android:text="RecylerView" />
     <Button
+        android:id="@+id/bt_headAd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="待开发" />
+        android:onClick="onClick"
+        android:text="头部广告位" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

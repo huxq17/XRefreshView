@@ -202,40 +202,6 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
 		AlphaIn, SlideInBottom, ScaleIn, SlideInLeft, SlideInRight,
 	}
 
-	// /**
-	// * Animations when loading the adapter
-	// *
-	// * @param view the view
-	// * @param type the type of the animation
-	// * @return the animator in array
-	// */
-	// @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	// protected Animator[] getAdapterAnimations(View view, AdapterAnimationType
-	// type) {
-	// if (type == AdapterAnimationType.ScaleIn) {
-	// ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", .5f, 1f);
-	// ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", .5f, 1f);
-	// return new ObjectAnimator[]{scaleX, scaleY};
-	// } else if (type == AdapterAnimationType.AlphaIn) {
-	// return new Animator[]{ObjectAnimator.ofFloat(view, "alpha", .5f, 1f)};
-	// } else if (type == AdapterAnimationType.SlideInBottom) {
-	// return new Animator[]{
-	// ObjectAnimator.ofFloat(view, "translationY", view.getMeasuredHeight(), 0)
-	// };
-	// } else if (type == AdapterAnimationType.SlideInLeft) {
-	// return new Animator[]{
-	// ObjectAnimator.ofFloat(view, "translationX",
-	// -view.getRootView().getWidth(), 0)
-	// };
-	// } else if (type == AdapterAnimationType.SlideInRight) {
-	// return new Animator[]{
-	// ObjectAnimator.ofFloat(view, "translationX",
-	// view.getRootView().getWidth(), 0)
-	// };
-	// }
-	// return null;
-	// }
-
 	protected OnStartDragListener mDragStartListener = null;
 
 	/**

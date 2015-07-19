@@ -3,6 +3,10 @@ package com.andview.refreshview.callback;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 
 public interface IFooterCallBack {
+	/**
+	 * 当不是到达底部自动加载更多的时候，需要自己写点击事件
+	 * @param xRefreshViewListener
+	 */
 	public void callWhenNotAutoLoadMore(XRefreshViewListener xRefreshViewListener);
 	/**
 	 * 正常状态，例如需要点击footerview才能加载更多，主要是到达底部不自动加载更多时会被调用
@@ -15,7 +19,7 @@ public interface IFooterCallBack {
 	/**
 	 * 刷新结束
 	 */
-	public void onStateEnd();
+	public void onStateFinish();
 	/**
 	 * 已无更多数据
 	 */

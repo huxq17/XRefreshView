@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andview.refreshview.XRefreshView;
+import com.andview.refreshview.XRefreshViewFooter;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.example.xrefreshviewdemo.R;
 import com.example.xrefreshviewdemo.recylerview.Person;
@@ -42,11 +43,11 @@ public class RecylerViewActivity extends Activity {
 
 		initData();
 		adapter = new SimpleAdapter(personList);
-		// adapter.setCustomLoadMoreView(LayoutInflater.from(this)
-		// .inflate(R.layout.custom_footer, null));
+		adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 		recyclerView.setAdapter(adapter);
-		// xRefreshView.setAutoLoadMore(false);
+		xRefreshView.setAutoLoadMore(false);
 		xRefreshView.setPinnedTime(1000);
+		xRefreshView.setMoveForHorizontal(true);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -60,8 +61,7 @@ public class RecylerViewActivity extends Activity {
 			}
 
 			@Override
-			public void onRecyclerViewLoadMore(int itemsCount,
-					int maxLastVisiblePosition) {
+			public void onLoadMore() {
 				new Handler().postDelayed(new Runnable() {
 					public void run() {
 						if (mLoadCount >= 3) {
@@ -74,6 +74,7 @@ public class RecylerViewActivity extends Activity {
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
 						mLoadCount++;
+						//刷新完成必须调用此方法停止加载
 						xRefreshView.stopLoadMore();
 					}
 				}, 1000);

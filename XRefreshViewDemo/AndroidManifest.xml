@@ -30,6 +30,7 @@
         <activity android:name=".activity.WebViewActivity" />
         <activity android:name=".activity.RecylerViewActivity" />
         <activity android:name=".activity.ScrollViewActivity" />
+        <activity android:name=".activity.HeadAdActivity" />
     </application>
 
 </manifest>

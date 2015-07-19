@@ -28,7 +28,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private OnTopRefreshTime mTopRefreshTime;
 	private OnBottomLoadMoreTime mBottomLoadMoreTime;
 	private XRefreshView mContainer;
-	private OnScrollListener mScrollListener;
+	private OnScrollListener mAbsListViewScrollListener;
+	private RecyclerView.OnScrollListener mRecyclerViewScrollListener;
 	private XRefreshViewListener mRefreshViewListener;
 	private RecyclerView.OnScrollListener mOnScrollListener;
 	protected LAYOUT_MANAGER_TYPE layoutManagerType;
@@ -68,9 +69,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	public View getContentView() {
 		return child;
 	}
-	public void setHolder(XRefreshHolder holder){
+
+	public void setHolder(XRefreshHolder holder) {
 		mHolder = holder;
 	}
+
 	/**
 	 * 如果自动刷新，设置container, container!=null代表列表到达底部自动加载更多
 	 * 
@@ -107,10 +110,18 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 				public void onScrollStateChanged(RecyclerView recyclerView,
 						int newState) {
 					super.onScrollStateChanged(recyclerView, newState);
+					if (mRecyclerViewScrollListener != null) {
+						mRecyclerViewScrollListener.onScrollStateChanged(
+								recyclerView, newState);
+					}
 				}
 
 				@Override
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+					if (mRecyclerViewScrollListener != null) {
+						mRecyclerViewScrollListener.onScrolled(recyclerView,
+								dx, dy);
+					}
 					RecyclerView.LayoutManager layoutManager = null;
 					if (layoutManager == null) {
 						layoutManager = recyclerView.getLayoutManager();
@@ -163,17 +174,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 					if (mContainer != null) {
 						if (!mIsLoadingMore
 								&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-							layoutManager.scrollToPosition(lastVisibleItemPosition);
 							if (!mContainer.hasLoadCompleted()) {
 								// todo: there are some bugs needs to be
 								// adjusted
 								// for admob adapter
 								if (mRefreshViewListener != null) {
 									mRefreshViewListener
-											.onRecyclerViewLoadMore(
-													recyclerView.getAdapter()
-															.getItemCount(),
-													lastVisibleItemPosition);
+											.onLoadMore();
 								}
 								mIsLoadingMore = true;
 								previousTotal = mTotalItemCount;
@@ -187,7 +194,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 						}
 					} else if (null == mContainer) {
 						if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-							layoutManager.scrollToPosition(lastVisibleItemPosition);
 							if (!mHasLoadComplete) {
 								if (mState != XRefreshViewState.STATE_READY) {
 									mFooterCallBack.onStateReady();
@@ -248,8 +254,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		mPinnedTime = pinnedTime;
 	}
 
-	public void setOnScrollListener(OnScrollListener listener) {
-		mScrollListener = listener;
+	public void setOnAbsListViewScrollListener(OnScrollListener listener) {
+		mAbsListViewScrollListener = listener;
+	}
+
+	public void setOnRecyclerViewScrollListener(
+			RecyclerView.OnScrollListener listener) {
+		mRecyclerViewScrollListener = listener;
 	}
 
 	public void setXRefreshViewListener(XRefreshViewListener refreshViewListener) {
@@ -295,8 +306,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 				&& mTotalItemCount - 1 == view.getLastVisiblePosition()) {
 			mContainer.invoketLoadMore();
 		}
-		if (mScrollListener != null) {
-			mScrollListener.onScrollStateChanged(view, scrollState);
+		if (mAbsListViewScrollListener != null) {
+			mAbsListViewScrollListener.onScrollStateChanged(view, scrollState);
 		}
 	}
 
@@ -304,9 +315,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		mTotalItemCount = totalItemCount;
-		if (mScrollListener != null) {
-			mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount,
-					totalItemCount);
+		if (mAbsListViewScrollListener != null) {
+			mAbsListViewScrollListener.onScroll(view, firstVisibleItem,
+					visibleItemCount, totalItemCount);
 		}
 	}
 
@@ -321,12 +332,15 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	public boolean hasChildOnBottom() {
 		return !canChildPullUp();
 	}
-	public boolean isLoading(){
+
+	public boolean isLoading() {
 		return mIsLoadingMore;
 	}
-	public void stopLoading(){
+
+	public void stopLoading() {
 		mIsLoadingMore = false;
 	}
+
 	/**
 	 * @return Whether it is possible for the child view of this layout to
 	 *         scroll up. Override this if the child view is a custom view.
