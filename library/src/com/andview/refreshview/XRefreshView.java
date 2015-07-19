@@ -554,8 +554,8 @@ public class XRefreshView extends LinearLayout {
 		if (mRefreshViewListener != null && mContentView.isTop()) {
 			double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
 			offset = offset > 1 ? 1 : offset;
-			mRefreshViewListener.onHeaderMove(offset,mHolder.mOffsetY);
-			mHeaderCallBack.onHeaderMove(offset);
+			mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
+			mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY);
 		}
 	}
 
@@ -573,6 +573,7 @@ public class XRefreshView extends LinearLayout {
 					+ mHolder.mOffsetY);
 		} else {
 			LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
+			mHasPinned = false;
 		}
 	}
 
@@ -580,7 +581,7 @@ public class XRefreshView extends LinearLayout {
 	 * stop refresh, reset header view.
 	 */
 	public void stopRefresh() {
-		LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
+		LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
 		if (mPullRefreshing == true) {
 			mPullRefreshing = false;
 			mHeaderCallBack.onStateEnd();
@@ -592,7 +593,6 @@ public class XRefreshView extends LinearLayout {
 				public void run() {
 					resetHeaderHeight();
 					lastRefreshTime = Calendar.getInstance().getTimeInMillis();
-					mHasPinned = false;
 				}
 			}, mPinnedTime);
 		}
@@ -643,7 +643,6 @@ public class XRefreshView extends LinearLayout {
 						@Override
 						public void run() {
 							endLoadMore();
-							mHasPinned = false;
 						}
 					}, mPinnedTime);
 				} else {
@@ -690,6 +689,7 @@ public class XRefreshView extends LinearLayout {
 	 *            滑动持续时间
 	 */
 	public void startScroll(int offsetY, int duration) {
+		mHasPinned = true;
 		if (offsetY != 0) {
 			mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
 			invalidate();
