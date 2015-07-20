@@ -1,7 +1,5 @@
 package com.andview.refreshview;
 
-import java.util.Calendar;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
@@ -18,6 +16,8 @@ import android.widget.TextView;
 
 import com.andview.refreshview.callback.IHeaderCallBack;
 import com.andview.refreshview.utils.Utils;
+
+import java.util.Calendar;
 
 public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack {
 	private RelativeLayout mContent;

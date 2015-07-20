@@ -1,1 +1,1 @@
-include ':app', ':app', ':xrefreshview'
+include ':app', ':xrefreshview'

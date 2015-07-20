@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.xrefreshviewdemo"
+    package="com.andview.example"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -28,7 +28,7 @@
         <activity android:name=".activity.GridViewActivity" />
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.WebViewActivity" />
-        <activity android:name=".activity.RecylerViewActivity" />
+        <activity android:name=".activity.RecyclerViewActivity" />
         <activity android:name=".activity.ScrollViewActivity" />
         <activity android:name=".activity.HeadAdActivity" />
     </application>

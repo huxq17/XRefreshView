@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
+import com.andview.refreshview.R;
 
 public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
 	private Context mContext;
@@ -62,6 +63,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 		mHintView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);
 		mClickView.setVisibility(View.GONE);
+
 	}
 
 	@Override

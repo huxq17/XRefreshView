@@ -148,6 +148,7 @@ public class XRefreshView extends LinearLayout {
 		// 根据属性设置参数
 		if (attrs != null) {
 			TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
+
 					R.styleable.XRefreshView, 0, 0);
 			try {
 				isHeightMatchParent = a.getBoolean(

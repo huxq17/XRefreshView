@@ -1,4 +1,4 @@
-<com.example.xrefreshviewdemo.FlowView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.andview.example.FlowView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -68,4 +68,4 @@
         android:layout_marginTop="5dp"
         android:text="待开发" />
 
-</com.example.xrefreshviewdemo.FlowView>
+</com.andview.example.FlowView>
