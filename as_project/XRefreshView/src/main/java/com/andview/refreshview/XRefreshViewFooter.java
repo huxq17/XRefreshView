@@ -1,25 +1,23 @@
-/**
- * @file XFooterView.java
- * @create Mar 31, 2012 9:33:43 PM
- * @author Maxwin
- * @description Xrefreshview's footer
- */
 package com.andview.refreshview;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class XRefreshViewFooter extends LinearLayout {
+import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.callback.IFooterCallBack;
+
+public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
 	private Context mContext;
 
 	private View mContentView;
 	private View mProgressBar;
 	private TextView mHintView;
+	private TextView mClickView;
 
 	public XRefreshViewFooter(Context context) {
 		super(context);
@@ -30,57 +28,49 @@ public class XRefreshViewFooter extends LinearLayout {
 		super(context, attrs);
 		initView(context);
 	}
-
-	public void setState(XRefreshViewState state) {
-		mHintView.setVisibility(View.INVISIBLE);
-		mProgressBar.setVisibility(View.INVISIBLE);
-		mHintView.setVisibility(View.INVISIBLE);
-		if (state == XRefreshViewState.STATE_READY) {
-			// mHintView.setVisibility(View.VISIBLE);
-			// mHintView.setText(R.string.xrefreshview_footer_hint_ready);
-		} else if (state == XRefreshViewState.STATE_LOADING) {
-			mProgressBar.setVisibility(View.VISIBLE);
-		} else {
-			// mHintView.setVisibility(View.VISIBLE);
-			// mHintView.setText(R.string.xrefreshview_footer_hint_normal);
-		}
+	@Override
+	public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+		mClickView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(listener!=null){
+					listener.onLoadMore();
+					onStateRefreshing();
+				}
+			}
+		});
 	}
 
-	public void setBottomMargin(int height) {
-		Log.i("footView", "footView is Visible=" + getVisibility());
-		if (height < 0)
-			return;
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-				.getLayoutParams();
-		lp.bottomMargin = height;
-		mContentView.setLayoutParams(lp);
+	@Override
+	public void onStateReady() {
+		mHintView.setVisibility(View.GONE);
+		mProgressBar.setVisibility(View.GONE);
+		mClickView.setVisibility(View.VISIBLE);
 	}
 
-	public int getBottomMargin() {
-		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-				.getLayoutParams();
-		return lp.bottomMargin;
+	@Override
+	public void onStateRefreshing() {
+		mHintView.setVisibility(View.GONE);
+		mProgressBar.setVisibility(View.VISIBLE);
+		mClickView.setVisibility(View.GONE);
 	}
 
-	/**
-	 * normal status
-	 */
-	public void normal() {
-		// mHintView.setVisibility(View.VISIBLE);
+	@Override
+	public void onStateFinish() {
+		mHintView.setText(R.string.xrefreshview_footer_hint_normal);
+		mHintView.setVisibility(View.VISIBLE);
+		mProgressBar.setVisibility(View.GONE);
+		mClickView.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onStateComplete() {
+		mHintView.setText(R.string.xrefreshview_footer_hint_complete);
+		mHintView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);
 	}
 
-	/**
-	 * loading status
-	 */
-	public void loading() {
-		mHintView.setVisibility(View.GONE);
-		mProgressBar.setVisibility(View.VISIBLE);
-	}
-
-	/**
-	 * hide footer when disable pull load more
-	 */
 	public void hide() {
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
 				.getLayoutParams();
@@ -88,9 +78,6 @@ public class XRefreshViewFooter extends LinearLayout {
 		mContentView.setLayoutParams(lp);
 	}
 
-	/**
-	 * show footer
-	 */
 	public void show() {
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
 				.getLayoutParams();
@@ -100,16 +87,22 @@ public class XRefreshViewFooter extends LinearLayout {
 
 	private void initView(Context context) {
 		mContext = context;
-		LinearLayout moreView = (LinearLayout) LayoutInflater.from(mContext)
-				.inflate(R.layout.xrefreshview_footer, null);
+		RelativeLayout moreView = (RelativeLayout) LayoutInflater
+				.from(mContext).inflate(R.layout.xrefreshview_footer, null);
 		addView(moreView);
-		moreView.setLayoutParams(new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
 		mContentView = moreView.findViewById(R.id.xrefreshview_footer_content);
 		mProgressBar = moreView
 				.findViewById(R.id.xrefreshview_footer_progressbar);
 		mHintView = (TextView) moreView
 				.findViewById(R.id.xrefreshview_footer_hint_textview);
+		mClickView = (TextView) moreView
+				.findViewById(R.id.xrefreshview_footer_click_textview);
 	}
+
+	@Override
+	public int getFooterHeight() {
+		return getMeasuredHeight();
+	}
+
 }

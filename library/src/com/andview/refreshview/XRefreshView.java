@@ -1,14 +1,11 @@
 package com.andview.refreshview;
 
-import java.util.Calendar;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +23,8 @@ import com.andview.refreshview.callback.IHeaderCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.utils.LogUtils;
+
+import java.util.Calendar;
 
 public class XRefreshView extends LinearLayout {
 	// -- header view
@@ -136,7 +135,7 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * pass true if need use for Horizontal move, or false
 	 * 
-	 * @param isDisableMoveForHorizontal
+	 * @param isForHorizontalMove
 	 *            default false
 	 */
 	public void setMoveForHorizontal(boolean isForHorizontalMove) {
@@ -261,7 +260,7 @@ public class XRefreshView extends LinearLayout {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		final int action = MotionEventCompat.getActionMasked(ev);
+		final int action = ev.getAction();
 		int deltaY = 0;
 		int deltaX = 0;
 		switch (action) {
@@ -467,7 +466,8 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * 如果第二个可变参数不为空，则代表是自动刷新
 	 * 
-	 * @param delta
+	 * @param currentY
+	 * @param deltaY
 	 * @param during
 	 */
 	private void updateHeaderHeight(int currentY, int deltaY, int... during) {
@@ -719,7 +719,7 @@ public class XRefreshView extends LinearLayout {
 	/**
 	 * 设置Abslistview的滚动监听事件
 	 * 
-	 * @param listener
+	 * @param scrollListener
 	 */
 	public void setOnAbsListViewScrollListener(OnScrollListener scrollListener) {
 		mContentView.setOnAbsListViewScrollListener(scrollListener);

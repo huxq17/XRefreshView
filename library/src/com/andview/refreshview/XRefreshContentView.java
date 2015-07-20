@@ -284,7 +284,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	/**
 	 * 设置顶部监听
 	 * 
-	 * @param topListener
+	 * @param topRefreshTime
 	 */
 	public void setOnTopRefreshTime(OnTopRefreshTime topRefreshTime) {
 		this.mTopRefreshTime = topRefreshTime;
@@ -293,7 +293,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	/**
 	 * 设置底部监听
 	 * 
-	 * @param mRefreshBase
+	 * @param bottomLoadMoreTime
 	 */
 	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomLoadMoreTime) {
 		this.mBottomLoadMoreTime = bottomLoadMoreTime;
