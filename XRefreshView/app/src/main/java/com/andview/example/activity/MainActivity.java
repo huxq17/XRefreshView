@@ -42,9 +42,8 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			break;
 		case R.id.bt_headAd:
-			//尚未完成
-//			intent = new Intent(this,HeadAdActivity.class);
-//			startActivity(intent);
+			intent = new Intent(this,HeadAdActivity.class);
+			startActivity(intent);
 			break;
 
 		default:
