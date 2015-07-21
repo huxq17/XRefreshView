@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">XRefreshViewDemo</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="clear_data">恢复数据</string>
+    <string name="click_to_refresh">点击刷新</string>
+
+</resources>

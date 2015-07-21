@@ -1,0 +1,16 @@
+<com.andview.refreshview.XRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xrefreshview="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/custom_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    xrefreshview:autoRefresh="true" >
+
+    <com.andview.example.stickyListHeaders.StickyListHeadersListView
+        android:id="@+id/sticky_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="3" />
+
+</com.andview.refreshview.XRefreshView>
