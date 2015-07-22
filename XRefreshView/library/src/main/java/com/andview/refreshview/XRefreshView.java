@@ -239,9 +239,6 @@ public class XRefreshView extends LinearLayout {
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b);
-		if(mHolder.hasFooterPullUp()){
-			return;
-		}
 		LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
 		mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
 		int childCount = getChildCount();

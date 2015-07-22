@@ -174,8 +174,6 @@ public class HeadAdActivity extends Activity {
 					}
 					break;
 				default:
-					// 停止图片滚动
-					mScheduledExecutorService.shutdown();
 					break;
 				}
 				return false;

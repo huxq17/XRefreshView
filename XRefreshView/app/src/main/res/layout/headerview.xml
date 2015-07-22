@@ -62,7 +62,7 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <com.example.xrefreshviewdemo.ui.LoopViewPager
+    <com.andview.example.ui.LoopViewPager
         android:id="@+id/index_viewpager"
         android:layout_below="@id/xrefreshview_header"
         android:layout_width="match_parent"
