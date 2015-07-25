@@ -26,6 +26,6 @@
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="@string/xrefreshview_footer_hint_click" />
+        android:text="@string/xrefreshview_footer_hint_ready" />
 
 </RelativeLayout>

@@ -378,6 +378,7 @@ public class XRefreshView extends LinearLayout {
     public void invoketLoadMore() {
         if (mEnablePullLoad && !mPullLoading && !mPullRefreshing
                 && !mHasScrollBack && !mHasLoadComplete) {
+            mFooterCallBack.onStateRefreshing();
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             startScroll(offset, SCROLL_DURATION);
             startLoadMore();
@@ -492,19 +493,23 @@ public class XRefreshView extends LinearLayout {
                 if (mHolder.mOffsetY > mHeaderViewHeight) {
                     if (mState != XRefreshViewState.STATE_READY) {
                         mHeaderCallBack.onStateReady();
+                        mState = XRefreshViewState.STATE_READY;
                     }
-                    mState = XRefreshViewState.STATE_READY;
                 } else {
                     if (mState != XRefreshViewState.STATE_NORMAL) {
                         mHeaderCallBack.onStateNormal();
+                        mState = XRefreshViewState.STATE_NORMAL;
                     }
-                    mState = XRefreshViewState.STATE_NORMAL;
                 }
             }
         }
     }
 
     private void updateFooterHeight(int deltaY) {
+        if (mState != XRefreshViewState.STATE_READY && !autoLoadMore) {
+            mFooterCallBack.onStateReady();
+            mState = XRefreshViewState.STATE_READY;
+        }
         moveView(deltaY);
     }
 
@@ -662,6 +667,7 @@ public class XRefreshView extends LinearLayout {
             if (mPullLoading == true) {
                 mPullLoading = false;
                 mFooterCallBack.onStateFinish();
+                mState = XRefreshViewState.STATE_COMPLETE;
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
                     mHasScrollBack = true;
                     mHandler.postDelayed(new Runnable() {
