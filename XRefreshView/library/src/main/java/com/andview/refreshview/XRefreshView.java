@@ -171,32 +171,15 @@ public class XRefreshView extends LinearLayout {
 
                     @Override
                     public void onGlobalLayout() {
+                        addHeaderView();
                         addFooterView(this);
                     }
                 });
     }
 
-    private void addFooterView(OnGlobalLayoutListener listener) {
-        mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
-        LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
-        mContentView.setHolder(mHolder);
-        mContentView.setScrollListener();
-        if (mEnablePullLoad && needAddFooterView()) {
-            Log.i("CustomView", "add footView");
-            addView(mFooterView);
-        }
-        // 移除视图树监听器
-        removeViewTreeObserver(listener);
-        if (autoRefresh) {
-            startRefresh();
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        LogUtils.i("onAttachedToWindow");
+    private void addHeaderView() {
         addView(mHeaderView, 0);
+        mHeaderView.measure(0,0);
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
         if (autoLoadMore) {
             mContentView.setContainer(this);
@@ -209,6 +192,22 @@ public class XRefreshView extends LinearLayout {
         mFooterCallBack = (IFooterCallBack) mFooterView;
         checkPullRefreshEnable();
         checkPullLoadEnable();
+    }
+
+    private void addFooterView(OnGlobalLayoutListener listener) {
+        mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
+        LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
+        mContentView.setHolder(mHolder);
+        mContentView.setScrollListener();
+        if (mEnablePullLoad && needAddFooterView()) {
+            Log.i("CustomView", "add footView"+";mHeaderViewHeight="+mHeaderViewHeight);
+            addView(mFooterView);
+        }
+        // 移除视图树监听器
+        removeViewTreeObserver(listener);
+        if (autoRefresh) {
+            startRefresh();
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -691,6 +690,7 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             stopLoadMore();
             if (hasComplete) {
+                mFooterCallBack.hide();
                 mFooterCallBack.onStateComplete();
             } else {
                 mFooterCallBack.onStateRefreshing();
