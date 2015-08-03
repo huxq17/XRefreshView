@@ -5,12 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.andview.example.R;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
-import com.andview.refreshview.utils.LogUtils;
 
 public class ScrollViewActivity extends Activity {
 	private XRefreshView outView;
@@ -25,9 +23,6 @@ public class ScrollViewActivity extends Activity {
 		outView.setPullLoadEnable(true);
 		outView.setAutoRefresh(false);
 		outView.setAutoLoadMore(false);
-		LogUtils.i("oncreate");
-		// XRefreshView下拉刷新时机有了更强大的判断方法，已经不需要再设置view的类型了
-		// outView.setRefreshViewType(XRefreshViewType.ABSLISTVIEW);
 
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -61,9 +56,9 @@ public class ScrollViewActivity extends Activity {
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		outView.startRefresh();
-	}
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		outView.startRefresh();
+//	}
 }

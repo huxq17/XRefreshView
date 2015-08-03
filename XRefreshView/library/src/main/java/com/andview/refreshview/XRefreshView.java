@@ -179,7 +179,7 @@ public class XRefreshView extends LinearLayout {
 
     private void addHeaderView() {
         addView(mHeaderView, 0);
-        mHeaderView.measure(0,0);
+        mHeaderView.measure(0, 0);
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
         if (autoLoadMore) {
             mContentView.setContainer(this);
@@ -200,13 +200,16 @@ public class XRefreshView extends LinearLayout {
         mContentView.setHolder(mHolder);
         mContentView.setScrollListener();
         if (mEnablePullLoad && needAddFooterView()) {
-            Log.i("CustomView", "add footView"+";mHeaderViewHeight="+mHeaderViewHeight);
+            Log.i("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             addView(mFooterView);
         }
         // 移除视图树监听器
         removeViewTreeObserver(listener);
         if (autoRefresh) {
             startRefresh();
+        }
+        if (mHeadMoveDistence == 0) {
+            mHeadMoveDistence = getHeight() / 3;
         }
     }
 
@@ -264,6 +267,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     private boolean isIntercepted;
+    private int mHeadMoveDistence;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -315,7 +319,11 @@ public class XRefreshView extends LinearLayout {
                 }
                 LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
                         + mContentView.isBottom());
-                deltaY = (int) (deltaY / OFFSET_RADIO);
+                if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence||deltaY<0) {
+                    deltaY = (int) (deltaY / OFFSET_RADIO);
+                } else {
+                    deltaY = 0;
+                }
                 if (mContentView.isTop()
                         && (deltaY > 0 || (deltaY < 0 && mHolder
                         .hasHeaderPullDown()))) {
@@ -405,6 +413,15 @@ public class XRefreshView extends LinearLayout {
                     last.getMetaState());
             dispatchTouchEventSupper(e);
         }
+    }
+
+    /**
+     * header可下拉的最大距离
+     *
+     * @param headMoveDistence
+     */
+    public void setHeadMoveLargestDistence(int headMoveDistence) {
+        mHeadMoveDistence = headMoveDistence;
     }
 
     private void sendDownEvent() {
