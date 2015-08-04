@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-// 这个version是区分library版本的，因此当我们需要更新library时记得修改这个version
 version = "1.0.0"
 android {
     compileSdkVersion 21
@@ -11,7 +10,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 1
-        versionName version
+        versionName "1.0"
     }
     buildTypes {
         release {
@@ -25,16 +24,16 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
 }
-def siteUrl = 'https://github.com/huxq17/XRefreshView'      // 项目的主页
-def gitUrl = 'https://github.com/huxq17/XRefreshView.git'   // Git仓库的url
-group = "com.andview.refreshview" // Maven Group ID for the artifact，一般填你唯一的包名
+def siteUrl = 'https://github.com/huxq17/XRefreshView'
+def gitUrl = 'https://github.com/huxq17/XRefreshView.git'
+group = "com.andview.refreshview"
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
         pom {
             project {
                 packaging 'aar'
-                name 'Android universal pull to refresh library'  //项目描述
+                name 'Android universal pull to refresh library'
                 url siteUrl
                 licenses {
                     license {
@@ -81,8 +80,8 @@ bintray {
     key = properties.getProperty("bintray.apikey")
     configurations = ['archives']
     pkg {
-        repo = "maven"  //发布到Bintray的那个仓库里，默认账户有四个库，我们这里上传到maven库
-        name = "XRefreshView"  //发布到Bintray上的项目名字
+        repo = "maven"
+        name = "XRefreshView"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/recycler_view_test_item_person_view"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:padding="15dp"
-              android:background="#aabbcc"
-        >
+    android:id="@+id/recycler_view_test_item_person_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#aabbcc"
+    android:orientation="vertical"
+    android:padding="15dp">
+
     <TextView
-            android:id="@+id/recycler_view_test_item_person_name_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:background="#ccbbaa"
-            />
+        android:id="@+id/recycler_view_test_item_person_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ccbbaa"
+        android:textSize="18sp" />
+
     <TextView
-            android:id="@+id/recycler_view_test_item_person_age_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:background="#aaccbb"
-            android:textSize="15sp"
-            />
+        android:id="@+id/recycler_view_test_item_person_age_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aaccbb"
+        android:paddingLeft="5dp"
+        android:textSize="15sp" />
 </LinearLayout>

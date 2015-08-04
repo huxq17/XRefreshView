@@ -303,12 +303,13 @@ public class XRefreshView extends LinearLayout {
                 deltaY = currentY - mLastY;
                 deltaX = currentX - mLastX;
                 mLastY = currentY;
+                mLastX = currentX;
                 // intercept the MotionEvent only when user is not scrolling
                 if (!isIntercepted && (Math.abs(deltaY) < mTouchSlop)) {
                     isIntercepted = true;
                     return super.dispatchTouchEvent(ev);
                 }
-                if (isForHorizontalMove && !mMoveForHorizontal
+                if (isForHorizontalMove && !mMoveForHorizontal && Math.abs(deltaX) > mTouchSlop
                         && Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (mHolder.mOffsetY == 0) {
                         mMoveForHorizontal = true;
@@ -319,7 +320,7 @@ public class XRefreshView extends LinearLayout {
                 }
                 LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
                         + mContentView.isBottom());
-                if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence||deltaY<0) {
+                if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence || deltaY < 0) {
                     deltaY = (int) (deltaY / OFFSET_RADIO);
                 } else {
                     deltaY = 0;
@@ -400,6 +401,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void sendCancelEvent() {
+        LogUtils.d("sendCancelEvent");
         if (!mHasSendCancelEvent) {
             setRefreshTime();
             mHasSendCancelEvent = true;
@@ -702,14 +704,15 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
+    /**
+     * 此方法当没有更多数据时调用，不要与stopLoadMore()同时调用，内部已经调用了stopLoadMore()。
+     * @param hasComplete
+     */
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
+        stopLoadMore();
         if (needAddFooterView()) {
-            stopLoadMore();
-            if (hasComplete) {
-                mFooterCallBack.hide();
-                mFooterCallBack.onStateComplete();
-            } else {
+            if (!hasComplete) {
                 mFooterCallBack.onStateRefreshing();
                 mFooterCallBack.show();
             }

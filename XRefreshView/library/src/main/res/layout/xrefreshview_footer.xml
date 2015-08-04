@@ -3,14 +3,15 @@
     android:id="@+id/xrefreshview_footer_content"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    android:layout_gravity="center_horizontal"
     android:background="#FFFFFF"
-    android:padding="10dp" >
+    android:padding="10dp">
 
     <ProgressBar
         android:id="@+id/xrefreshview_footer_progressbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_centerInParent="true" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/xrefreshview_footer_hint_textview"
@@ -27,5 +28,4 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:text="@string/xrefreshview_footer_hint_ready" />
-
 </RelativeLayout>

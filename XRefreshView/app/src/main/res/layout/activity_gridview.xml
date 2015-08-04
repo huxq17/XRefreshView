@@ -15,7 +15,6 @@
             android:id="@+id/gv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            xrefreshview:autoLoadMore="true"
             android:numColumns="3" />
     </com.andview.refreshview.XRefreshView>
 

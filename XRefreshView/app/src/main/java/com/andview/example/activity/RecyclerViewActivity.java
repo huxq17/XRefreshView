@@ -45,7 +45,7 @@ public class RecyclerViewActivity extends Activity {
 		adapter = new SimpleAdapter(personList);
 		adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 		recyclerView.setAdapter(adapter);
-		xRefreshView.setAutoLoadMore(false);
+		xRefreshView.setAutoLoadMore(true);
 		xRefreshView.setPinnedTime(1000);
 		xRefreshView.setMoveForHorizontal(true);
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
@@ -66,6 +66,9 @@ public class RecyclerViewActivity extends Activity {
 					public void run() {
 						if (mLoadCount >= 3) {
 							xRefreshView.setLoadComplete(true);
+						}else{
+							//刷新完成必须调用此方法停止加载
+							xRefreshView.stopLoadMore();
 						}
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
@@ -74,8 +77,6 @@ public class RecyclerViewActivity extends Activity {
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
 						mLoadCount++;
-						//刷新完成必须调用此方法停止加载
-						xRefreshView.stopLoadMore();
 					}
 				}, 1000);
 			}

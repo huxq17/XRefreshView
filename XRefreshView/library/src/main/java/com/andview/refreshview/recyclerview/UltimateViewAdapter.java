@@ -1,13 +1,13 @@
 package com.andview.refreshview.recyclerview;
 
-import java.util.Collections;
-import java.util.List;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.andview.refreshview.callback.IFooterCallBack;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An abstract adapter which can be extended for Recyclerview
@@ -49,7 +49,7 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
 	/**
 	 * Using a custom LoadMoreView
 	 * 
-	 * @param customview
+	 * @param footerView
 	 *            the inflated view
 	 */
 	public void setCustomLoadMoreView(View footerView) {

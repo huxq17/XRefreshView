@@ -13,6 +13,7 @@ import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 public class ScrollViewActivity extends Activity {
 	private XRefreshView outView;
 	private LinearLayout ll;
+	private int count = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +43,13 @@ public class ScrollViewActivity extends Activity {
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						outView.stopLoadMore();
-						outView.setLoadComplete(true);
+						//setLoadComplete不要和stopLoadMore同时调用
+						if (count > 1) {
+							outView.setLoadComplete(true);
+						} else {
+							outView.stopLoadMore();
+						}
+						count++;
 					}
 				}, 2000);
 			}

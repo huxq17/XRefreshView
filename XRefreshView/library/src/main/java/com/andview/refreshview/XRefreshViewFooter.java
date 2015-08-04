@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
-import com.andview.refreshview.R;
 
 public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
     private Context mContext;
@@ -90,6 +89,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
     }
 
     private void initView(Context context) {
+        setOrientation(HORIZONTAL);
         mContext = context;
         RelativeLayout moreView = (RelativeLayout) LayoutInflater
                 .from(mContext).inflate(R.layout.xrefreshview_footer, null);
@@ -108,5 +108,4 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
     public int getFooterHeight() {
         return getMeasuredHeight();
     }
-
 }
