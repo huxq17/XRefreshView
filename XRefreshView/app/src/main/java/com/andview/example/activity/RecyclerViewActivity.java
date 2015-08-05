@@ -14,7 +14,6 @@ import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
-import com.andview.refreshview.XRefreshViewFooter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +42,15 @@ public class RecyclerViewActivity extends Activity {
 
 		initData();
 		adapter = new SimpleAdapter(personList);
-		adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+		//设置静默加载模式
+		xRefreshView.setSlienceLoadMore();
+		//静默加载模式不能设置footerview
+//		adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 		recyclerView.setAdapter(adapter);
 		xRefreshView.setAutoLoadMore(true);
 		xRefreshView.setPinnedTime(1000);
 		xRefreshView.setMoveForHorizontal(true);
+		
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -61,15 +64,9 @@ public class RecyclerViewActivity extends Activity {
 			}
 
 			@Override
-			public void onLoadMore() {
+			public void onLoadMore(boolean isSlience) {
 				new Handler().postDelayed(new Runnable() {
 					public void run() {
-						if (mLoadCount >= 3) {
-							xRefreshView.setLoadComplete(true);
-						}else{
-							//刷新完成必须调用此方法停止加载
-							xRefreshView.stopLoadMore();
-						}
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
 						adapter.insert(new Person("More ", "21"),
@@ -77,6 +74,12 @@ public class RecyclerViewActivity extends Activity {
 						adapter.insert(new Person("More ", "21"),
 								adapter.getAdapterItemCount());
 						mLoadCount++;
+						if (mLoadCount >= 3) {
+							xRefreshView.setLoadComplete(true);
+						}else{
+							//刷新完成必须调用此方法停止加载
+							xRefreshView.stopLoadMore();
+						}
 					}
 				}, 1000);
 			}

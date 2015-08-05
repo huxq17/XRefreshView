@@ -37,7 +37,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onLoadMore();
+                    listener.onLoadMore(false);
                     onStateRefreshing();
                 }
             }

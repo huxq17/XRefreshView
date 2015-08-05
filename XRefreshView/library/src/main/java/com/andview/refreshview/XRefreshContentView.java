@@ -10,7 +10,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
@@ -19,6 +18,7 @@ import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.UltimateViewAdapter;
+import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		OnBottomLoadMoreTime {
@@ -51,7 +51,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
 			boolean isWidthMatchParent) {
-		LinearLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
+		LayoutParams lp = (LayoutParams) child.getLayoutParams();
 		if (isHeightMatchParent) {
 			lp.height = LayoutParams.MATCH_PARENT;
 		}
@@ -93,6 +93,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			layoutManager = recyclerView.getLayoutManager();
 			layoutManager.scrollToPosition(0);
 		}
+	}
+
+	private boolean mSlienceLoadMore = false;
+
+	public void setSlienceLoadMore(boolean slienceLoadMore) {
+		mSlienceLoadMore = slienceLoadMore;
 	}
 
 	public void setScrollListener() {
@@ -163,53 +169,67 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 						mFirstVisibleItem = findMin(lastPositions);
 						break;
 					}
-					if (mIsLoadingMore) {
-						// todo: there are some bugs needs to be adjusted for
-						// admob adapter
-						if (mTotalItemCount > previousTotal) {
-							mIsLoadingMore = false;
-							previousTotal = mTotalItemCount;
-						}
-					}
-					if (mContainer != null) {
+//					if (mIsLoadingMore) {
+//						// todo: there are some bugs needs to be adjusted for
+//						// admob adapter
+//						if (mTotalItemCount > previousTotal) {
+//							mIsLoadingMore = false;
+//							previousTotal = mTotalItemCount;
+//						}
+//					}
+					LogUtils.i("pre onLoadMore mIsLoadingMore="+mIsLoadingMore);
+					if (mSlienceLoadMore) {
 						if (!mIsLoadingMore
 								&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-							if (!mContainer.hasLoadCompleted()) {
-								// todo: there are some bugs needs to be
-								// adjusted
-								// for admob adapter
-								if (mRefreshViewListener != null) {
-									mRefreshViewListener
-											.onLoadMore();
-								}
+							if (mRefreshViewListener != null) {
+								LogUtils.i("scroll onLoadMore mIsLoadingMore="+mIsLoadingMore);
 								mIsLoadingMore = true;
-								previousTotal = mTotalItemCount;
-								mFooterCallBack.onStateRefreshing();
-								mState = XRefreshViewState.STATE_LOADING;
-							} else {
-								loadCompleted();
+								mRefreshViewListener.onLoadMore(true);
 							}
-						} else {
-							mState = XRefreshViewState.STATE_NORMAL;
 						}
-					} else if (null == mContainer) {
-						if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-							if (!mHasLoadComplete) {
-								if (mState != XRefreshViewState.STATE_READY) {
-									mFooterCallBack.onStateReady();
-									mState = XRefreshViewState.STATE_READY;
+					} else{
+						if (mContainer != null) {
+							if (!mIsLoadingMore
+									&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+								if (!mContainer.hasLoadCompleted()) {
+									// todo: there are some bugs needs to be
+									// adjusted
+									// for admob adapter
+									if (mRefreshViewListener != null) {
+										mRefreshViewListener.onLoadMore(false);
+									}
+									mIsLoadingMore = true;
+									previousTotal = mTotalItemCount;
+									mFooterCallBack.onStateRefreshing();
+									mState = XRefreshViewState.STATE_LOADING;
+								} else {
+									loadCompleted();
 								}
 							} else {
-								loadCompleted();
+								mState = XRefreshViewState.STATE_NORMAL;
 							}
-						} else {
-							mState = XRefreshViewState.STATE_NORMAL;
+						} else if (null == mContainer) {
+							if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+								if (!mHasLoadComplete) {
+									if (mState != XRefreshViewState.STATE_READY) {
+										mFooterCallBack.onStateReady();
+										mState = XRefreshViewState.STATE_READY;
+									}
+								} else {
+									loadCompleted();
+								}
+							} else {
+								mState = XRefreshViewState.STATE_NORMAL;
+							}
 						}
 					}
 				}
 			};
 
 			recyclerView.addOnScrollListener(mOnScrollListener);
+			if (mSlienceLoadMore) {
+				return;
+			}
 			UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
 					.getAdapter();
 			if (adapter != null) {
@@ -301,7 +321,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		if (mContainer != null && !mContainer.hasLoadCompleted()
+		if (mSlienceLoadMore) {
+			if (mRefreshViewListener != null) {
+				mRefreshViewListener.onLoadMore(true);
+			}
+		} else if (mContainer != null && !mContainer.hasLoadCompleted()
 				&& scrollState == OnScrollListener.SCROLL_STATE_IDLE
 				&& mTotalItemCount - 1 == view.getLastVisiblePosition()) {
 			mContainer.invoketLoadMore();

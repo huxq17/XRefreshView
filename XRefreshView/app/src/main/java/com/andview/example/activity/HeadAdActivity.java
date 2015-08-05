@@ -77,7 +77,7 @@ public class HeadAdActivity extends Activity {
 			}
 
 			@Override
-			public void onLoadMore() {
+			public void onLoadMore(boolean isSlience) {
 				final List<String> addlist = new ArrayList<String>();
 				for (int i = 0; i < 20; i++) {
 					addlist.add("数据" + (i + str_name.size()));

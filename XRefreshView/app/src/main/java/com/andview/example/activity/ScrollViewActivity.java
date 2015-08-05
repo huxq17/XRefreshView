@@ -39,7 +39,7 @@ public class ScrollViewActivity extends Activity {
 			}
 
 			@Override
-			public void onLoadMore() {
+			public void onLoadMore(boolean isSlience) {
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
