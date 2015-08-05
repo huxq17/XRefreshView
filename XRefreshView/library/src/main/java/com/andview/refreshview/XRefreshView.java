@@ -255,7 +255,7 @@ public class XRefreshView extends LinearLayout {
                 top += adHeight;
             } else if (i == 1) {
                 int childHeight = child.getMeasuredHeight() - adHeight;
-                child.layout(0, top, child.getMeasuredHeight(),
+                child.layout(0, top, child.getMeasuredWidth(),
                         childHeight + top);
                 top += childHeight;
             } else {
