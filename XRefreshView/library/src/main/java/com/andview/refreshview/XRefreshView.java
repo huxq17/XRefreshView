@@ -241,8 +241,10 @@ public class XRefreshView extends LinearLayout {
 		int finalHeight = 0;
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
-			measureChild(child, widthMeasureSpec, heightMeasureSpec);
-			finalHeight += child.getMeasuredHeight();
+			if(child.getVisibility() == View.VISIBLE){
+				measureChild(child, widthMeasureSpec, heightMeasureSpec);
+				finalHeight += child.getMeasuredHeight();
+			}
 		}
 		setMeasuredDimension(width, finalHeight);
 	}
@@ -257,26 +259,31 @@ public class XRefreshView extends LinearLayout {
 		int adHeight = 0;
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
-			if (i == 0) {
-				adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
-				// 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
-				child.layout(0, top - mHeaderViewHeight,
-						child.getMeasuredWidth(), top + adHeight);
-				top += adHeight;
-			} else if (i == 1) {
-				int childHeight = child.getMeasuredHeight() - adHeight;
-				child.layout(0, top, child.getMeasuredWidth(), childHeight
-						+ top);
-				top += childHeight;
-			} else {
-				child.layout(0, top, child.getMeasuredWidth(),
-						child.getMeasuredHeight() + top);
-				top += child.getMeasuredHeight();
+			if(child.getVisibility() == View.VISIBLE){
+				if (i == 0) {
+					adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
+					// 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
+					child.layout(0, top - mHeaderViewHeight,
+							child.getMeasuredWidth(), top + adHeight);
+					top += adHeight;
+				} else if (i == 1) {
+					int childHeight = child.getMeasuredHeight() - adHeight;
+					child.layout(0, top, child.getMeasuredWidth(), childHeight
+							+ top);
+					top += childHeight;
+				} else {
+					child.layout(0, top, child.getMeasuredWidth(),
+							child.getMeasuredHeight() + top);
+					top += child.getMeasuredHeight();
+				}
 			}
 		}
 	}
 
 	private boolean isIntercepted;
+	/**
+	 * headerView可下拉的距离
+	 */
 	private int mHeadMoveDistence;
 
 	@Override
