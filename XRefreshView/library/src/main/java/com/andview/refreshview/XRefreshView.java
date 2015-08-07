@@ -241,7 +241,7 @@ public class XRefreshView extends LinearLayout {
 		int finalHeight = 0;
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
-			if(child.getVisibility() == View.VISIBLE){
+			if(child.getVisibility() != View.GONE){
 				measureChild(child, widthMeasureSpec, heightMeasureSpec);
 				finalHeight += child.getMeasuredHeight();
 			}
@@ -259,7 +259,7 @@ public class XRefreshView extends LinearLayout {
 		int adHeight = 0;
 		for (int i = 0; i < childCount; i++) {
 			View child = getChildAt(i);
-			if(child.getVisibility() == View.VISIBLE){
+			if(child.getVisibility() != View.GONE){
 				if (i == 0) {
 					adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
 					// 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
