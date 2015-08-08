@@ -10,6 +10,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
@@ -50,8 +51,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	private XRefreshHolder mHolder;
 
 	public void setContentViewLayoutParams(boolean isHeightMatchParent,
-			boolean isWidthMatchParent) {
-		LayoutParams lp = (LayoutParams) child.getLayoutParams();
+										   boolean isWidthMatchParent) {
+		LinearLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
 		if (isHeightMatchParent) {
 			lp.height = LayoutParams.MATCH_PARENT;
 		}
@@ -76,7 +77,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 如果自动刷新，设置container, container!=null代表列表到达底部自动加载更多
-	 * 
+	 *
 	 * @param container
 	 */
 	public void setContainer(XRefreshView container) {
@@ -105,16 +106,15 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		if (child instanceof AbsListView) {
 			AbsListView absListView = (AbsListView) child;
 			absListView.setOnScrollListener(this);
-		} else if (isRecyclerView()) {
+		} else if (child instanceof RecyclerView) {
 			final RecyclerView recyclerView = (RecyclerView) child;
 			recyclerView.removeOnScrollListener(mOnScrollListener);
 
 			mOnScrollListener = new RecyclerView.OnScrollListener() {
-				private int[] lastPositions;
 
 				@Override
 				public void onScrollStateChanged(RecyclerView recyclerView,
-						int newState) {
+												 int newState) {
 					super.onScrollStateChanged(recyclerView, newState);
 					if (mRecyclerViewScrollListener != null) {
 						mRecyclerViewScrollListener.onScrollStateChanged(
@@ -132,62 +132,28 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 					if (layoutManager == null) {
 						layoutManager = recyclerView.getLayoutManager();
 					}
-					if (layoutManagerType == null) {
-						if (layoutManager instanceof GridLayoutManager) {
-							layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
-						} else if (layoutManager instanceof LinearLayoutManager) {
-							layoutManagerType = LAYOUT_MANAGER_TYPE.LINEAR;
-						} else if (layoutManager instanceof StaggeredGridLayoutManager) {
-							layoutManagerType = LAYOUT_MANAGER_TYPE.STAGGERED_GRID;
-						} else {
-							throw new RuntimeException(
-									"Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
-						}
-					}
-					switch (layoutManagerType) {
-					case LINEAR:
-						mVisibleItemCount = layoutManager.getChildCount();
-						mTotalItemCount = layoutManager.getItemCount();
-					case GRID:
-						lastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
-								.findLastVisibleItemPosition();
-						mFirstVisibleItem = ((LinearLayoutManager) layoutManager)
-								.findFirstVisibleItemPosition();
-						break;
-					case STAGGERED_GRID:
-						StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
-						if (lastPositions == null)
-							lastPositions = new int[staggeredGridLayoutManager
-									.getSpanCount()];
-
-						staggeredGridLayoutManager
-								.findLastVisibleItemPositions(lastPositions);
-						lastVisibleItemPosition = findMax(lastPositions);
-
-						staggeredGridLayoutManager
-								.findFirstVisibleItemPositions(lastPositions);
-						mFirstVisibleItem = findMin(lastPositions);
-						break;
-					}
-//					if (mIsLoadingMore) {
-//						// todo: there are some bugs needs to be adjusted for
-//						// admob adapter
-//						if (mTotalItemCount > previousTotal) {
-//							mIsLoadingMore = false;
-//							previousTotal = mTotalItemCount;
-//						}
-//					}
-					LogUtils.i("pre onLoadMore mIsLoadingMore="+mIsLoadingMore);
+					getRecyclerViewInfo(layoutManager);
+					// if (mIsLoadingMore) {
+					// // todo: there are some bugs needs to be adjusted for
+					// // admob adapter
+					// if (mTotalItemCount > previousTotal) {
+					// mIsLoadingMore = false;
+					// previousTotal = mTotalItemCount;
+					// }
+					// }
+					LogUtils.i("pre onLoadMore mIsLoadingMore="
+							+ mIsLoadingMore);
 					if (mSlienceLoadMore) {
 						if (!mIsLoadingMore
-								&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+								&& (mTotalItemCount - mVisibleItemCount - mPreLoadCount) <= mFirstVisibleItem) {
 							if (mRefreshViewListener != null) {
-								LogUtils.i("scroll onLoadMore mIsLoadingMore="+mIsLoadingMore);
+								LogUtils.i("scroll onLoadMore mIsLoadingMore="
+										+ mIsLoadingMore);
 								mIsLoadingMore = true;
 								mRefreshViewListener.onLoadMore(true);
 							}
 						}
-					} else{
+					} else {
 						if (mContainer != null) {
 							if (!mIsLoadingMore
 									&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
@@ -209,7 +175,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 								mState = XRefreshViewState.STATE_NORMAL;
 							}
 						} else if (null == mContainer) {
-							if ((mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+							if (!mIsLoadingMore
+									&& (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
 								if (!mHasLoadComplete) {
 									if (mState != XRefreshViewState.STATE_READY) {
 										mFooterCallBack.onStateReady();
@@ -248,6 +215,64 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		}
 	}
 
+	public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager) {
+		int[] lastPositions = null;
+		if (layoutManagerType == null) {
+			if (layoutManager instanceof GridLayoutManager) {
+				layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
+			} else if (layoutManager instanceof LinearLayoutManager) {
+				layoutManagerType = LAYOUT_MANAGER_TYPE.LINEAR;
+			} else if (layoutManager instanceof StaggeredGridLayoutManager) {
+				layoutManagerType = LAYOUT_MANAGER_TYPE.STAGGERED_GRID;
+			} else {
+				throw new RuntimeException(
+						"Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
+			}
+		}
+		switch (layoutManagerType) {
+			case LINEAR:
+				mVisibleItemCount = layoutManager.getChildCount();
+				mTotalItemCount = layoutManager.getItemCount();
+			case GRID:
+				lastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
+						.findLastVisibleItemPosition();
+				mFirstVisibleItem = ((LinearLayoutManager) layoutManager)
+						.findFirstVisibleItemPosition();
+				break;
+			case STAGGERED_GRID:
+				StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
+				if (lastPositions == null)
+					lastPositions = new int[staggeredGridLayoutManager
+							.getSpanCount()];
+
+				staggeredGridLayoutManager
+						.findLastVisibleItemPositions(lastPositions);
+				lastVisibleItemPosition = findMax(lastPositions);
+
+				staggeredGridLayoutManager
+						.findFirstVisibleItemPositions(lastPositions);
+				mFirstVisibleItem = findMin(lastPositions);
+				break;
+		}
+	}
+
+	/**
+	 * 静默加载时提前加载的item个数
+	 */
+	private int mPreLoadCount;
+
+	/**
+	 * 设置静默加载时提前加载的item个数
+	 *
+	 * @param count
+	 */
+	public void setPreLoadCount(int count) {
+		if (count < 0) {
+			count = 0;
+		}
+		mPreLoadCount = count;
+	}
+
 	public void loadCompleted() {
 		if (mState != XRefreshViewState.STATE_COMPLETE) {
 			mFooterCallBack.onStateComplete();
@@ -267,6 +292,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 		mHasLoadComplete = hasComplete;
 		if (!hasComplete) {
 			mFooterCallBack.show();
+			mIsLoadingMore = false;
 		}
 	}
 
@@ -303,7 +329,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 设置顶部监听
-	 * 
+	 *
 	 * @param topRefreshTime
 	 */
 	public void setOnTopRefreshTime(OnTopRefreshTime topRefreshTime) {
@@ -312,7 +338,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 设置底部监听
-	 * 
+	 *
 	 * @param bottomLoadMoreTime
 	 */
 	public void setOnBottomLoadMoreTime(OnBottomLoadMoreTime bottomLoadMoreTime) {
@@ -337,7 +363,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
+						 int visibleItemCount, int totalItemCount) {
 		mTotalItemCount = totalItemCount;
 		if (mAbsListViewScrollListener != null) {
 			mAbsListViewScrollListener.onScroll(view, firstVisibleItem,
@@ -358,11 +384,15 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	}
 
 	public boolean isLoading() {
+		if (mSlienceLoadMore) {
+			return false;
+		}
 		return mIsLoadingMore;
 	}
 
 	public void stopLoading() {
 		mIsLoadingMore = false;
+		mTotalItemCount = 0;
 	}
 
 	/**
@@ -375,8 +405,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			return canScrollVertically(child, -1)
 					|| absListView.getChildCount() > 0
 					&& (absListView.getFirstVisiblePosition() > 0 || absListView
-							.getChildAt(0).getTop() < absListView
-							.getPaddingTop());
+					.getChildAt(0).getTop() < absListView
+					.getPaddingTop());
 		} else {
 			return canScrollVertically(child, -1) || child.getScrollY() > 0;
 		}
@@ -391,14 +421,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 			WebView webview = (WebView) child;
 			return canScrollVertically(child, 1)
 					|| webview.getContentHeight() * webview.getScale() != webview
-							.getHeight() + webview.getScrollY();
+					.getHeight() + webview.getScrollY();
 		} else if (child instanceof ScrollView) {
 			ScrollView scrollView = (ScrollView) child;
 			View childView = scrollView.getChildAt(0);
 			if (childView != null) {
 				return canScrollVertically(child, 1)
 						|| scrollView.getScrollY() != childView.getHeight()
-								- scrollView.getHeight();
+						- scrollView.getHeight();
 			}
 		} else {
 			return canScrollVertically(child, 1);
@@ -408,7 +438,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
 	/**
 	 * 用来判断view在竖直方向上能不能向上或者向下滑动
-	 * 
+	 *
 	 * @param view
 	 *            v
 	 * @param direction
@@ -424,7 +454,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 	}
 
 	public boolean isRecyclerView() {
-		if (null != child && child instanceof RecyclerView) {
+		if (mSlienceLoadMore) {
+			return false;
+		} else if (null != child && child instanceof RecyclerView) {
 			return true;
 		}
 		return false;

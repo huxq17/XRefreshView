@@ -42,15 +42,17 @@ public class RecyclerViewActivity extends Activity {
 
 		initData();
 		adapter = new SimpleAdapter(personList);
-		//设置静默加载模式
+		// 设置静默加载模式
 		xRefreshView.setSlienceLoadMore();
-		//静默加载模式不能设置footerview
-//		adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+		// 静默加载模式不能设置footerview
+		// adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 		recyclerView.setAdapter(adapter);
 		xRefreshView.setAutoLoadMore(true);
 		xRefreshView.setPinnedTime(1000);
 		xRefreshView.setMoveForHorizontal(true);
-		
+		//设置静默加载时提前加载的item个数
+		xRefreshView.setPreLoadCount(5);
+
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
@@ -76,15 +78,16 @@ public class RecyclerViewActivity extends Activity {
 						mLoadCount++;
 						if (mLoadCount >= 3) {
 							xRefreshView.setLoadComplete(true);
-						}else{
-							//刷新完成必须调用此方法停止加载
+						} else {
+							// 刷新完成必须调用此方法停止加载
 							xRefreshView.stopLoadMore();
 						}
 					}
 				}, 1000);
 			}
 		});
-		recyclerView.addOnScrollListener(new OnScrollListener() {
+		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
+		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 				super.onScrolled(recyclerView, dx, dy);
@@ -92,7 +95,7 @@ public class RecyclerViewActivity extends Activity {
 			}
 
 			public void onScrollStateChanged(RecyclerView recyclerView,
-					int newState) {
+											 int newState) {
 				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
 				}
@@ -118,13 +121,13 @@ public class RecyclerViewActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int menuId = item.getItemId();
 		switch (menuId) {
-		case R.id.menu_clear:
-			mLoadCount = 0;
-			xRefreshView.setLoadComplete(false);
-			break;
-		case R.id.menu_refresh:
-			xRefreshView.startRefresh();
-			break;
+			case R.id.menu_clear:
+				mLoadCount = 0;
+				xRefreshView.setLoadComplete(false);
+				break;
+			case R.id.menu_refresh:
+				xRefreshView.startRefresh();
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
