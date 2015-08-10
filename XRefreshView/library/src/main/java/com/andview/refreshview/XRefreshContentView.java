@@ -205,11 +205,15 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 					footerView = new XRefreshViewFooter(child.getContext());
 					adapter.setCustomLoadMoreView(footerView);
 				}
-				mFooterCallBack = (IFooterCallBack) footerView;
-				// 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
-				if (null == mContainer) {
-					mFooterCallBack
-							.callWhenNotAutoLoadMore(mRefreshViewListener);
+				if(null!=footerView){
+					mFooterCallBack = (IFooterCallBack) footerView;
+					// 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
+					if (null == mContainer) {
+						mFooterCallBack
+								.callWhenNotAutoLoadMore(mRefreshViewListener);
+					}
+				}else{
+					throw new RuntimeException("not found footerView");
 				}
 			}
 		}
