@@ -18,8 +18,6 @@ import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
-import com.andview.refreshview.recyclerview.UltimateViewAdapter;
-import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         OnBottomLoadMoreTime {
@@ -120,6 +118,20 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mRecyclerViewScrollListener.onScrollStateChanged(
                                 recyclerView, newState);
                     }
+                    RecyclerView.LayoutManager layoutManager = null;
+                    if (layoutManager == null) {
+                        layoutManager = recyclerView.getLayoutManager();
+                    }
+                    getRecyclerViewInfo(layoutManager);
+                    if (mSlienceLoadMore) {
+                        if (mRefreshViewListener != null) {
+                            mRefreshViewListener.onLoadMore(true);
+                        }
+                    } else if (mContainer != null && !mContainer.hasLoadCompleted()
+                            && newState == OnScrollListener.SCROLL_STATE_IDLE
+                            &&(mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+                        mContainer.invoketLoadMore();
+                    }
                 }
 
                 @Override
@@ -128,68 +140,80 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mRecyclerViewScrollListener.onScrolled(recyclerView,
                                 dx, dy);
                     }
-                    RecyclerView.LayoutManager layoutManager = null;
-                    if (layoutManager == null) {
-                        layoutManager = recyclerView.getLayoutManager();
-                    }
-                    getRecyclerViewInfo(layoutManager);
-                    // if (mIsLoadingMore) {
-                    // // todo: there are some bugs needs to be adjusted for
-                    // // admob adapter
-                    // if (mTotalItemCount > previousTotal) {
-                    // mIsLoadingMore = false;
-                    // previousTotal = mTotalItemCount;
-                    // }
-                    // }
-                    LogUtils.i("pre onLoadMore mIsLoadingMore="
-                            + mIsLoadingMore);
-                    if (mSlienceLoadMore) {
-                        if (!mIsLoadingMore
-                                && (mTotalItemCount - mVisibleItemCount - mPreLoadCount) <= mFirstVisibleItem) {
-                            if (mRefreshViewListener != null) {
-                                LogUtils.i("scroll onLoadMore mIsLoadingMore="
-                                        + mIsLoadingMore);
-                                mIsLoadingMore = true;
-                                mRefreshViewListener.onLoadMore(true);
-                            }
-                        }
-                    } else {
-                        if (mContainer != null) {
-                            if (!mIsLoadingMore
-                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-                                if (!mContainer.hasLoadCompleted()) {
-                                    // todo: there are some bugs needs to be
-                                    // adjusted
-                                    // for admob adapter
-                                    if (mRefreshViewListener != null) {
-                                        mRefreshViewListener.onLoadMore(false);
-                                    }
-                                    mIsLoadingMore = true;
-                                    previousTotal = mTotalItemCount;
-                                    mFooterCallBack.onStateRefreshing();
-                                    mState = XRefreshViewState.STATE_LOADING;
-                                } else {
-                                    loadCompleted();
-                                }
-                            } else {
-                                mState = XRefreshViewState.STATE_NORMAL;
-                            }
-                        } else if (null == mContainer) {
-                            if (!mIsLoadingMore
-                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
-                                if (!mHasLoadComplete) {
-                                    if (mState != XRefreshViewState.STATE_READY) {
-                                        mFooterCallBack.onStateReady();
-                                        mState = XRefreshViewState.STATE_READY;
-                                    }
-                                } else {
-                                    loadCompleted();
-                                }
-                            } else {
-                                mState = XRefreshViewState.STATE_NORMAL;
-                            }
-                        }
-                    }
+//                    RecyclerView.LayoutManager layoutManager = null;
+//                    if (layoutManager == null) {
+//                        layoutManager = recyclerView.getLayoutManager();
+//                    }
+//                    getRecyclerViewInfo(layoutManager);
+//                    // if (mIsLoadingMore) {
+//                    // // todo: there are some bugs needs to be adjusted for
+//                    // // admob adapter
+//                    // if (mTotalItemCount > previousTotal) {
+//                    // mIsLoadingMore = false;
+//                    // previousTotal = mTotalItemCount;
+//                    // }
+//                    // }
+//                    LogUtils.i("pre onLoadMore mIsLoadingMore="
+//                            + mIsLoadingMore);
+//                    if (mSlienceLoadMore) {
+//                        if (!mIsLoadingMore
+//                                && (mTotalItemCount - mVisibleItemCount - mPreLoadCount) <= mFirstVisibleItem) {
+//                            if (mRefreshViewListener != null) {
+//                                LogUtils.i("scroll onLoadMore mIsLoadingMore="
+//                                        + mIsLoadingMore);
+//                                mIsLoadingMore = true;
+//                                mRefreshViewListener.onLoadMore(true);
+//                            }
+//                        }
+//                    } else {
+//                        if(mFooterCallBack==null){
+//                            UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
+//                                    .getAdapter();
+//                            if (adapter != null) {
+//                                View footerView = adapter.getCustomLoadMoreView();
+//                                if (null == footerView) {
+//                                    footerView = new XRefreshViewFooter(child.getContext());
+//                                    adapter.setCustomLoadMoreView(footerView);
+//                                }
+//                                mFooterCallBack = (IFooterCallBack) footerView;
+//                            }
+//                        }
+//                        if (mContainer != null) {
+//                            if (!mIsLoadingMore
+//                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+//                                if (!mContainer.hasLoadCompleted()) {
+//                                    // todo: there are some bugs needs to be
+//                                    // adjusted
+//                                    // for admob adapter
+//                                    if (mRefreshViewListener != null) {
+//                                        mRefreshViewListener.onLoadMore(false);
+//                                    }
+//                                    mIsLoadingMore = true;
+//                                    previousTotal = mTotalItemCount;
+//                                    mFooterCallBack.onStateRefreshing();
+//                                    mState = XRefreshViewState.STATE_LOADING;
+//                                } else {
+//                                    loadCompleted();
+//                                }
+//                            } else {
+//                                mState = XRefreshViewState.STATE_NORMAL;
+//                            }
+//                        } else if (null == mContainer) {
+//                            if (!mIsLoadingMore
+//                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+//                                if (!mHasLoadComplete) {
+//                                    if (mState != XRefreshViewState.STATE_READY) {
+//                                        mFooterCallBack.onStateReady();
+//                                        mState = XRefreshViewState.STATE_READY;
+//                                    }
+//                                } else {
+//                                    loadCompleted();
+//                                }
+//                            } else {
+//                                mState = XRefreshViewState.STATE_NORMAL;
+//                            }
+//                        }
+//                    }
                 }
             };
 
@@ -197,21 +221,21 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             if (mSlienceLoadMore) {
                 return;
             }
-            UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
-                    .getAdapter();
-            if (adapter != null) {
-                View footerView = adapter.getCustomLoadMoreView();
-                if (null == footerView) {
-                    footerView = new XRefreshViewFooter(child.getContext());
-                    adapter.setCustomLoadMoreView(footerView);
-                }
-                mFooterCallBack = (IFooterCallBack) footerView;
-                // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
-                if (null == mContainer) {
-                    mFooterCallBack
-                            .callWhenNotAutoLoadMore(mRefreshViewListener);
-                }
-            }
+//            UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
+//                    .getAdapter();
+//            if (adapter != null) {
+//                View footerView = adapter.getCustomLoadMoreView();
+//                if (null == footerView) {
+//                    footerView = new XRefreshViewFooter(child.getContext());
+//                    adapter.setCustomLoadMoreView(footerView);
+//                }
+//                mFooterCallBack = (IFooterCallBack) footerView;
+//                // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
+//                if (null == mContainer) {
+//                    mFooterCallBack
+//                            .callWhenNotAutoLoadMore(mRefreshViewListener);
+//                }
+//            }
         }
     }
 
@@ -397,7 +421,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     /**
      * @return Whether it is possible for the child view of this layout to
-     * scroll up. Override this if the child view is a custom view.
+     *         scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildPullDown() {
         if (child instanceof AbsListView) {
@@ -439,8 +463,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     /**
      * 用来判断view在竖直方向上能不能向上或者向下滑动
      *
-     * @param view      v
-     * @param direction 方向 负数代表向上滑动 ，正数则反之
+     * @param view
+     *            v
+     * @param direction
+     *            方向 负数代表向上滑动 ，正数则反之
      * @return
      */
     public boolean canScrollVertically(View view, int direction) {
@@ -452,11 +478,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public boolean isRecyclerView() {
-        if (mSlienceLoadMore) {
-            return false;
-        } else if (null != child && child instanceof RecyclerView) {
-            return true;
-        }
+//        if (mSlienceLoadMore) {
+//            return false;
+//        } else if (null != child && child instanceof RecyclerView) {
+//            return true;
+//        }
         return false;
     }
 
