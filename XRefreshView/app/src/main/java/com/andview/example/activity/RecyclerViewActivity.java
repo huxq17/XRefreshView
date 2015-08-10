@@ -14,6 +14,7 @@ import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.XRefreshViewFooter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +44,9 @@ public class RecyclerViewActivity extends Activity {
 		initData();
 		adapter = new SimpleAdapter(personList);
 		// 设置静默加载模式
-		xRefreshView.setSlienceLoadMore();
+//		xRefreshView.setSlienceLoadMore();
 		// 静默加载模式不能设置footerview
-		// adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+		 adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 		recyclerView.setAdapter(adapter);
 		xRefreshView.setAutoLoadMore(true);
 		xRefreshView.setPinnedTime(1000);

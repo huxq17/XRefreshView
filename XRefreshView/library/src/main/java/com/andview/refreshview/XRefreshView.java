@@ -23,6 +23,7 @@ import com.andview.refreshview.callback.IHeaderCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.utils.LogUtils;
+import com.andview.refreshview.utils.Utils;
 
 import java.util.Calendar;
 
@@ -219,7 +220,8 @@ public class XRefreshView extends LinearLayout {
 			startRefresh();
 		}
 		if (mHeadMoveDistence == 0) {
-			mHeadMoveDistence = getHeight() / 3;
+			int ScreenHeight = Utils.getScreenSize(getContext()).y;
+			mHeadMoveDistence = ScreenHeight / 3;
 		}
 	}
 

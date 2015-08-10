@@ -28,7 +28,7 @@ public class ListViewActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_listview);
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 1; i++) {
 			str_name.add("数据" + i);
 		}
 		lv = (ListView) findViewById(R.id.lv);
