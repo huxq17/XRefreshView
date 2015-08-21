@@ -348,13 +348,17 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (mSlienceLoadMore) {
-            if (mRefreshViewListener != null) {
+            if (mRefreshViewListener != null && !mContainer.hasLoadCompleted() && !mIsLoadingMore && mTotalItemCount - 1 == view.getLastVisiblePosition()) {
                 mRefreshViewListener.onLoadMore(true);
+                mIsLoadingMore = true;
             }
         } else if (mContainer != null && !mContainer.hasLoadCompleted()
                 && scrollState == OnScrollListener.SCROLL_STATE_IDLE
                 && mTotalItemCount - 1 == view.getLastVisiblePosition()) {
-            mContainer.invoketLoadMore();
+            if (!mIsLoadingMore) {
+                mContainer.invoketLoadMore();
+                mIsLoadingMore = true;
+            }
         }
         if (mAbsListViewScrollListener != null) {
             mAbsListViewScrollListener.onScrollStateChanged(view, scrollState);
