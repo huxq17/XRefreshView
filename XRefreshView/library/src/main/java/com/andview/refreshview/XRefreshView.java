@@ -616,7 +616,7 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             mFooterView.offsetTopAndBottom(deltaY);
         }
-        invalidate();
+        postInvalidate();
 
         if (mRefreshViewListener != null
                 && (mContentView.isTop() || mPullRefreshing)) {
