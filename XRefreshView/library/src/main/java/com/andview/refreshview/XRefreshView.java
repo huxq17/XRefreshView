@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -254,6 +255,7 @@ public class XRefreshView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
+//        if(mHolder.mOffsetY!=0)return;
         LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
         mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
         int childCount = getChildCount();
@@ -616,14 +618,14 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             mFooterView.offsetTopAndBottom(deltaY);
         }
-        postInvalidate();
+        ViewCompat.postInvalidateOnAnimation(this);
 
         if (mRefreshViewListener != null
                 && (mContentView.isTop() || mPullRefreshing)) {
             double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
             offset = offset > 1 ? 1 : offset;
             mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
-            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY);
+            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY,deltaY);
         }
     }
 
