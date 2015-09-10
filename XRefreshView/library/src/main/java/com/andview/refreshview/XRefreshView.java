@@ -148,7 +148,6 @@ public class XRefreshView extends LinearLayout {
      */
     public void setSlienceLoadMore() {
         mContentView.setSlienceLoadMore(true);
-        setAutoLoadMore(false);
         setPullLoadEnable(false);
     }
 
@@ -403,14 +402,16 @@ public class XRefreshView extends LinearLayout {
     // return super.onInterceptTouchEvent(ev);
     // }
 
-    public void invoketLoadMore() {
+    public boolean invoketLoadMore() {
         if (mEnablePullLoad && !mPullLoading && !mPullRefreshing
                 && !mHasScrollBack && !mHasLoadComplete) {
             mFooterCallBack.onStateRefreshing();
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             startScroll(offset, SCROLL_DURATION);
             startLoadMore();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -474,7 +475,7 @@ public class XRefreshView extends LinearLayout {
     public void setPullLoadEnable(boolean enable) {
         LogUtils.d("setPullLoadEnable");
         mEnablePullLoad = enable;
-        autoLoadMore = false;
+        setAutoLoadMore(false);
     }
 
     /**

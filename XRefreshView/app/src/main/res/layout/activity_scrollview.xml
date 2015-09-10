@@ -7,7 +7,7 @@
     android:background="#fff"
     xrefreshview:autoRefresh="false" >
 
-    <ScrollView
+    <com.andview.refreshview.XScrollView
         android:id="@+id/gv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -18,6 +18,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
         </LinearLayout>
-    </ScrollView>
+    </com.andview.refreshview.XScrollView>
 
 </com.andview.refreshview.XRefreshView>

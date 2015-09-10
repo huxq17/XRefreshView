@@ -23,5 +23,4 @@
         <attr name="autoRefresh" format="boolean" />
         <attr name="autoLoadMore" format="boolean" />
     </declare-styleable>
-
 </resources>

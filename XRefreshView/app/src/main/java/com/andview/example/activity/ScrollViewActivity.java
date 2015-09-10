@@ -21,9 +21,8 @@ public class ScrollViewActivity extends Activity {
 		setContentView(R.layout.activity_scrollview);
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		ll = (LinearLayout) findViewById(R.id.ll);
-		outView.setPullLoadEnable(true);
 		outView.setAutoRefresh(false);
-		outView.setAutoLoadMore(false);
+		outView.setSlienceLoadMore();
 
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 

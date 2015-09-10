@@ -35,7 +35,7 @@ public interface IHeaderCallBack {
 	 * @param offsetY
 	 *            headerview移动的距离
 	 */
-	public void onHeaderMove(double offset, int offsetY);
+	public void onHeaderMove(double offset, int offsetY,int deltaY);
 
 	/**
 	 * 设置显示上一次刷新的时间

@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
+import com.andview.refreshview.XScrollView.OnScrollBottomListener;
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
@@ -106,6 +107,29 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         if (child instanceof AbsListView) {
             AbsListView absListView = (AbsListView) child;
             absListView.setOnScrollListener(this);
+        }else if (child instanceof ScrollView) {
+            if (child instanceof XScrollView) {
+                XScrollView scrollView = (XScrollView) child;
+                scrollView
+                        .registerOnBottomListener(new OnScrollBottomListener() {
+
+                            @Override
+                            public void srollToBottom() {
+                                if (mSlienceLoadMore) {
+                                    if (mRefreshViewListener != null) {
+                                        mRefreshViewListener.onLoadMore(true);
+                                    }
+                                } else if (mContainer != null
+                                        && !mContainer.hasLoadCompleted()) {
+                                    mContainer.invoketLoadMore();
+                                }
+                            }
+                        });
+            } else {
+                throw new RuntimeException(
+                        "please use XScrollView instead of ScrollView!");
+            }
+
         } else if (child instanceof RecyclerView) {
             final RecyclerView recyclerView = (RecyclerView) child;
             recyclerView.removeOnScrollListener(mOnScrollListener);
@@ -356,8 +380,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 && scrollState == OnScrollListener.SCROLL_STATE_IDLE
                 && mTotalItemCount - 1 <= view.getLastVisiblePosition()+mPreLoadCount) {
             if (!mIsLoadingMore) {
-                mContainer.invoketLoadMore();
-                mIsLoadingMore = true;
+                mIsLoadingMore = mContainer.invoketLoadMore();
             }
         }
         if (mAbsListViewScrollListener != null) {

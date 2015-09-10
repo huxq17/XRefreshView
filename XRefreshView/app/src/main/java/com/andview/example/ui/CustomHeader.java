@@ -117,7 +117,7 @@ public class CustomHeader extends View implements IHeaderCallBack {
 	}
 
 	@Override
-	public void onHeaderMove(double offset, int offsetY) {
+	public void onHeaderMove(double offset, int offsetY,int deltaY) {
 		mDrawable.setAlpha((int) (255 * offset));
 		mDrawable.showArrow(true);
 

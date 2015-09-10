@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:raindrop="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
+
+    <com.andview.example.ui.raindrop.RainDropView
+        android:id="@+id/waterdroplist_waterdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        raindrop:bottomcircle_x="20dp"
+        raindrop:bottomcircle_y="20dp"
+        raindrop:max_circle_radius="20dp"
+        raindrop:min_circle_radius="5dp"
+        raindrop:topcircle_x="20dp"
+        raindrop:topcircle_y="20dp"
+        raindrop:waterdrop_color="#9ba2ab" />
+
+    <ProgressBar
+        android:id="@+id/waterdroplist_header_progressbar"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:visibility="gone" />
+
+</LinearLayout>
