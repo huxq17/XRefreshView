@@ -474,6 +474,7 @@ public class XRefreshView extends LinearLayout {
     public void setPullLoadEnable(boolean enable) {
         LogUtils.d("setPullLoadEnable");
         mEnablePullLoad = enable;
+        autoLoadMore = false;
     }
 
     /**
