@@ -169,7 +169,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             + mIsLoadingMore);
                     if (mSlienceLoadMore) {
                         if (!mIsLoadingMore
-                                && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
+                                && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {
                             if (mRefreshViewListener != null) {
                                 LogUtils.i("scroll onLoadMore mIsLoadingMore="
                                         + mIsLoadingMore);
@@ -180,7 +180,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     } else {
                         if (mContainer != null) {
                             if (!mIsLoadingMore
-                                    && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
+                                    && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {
                                 if (!mContainer.hasLoadCompleted()) {
                                     // todo: there are some bugs needs to be
                                     // adjusted
@@ -200,7 +200,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             }
                         } else if (null == mContainer) {
                             if (!mIsLoadingMore
-                                    && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
+                                    && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {
                                 if (!mHasLoadComplete) {
                                     if (mState != XRefreshViewState.STATE_READY) {
                                         mFooterCallBack.onStateReady();
