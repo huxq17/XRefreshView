@@ -52,7 +52,7 @@ public class RecyclerViewActivity extends Activity {
 		xRefreshView.setPinnedTime(1000);
 		xRefreshView.setMoveForHorizontal(true);
 		//设置静默加载时提前加载的item个数
-		xRefreshView.setPreLoadCount(5);
+		xRefreshView.setPreLoadCount(2);
 
 		xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 

@@ -39,7 +39,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     private int mVisibleItemCount = 0;
     private int previousTotal = 0;
     private int mFirstVisibleItem;
-    private int lastVisibleItemPosition;
+    private int mLastVisibleItemPosition;
     private boolean mIsLoadingMore;
     private IFooterCallBack mFooterCallBack;
     private XRefreshViewState mState = XRefreshViewState.STATE_NORMAL;
@@ -169,7 +169,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             + mIsLoadingMore);
                     if (mSlienceLoadMore) {
                         if (!mIsLoadingMore
-                                && (mTotalItemCount - mVisibleItemCount - mPreLoadCount) <= mFirstVisibleItem) {
+                                && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
                             if (mRefreshViewListener != null) {
                                 LogUtils.i("scroll onLoadMore mIsLoadingMore="
                                         + mIsLoadingMore);
@@ -180,7 +180,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     } else {
                         if (mContainer != null) {
                             if (!mIsLoadingMore
-                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+                                    && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
                                 if (!mContainer.hasLoadCompleted()) {
                                     // todo: there are some bugs needs to be
                                     // adjusted
@@ -200,7 +200,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             }
                         } else if (null == mContainer) {
                             if (!mIsLoadingMore
-                                    && (mTotalItemCount - mVisibleItemCount) <= mFirstVisibleItem) {
+                                    && (mTotalItemCount - mPreLoadCount) <= mLastVisibleItemPosition) {
                                 if (!mHasLoadComplete) {
                                     if (mState != XRefreshViewState.STATE_READY) {
                                         mFooterCallBack.onStateReady();
@@ -253,12 +253,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         "Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
             }
         }
+        mTotalItemCount = layoutManager.getItemCount();
         switch (layoutManagerType) {
             case LINEAR:
                 mVisibleItemCount = layoutManager.getChildCount();
-                mTotalItemCount = layoutManager.getItemCount();
+                mLastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
+                        .findLastVisibleItemPosition();
             case GRID:
-                lastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
+                mLastVisibleItemPosition = ((LinearLayoutManager) layoutManager)
                         .findLastVisibleItemPosition();
                 mFirstVisibleItem = ((LinearLayoutManager) layoutManager)
                         .findFirstVisibleItemPosition();
@@ -271,7 +273,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
                 staggeredGridLayoutManager
                         .findLastVisibleItemPositions(lastPositions);
-                lastVisibleItemPosition = findMax(lastPositions);
+                mLastVisibleItemPosition = findMax(lastPositions);
 
                 staggeredGridLayoutManager
                         .findFirstVisibleItemPositions(lastPositions);
@@ -279,6 +281,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 break;
         }
     }
+
 
     /**
      * 静默加载时提前加载的item个数

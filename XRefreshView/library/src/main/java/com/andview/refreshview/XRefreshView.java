@@ -903,12 +903,10 @@ public class XRefreshView extends LinearLayout {
 
         @Override
         public void onRefresh() {
-
         }
 
         @Override
         public void onLoadMore(boolean isSlience) {
-
         }
 
         @Override
@@ -917,7 +915,6 @@ public class XRefreshView extends LinearLayout {
 
         @Override
         public void onHeaderMove(double offset, int offsetY) {
-
         }
 
     }
