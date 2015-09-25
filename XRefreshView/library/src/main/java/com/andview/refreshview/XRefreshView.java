@@ -327,7 +327,6 @@ public class XRefreshView extends LinearLayout {
                     return super.dispatchTouchEvent(ev);
                 }
                 if (isForHorizontalMove && !mMoveForHorizontal
-                        && Math.abs(deltaX) > mTouchSlop
                         && Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (mHolder.mOffsetY == 0) {
                         mMoveForHorizontal = true;
