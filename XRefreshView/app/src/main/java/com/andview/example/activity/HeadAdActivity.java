@@ -21,6 +21,7 @@ import com.andview.example.ui.AdHeader;
 import com.andview.example.ui.LoopViewPager;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,12 @@ public class HeadAdActivity extends Activity {
 				}, 2000);
 			}
 		});
+		mUiHandler = new UIHandler();
+		// 开始图片滚动
+		mScheduledExecutorService = Executors
+				.newSingleThreadScheduledExecutor();
+		mScheduledExecutorService.scheduleAtFixedRate(
+				new ScrollTask(), 1, 5, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -164,14 +171,11 @@ public class HeadAdActivity extends Activity {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_UP:
 					// 开始图片滚动
-					if (mScheduledExecutorService != null
-							&& mScheduledExecutorService.isShutdown()) {
-						mScheduledExecutorService = Executors
-								.newSingleThreadScheduledExecutor();
-						mScheduledExecutorService.scheduleAtFixedRate(
-								new ScrollTask(), 1, 5, TimeUnit.SECONDS);
-
-					}
+//					if (mScheduledExecutorService != null
+//							&& mScheduledExecutorService.isShutdown()) {
+//						
+//
+//					}
 					break;
 				default:
 					break;
@@ -188,12 +192,15 @@ public class HeadAdActivity extends Activity {
 	private class ScrollTask implements Runnable {
 
 		public void run() {
-			synchronized (mLoopViewPager) {
+			LogUtils.i("PagerPager mUiHandler == null is "+(mUiHandler==null));
+//			synchronized (mLoopViewPager) {
 				mCurrentItem = (mCurrentItem + 1) % mImageIds.length;
 				Message msg = mUiHandler.obtainMessage();
 				msg.what = 1000;
+				LogUtils.i("PagerPager2");
 				msg.sendToTarget(); // 通过Handler切换图片
-			}
+				LogUtils.i("PagerPager3");
+//			}
 		}
 	}
 
