@@ -43,7 +43,7 @@ public class XRefreshView extends LinearLayout {
     public boolean mPullRefreshing = false; // is refreashing.
     private float OFFSET_RADIO = 1.8f; // support iOS like pull
 
-    private int SCROLL_DURATION = 400; // scroll back duration
+    private int SCROLL_DURATION = 300; // scroll back duration
     private XRefreshViewListener mRefreshViewListener;
     // -- footer view
     private View mFooterView;
@@ -85,7 +85,7 @@ public class XRefreshView extends LinearLayout {
      * 有没有滚回初始位置
      */
     private boolean mHasScrollBack;
-    private Handler mHandler = new Handler();
+    private static Handler mHandler = new Handler();
     private XRefreshViewState mState = null;
     /**
      * 当已无更多数据时候，需把这个变量设为true
@@ -512,7 +512,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 如果第二个可变参数不为空，则代表是自动刷新
+     * 如果第可变参数不为空，则代表是自动刷新
      *
      * @param currentY
      * @param deltaY
