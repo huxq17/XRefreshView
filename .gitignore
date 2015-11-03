@@ -2,10 +2,6 @@
 bin/
 gen/
 
-# Ant
-build.xml
-local.properties
-
 # Maven
 target/
 pom.xml.*
@@ -34,7 +30,12 @@ output/
 .settings/
 .properties
 
-
+# Ant
+build.xml
+local.properties
+.idea/workspace.xml
+/.idea/libraries
+.DS_Store
 .gradle
 build/
 

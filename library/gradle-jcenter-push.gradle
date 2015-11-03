@@ -1,0 +1,139 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+
+task androidJavadocs(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.encoding = "UTF-8"
+        }
+    }
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+artifacts {
+    archives androidJavadocsJar
+    archives androidSourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId GROUP
+            version VERSION_NAME
+            artifactId POM_ARTIFACT_ID
+            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
+            artifact androidJavadocsJar
+            artifact androidSourcesJar
+
+            pom.withXml {
+                Node root = asNode()
+                root.appendNode('name', POM_ARTIFACT_ID)
+                root.appendNode('description', POM_DESCRIPTION)
+                root.appendNode('url', POM_URL)
+
+                def issues = root.appendNode('issueManagement')
+                issues.appendNode('system', 'github')
+                issues.appendNode('url', ISSUE_URL)
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', POM_SCM_URL)
+                scm.appendNode('connection', POM_SCM_CONNECTION)
+                scm.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', POM_LICENCE_NAME)
+                license.appendNode('url', POM_LICENCE_URL)
+                license.appendNode('distribution', POM_LICENCE_DIST)
+
+                def developer = root.appendNode('developers').appendNode('developer')
+                developer.appendNode('id', POM_DEVELOPER_ID)
+                developer.appendNode('name', POM_DEVELOPER_NAME)
+                developer.appendNode('email', POM_DEVELOPER_EMAIL)
+                developer.appendNode('url', POM_DEVELOPER_URL)
+
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+                configurations.compile.allDependencies.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.group)
+                    dependencyNode.appendNode('artifactId', it.name)
+                    dependencyNode.appendNode('version', it.version)
+                }
+            }
+        }
+    }
+}
+
+def getBintrayUserProperty() {
+    return hasProperty('BINTRAY_USER') ? BINTRAY_USER : ""
+}
+
+def getBintrayApiKeyProperty() {
+    return hasProperty('BINTRAY_APIKEY') ? BINTRAY_APIKEY : ""
+}
+
+def getGpgPassphraseProperty() {
+    return hasProperty('GPG_PASSPHRASE') ? GPG_PASSPHRASE : ""
+}
+
+def getUserTokenProperty() {
+    return hasProperty('USERTOKEN') ? USERTOKEN : ""
+}
+
+def getUserPasswordProperty() {
+    return hasProperty('USERPASSWORD') ? USERPASSWORD : ""
+}
+
+// gradle bintrayUpload
+bintray {
+    user = getBintrayUserProperty()
+    key = getBintrayApiKeyProperty()
+    def passphrase = getGpgPassphraseProperty()
+    def userToken = getUserTokenProperty()
+    def userPassword = getUserPasswordProperty()
+    publications = ['mavenJava']
+
+    dryRun = false
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = POM_ARTIFACT_ID
+        desc = POM_NAME
+        websiteUrl = POM_URL
+        issueTrackerUrl = ISSUE_URL
+        vcsUrl = GIT_URL
+        licenses = ['Apache-2.0']
+        labels = ['android', 'aar']
+        publicDownloadNumbers = true
+
+        version {
+            name = VERSION_NAME
+            vcsTag = VERSION_NAME
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
+            }
+            mavenCentralSync {
+                sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = userToken //OSS user token
+                password = userPassword //OSS user password
+                close = '1'
+                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }
+        }
+    }
+}
