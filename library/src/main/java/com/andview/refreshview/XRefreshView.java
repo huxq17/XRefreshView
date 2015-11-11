@@ -326,7 +326,7 @@ public class XRefreshView extends LinearLayout {
                     isIntercepted = true;
                     return super.dispatchTouchEvent(ev);
                 }
-                if (isForHorizontalMove && !mMoveForHorizontal
+                if (isForHorizontalMove && !mMoveForHorizontal&&Math.abs(deltaX)>mTouchSlop
                         && Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (mHolder.mOffsetY == 0) {
                         mMoveForHorizontal = true;
@@ -626,7 +626,7 @@ public class XRefreshView extends LinearLayout {
             double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
             offset = offset > 1 ? 1 : offset;
             mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
-            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY,deltaY);
+            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY, deltaY);
         }
     }
 
