@@ -25,6 +25,7 @@ public class CustomViewActivity extends Activity {
 	private int mTotalItemCount;
 	private StickylistAdapter adapter;
 
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
