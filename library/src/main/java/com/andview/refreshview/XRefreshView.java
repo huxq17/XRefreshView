@@ -581,12 +581,12 @@ public class XRefreshView extends LinearLayout {
         } else {
             if (!mPullRefreshing) {
                 updateHeaderHeight(0, mHeaderViewHeight, 0);
+                mPullRefreshing = true;
+                if (mRefreshViewListener != null) {
+                    mRefreshViewListener.onRefresh();
+                }
+                mContentView.scrollToTop();
             }
-            mPullRefreshing = true;
-            if (mRefreshViewListener != null) {
-                mRefreshViewListener.onRefresh();
-            }
-            mContentView.scrollToTop();
         }
     }
 
