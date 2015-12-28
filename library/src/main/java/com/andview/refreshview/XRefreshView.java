@@ -360,7 +360,6 @@ public class XRefreshView extends LinearLayout {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);
                 // }
                 if (mHolder.hasHeaderPullDown()) {
-                    // invoke refresh
                     if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > mHeaderViewHeight) {
                         mPullRefreshing = true;
                         mHeaderCallBack.onStateRefreshing();
@@ -371,11 +370,13 @@ public class XRefreshView extends LinearLayout {
                     }
                     resetHeaderHeight();
                 } else if (mHolder.hasFooterPullUp()) {
-                    if (mEnablePullLoad && !mStopingRefresh && needAddFooterView() && !mHasLoadComplete) {
-                        invoketLoadMore();
-                    } else {
-                        int offset = 0 - mHolder.mOffsetY;
-                        startScroll(offset, SCROLL_DURATION);
+                    if (!mStopingRefresh) {
+                        if (mEnablePullLoad && needAddFooterView() && !mHasLoadComplete) {
+                            invokeLoadMore();
+                        } else {
+                            int offset = 0 - mHolder.mOffsetY;
+                            startScroll(offset, SCROLL_DURATION);
+                        }
                     }
                 }
                 mLastY = -1; // reset
@@ -388,11 +389,13 @@ public class XRefreshView extends LinearLayout {
         return super.dispatchTouchEvent(ev);
     }
 
-    public boolean invoketLoadMore() {
-        if (mEnablePullLoad && !mPullRefreshing
+    public boolean invokeLoadMore() {
+        if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh
                 && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
-            startScroll(offset, SCROLL_DURATION);
+            if (offset > 0) {
+                startScroll(offset, SCROLL_DURATION);
+            }
             if (!mPullLoading) {
                 mFooterCallBack.onStateRefreshing();
                 startLoadMore();
@@ -644,7 +647,7 @@ public class XRefreshView extends LinearLayout {
      * stop refresh, reset header view.
      */
     public void stopRefresh() {
-        LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
+        LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
         if (mPullRefreshing == true) {
             mPullRefreshing = false;
             mStopingRefresh = true;

@@ -22,7 +22,9 @@ public class ScrollViewActivity extends Activity {
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		ll = (LinearLayout) findViewById(R.id.ll);
 		outView.setAutoRefresh(false);
-		outView.setSlienceLoadMore();
+		outView.setPullLoadEnable(true);
+		outView.setPinnedTime(1000);
+//		outView.setSlienceLoadMore();
 
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -43,7 +45,7 @@ public class ScrollViewActivity extends Activity {
 					@Override
 					public void run() {
 						//setLoadComplete不要和stopLoadMore同时调用
-						if (count > 1) {
+						if (count > 100) {
 							outView.setLoadComplete(true);
 						} else {
 							outView.stopLoadMore();

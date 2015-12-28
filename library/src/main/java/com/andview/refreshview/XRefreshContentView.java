@@ -122,7 +122,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                     }
                                 } else if (mContainer != null
                                         && !mContainer.hasLoadCompleted()) {
-                                    mContainer.invoketLoadMore();
+                                    mContainer.invokeLoadMore();
                                 }
                             }
                         });
@@ -384,7 +384,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 && scrollState == OnScrollListener.SCROLL_STATE_IDLE
                 && mTotalItemCount - 1 <= view.getLastVisiblePosition()+mPreLoadCount) {
             if (!mIsLoadingMore) {
-                mIsLoadingMore = mContainer.invoketLoadMore();
+                mIsLoadingMore = mContainer.invokeLoadMore();
             }
         }
         if (mAbsListViewScrollListener != null) {
