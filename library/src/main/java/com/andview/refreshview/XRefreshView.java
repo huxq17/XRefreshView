@@ -81,10 +81,6 @@ public class XRefreshView extends LinearLayout {
      * 当刷新完成以后，headerview和footerview被固定的时间，在这个时间以后headerview才会回弹
      */
     private int mPinnedTime;
-    /**
-     * 有没有滚回初始位置
-     */
-    private boolean mHasScrollBack;
     private static Handler mHandler = new Handler();
     private XRefreshViewState mState = null;
     /**
@@ -94,7 +90,7 @@ public class XRefreshView extends LinearLayout {
     /**
      * 在刷新的时候是否可以移动contentView
      */
-    private boolean mIsPinnedContentWhenRefreshing = true;
+    private boolean mIsPinnedContentWhenRefreshing = false;
 
     public XRefreshView(Context context) {
         this(context, null);
@@ -306,14 +302,13 @@ public class XRefreshView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastMoveEvent = ev;
-                if (mPullLoading || mPullRefreshing || !isEnabled() || mIsIntercept
-                        || mHasScrollBack || mContentView.isLoading()) {
-                    if (mIsPinnedContentWhenRefreshing) {
-                        return super.dispatchTouchEvent(ev);
-                    } else {
-                        sendCancelEvent();
-                        return true;
-                    }
+                if (mStopingRefresh || !isEnabled() || mIsIntercept
+                        || mContentView.isLoading()) {
+                    return super.dispatchTouchEvent(ev);
+                }
+                if ((mPullLoading || mPullRefreshing) && mIsPinnedContentWhenRefreshing) {
+                    sendCancelEvent();
+                    return true;
                 }
                 int currentY = (int) ev.getRawY();
                 int currentX = (int) ev.getRawX();
@@ -326,7 +321,7 @@ public class XRefreshView extends LinearLayout {
                     isIntercepted = true;
                     return super.dispatchTouchEvent(ev);
                 }
-                if (isForHorizontalMove && !mMoveForHorizontal&&Math.abs(deltaX)>mTouchSlop
+                if (isForHorizontalMove && !mMoveForHorizontal && Math.abs(deltaX) > mTouchSlop
                         && Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (mHolder.mOffsetY == 0) {
                         mMoveForHorizontal = true;
@@ -364,9 +359,9 @@ public class XRefreshView extends LinearLayout {
                 // && !mPullRefreshing && !mPullLoading) {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);
                 // }
-                if (mHolder.hasHeaderPullDown() && !mHasScrollBack) {
+                if (mHolder.hasHeaderPullDown()) {
                     // invoke refresh
-                    if (mEnablePullRefresh && mHolder.mOffsetY > mHeaderViewHeight) {
+                    if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > mHeaderViewHeight) {
                         mPullRefreshing = true;
                         mHeaderCallBack.onStateRefreshing();
                         mState = XRefreshViewState.STATE_REFRESHING;
@@ -376,7 +371,7 @@ public class XRefreshView extends LinearLayout {
                     }
                     resetHeaderHeight();
                 } else if (mHolder.hasFooterPullUp()) {
-                    if (mEnablePullLoad && needAddFooterView() && !mHasLoadComplete) {
+                    if (mEnablePullLoad && !mStopingRefresh && needAddFooterView() && !mHasLoadComplete) {
                         invoketLoadMore();
                     } else {
                         int offset = 0 - mHolder.mOffsetY;
@@ -393,21 +388,15 @@ public class XRefreshView extends LinearLayout {
         return super.dispatchTouchEvent(ev);
     }
 
-    // @Override
-    // public boolean onInterceptTouchEvent(MotionEvent ev) {
-    // if(mPullRefreshing||mPullLoading){
-    // return !mIsPinnedContentWhenRefreshing;
-    // }
-    // return super.onInterceptTouchEvent(ev);
-    // }
-
     public boolean invoketLoadMore() {
-        if (mEnablePullLoad && !mPullLoading && !mPullRefreshing
-                && !mHasScrollBack && !mHasLoadComplete) {
-            mFooterCallBack.onStateRefreshing();
+        if (mEnablePullLoad && !mPullRefreshing
+                && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             startScroll(offset, SCROLL_DURATION);
-            startLoadMore();
+            if (!mPullLoading) {
+                mFooterCallBack.onStateRefreshing();
+                startLoadMore();
+            }
             return true;
         }
         return false;
@@ -472,7 +461,6 @@ public class XRefreshView extends LinearLayout {
      * @param enable
      */
     public void setPullLoadEnable(boolean enable) {
-        LogUtils.d("setPullLoadEnable");
         mEnablePullLoad = enable;
         setAutoLoadMore(false);
     }
@@ -644,10 +632,13 @@ public class XRefreshView extends LinearLayout {
                     + mHolder.mOffsetY);
         } else {
             LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
-            if (mHolder.mOffsetY == 0)
-                mHasScrollBack = false;
+            if (mHolder.mOffsetY == 0) {
+                mStopingRefresh = false;
+            }
         }
     }
+
+    private boolean mStopingRefresh = false;
 
     /**
      * stop refresh, reset header view.
@@ -656,9 +647,9 @@ public class XRefreshView extends LinearLayout {
         LogUtils.i("stopRefresh mPullRefreshing=" + mPullRefreshing);
         if (mPullRefreshing == true) {
             mPullRefreshing = false;
+            mStopingRefresh = true;
             mHeaderCallBack.onStateFinish();
             mState = XRefreshViewState.STATE_COMPLETE;
-            mHasScrollBack = true;
             mHandler.postDelayed(new Runnable() {
 
                 @Override
@@ -706,11 +697,11 @@ public class XRefreshView extends LinearLayout {
     public void stopLoadMore() {
         if (needAddFooterView()) {
             if (mPullLoading == true) {
+                mStopingRefresh = true;
                 mPullLoading = false;
                 mFooterCallBack.onStateFinish();
                 mState = XRefreshViewState.STATE_COMPLETE;
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    mHasScrollBack = true;
                     mHandler.postDelayed(new Runnable() {
 
                         @Override
@@ -761,7 +752,6 @@ public class XRefreshView extends LinearLayout {
      * @param duration 滑动持续时间
      */
     public void startScroll(int offsetY, int duration) {
-        mHasScrollBack = true;
         if (offsetY != 0) {
             mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
             invalidate();
@@ -838,7 +828,7 @@ public class XRefreshView extends LinearLayout {
      * @param isPinned true 固定不移动 反之，可以移动
      */
     public void setPinnedContent(boolean isPinned) {
-        mIsPinnedContentWhenRefreshing = !isPinned;
+        mIsPinnedContentWhenRefreshing = isPinned;
     }
 
     /**
@@ -847,7 +837,6 @@ public class XRefreshView extends LinearLayout {
      * @param headerView headerView必须要实现 IHeaderCallBack接口
      */
     public void setCustomHeaderView(View headerView) {
-        LogUtils.i("setCustomHeaderView");
         if (headerView instanceof IHeaderCallBack) {
             mHeaderView = headerView;
         } else {

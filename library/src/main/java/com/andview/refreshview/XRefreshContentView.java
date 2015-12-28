@@ -66,6 +66,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     public void setContentView(View child) {
         this.child = child;
+        child.setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
     }
 
     public View getContentView() {
