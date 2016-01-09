@@ -133,6 +133,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
         } else if (child instanceof RecyclerView) {
             final RecyclerView recyclerView = (RecyclerView) child;
+            if (!(recyclerView.getAdapter() instanceof UltimateViewAdapter)) {
+                throw new RuntimeException("Recylerview的adapter请继承 UltimateViewAdapter");
+            }
             final UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
                     .getAdapter();
             recyclerView.removeOnScrollListener(mOnScrollListener);
@@ -179,7 +182,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                 LogUtils.i("scroll onLoadMore mIsLoadingMore="
                                         + mIsLoadingMore);
                                 mIsLoadingMore = true;
-                                refreshAdapter(adapter,layoutManager);
+                                refreshAdapter(adapter, layoutManager);
                                 mRefreshViewListener.onLoadMore(true);
                             }
                         }
@@ -189,7 +192,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                     && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {
                                 if (!mContainer.hasLoadCompleted()) {
                                     if (mRefreshViewListener != null) {
-                                        refreshAdapter(adapter,layoutManager);
+                                        refreshAdapter(adapter, layoutManager);
                                         mRefreshViewListener.onLoadMore(false);
                                     }
                                     mIsLoadingMore = true;
@@ -205,7 +208,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         } else if (null == mContainer) {
                             if (!mIsLoadingMore
                                     && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {
-                                refreshAdapter(adapter,layoutManager);
+                                refreshAdapter(adapter, layoutManager);
                                 if (!mHasLoadComplete) {
                                     if (mState != XRefreshViewState.STATE_READY) {
                                         mFooterCallBack.onStateReady();
