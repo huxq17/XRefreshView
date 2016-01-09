@@ -14,8 +14,6 @@ import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
-import com.andview.refreshview.recyclerview.UltimateViewAdapter;
-import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +41,10 @@ public class RecyclerViewActivity extends Activity {
         adapter = new SimpleAdapter(personList);
         // 设置静默加载模式
 //		xRefreshView.setSlienceLoadMore();
+        layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-        createLayoutManager();
-        recyclerView.setLayoutManager(layoutManager);
         xRefreshView.setAutoLoadMore(true);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
@@ -101,16 +99,6 @@ public class RecyclerViewActivity extends Activity {
 //				}
 //			}
 //		});
-    }
-
-    private void createLayoutManager() {
-        layoutManager = new GridLayoutManager(this, 2);
-        if (layoutManager instanceof GridLayoutManager) {
-        //当layoutmanager为GridLayoutManager时，需添加下面这行代码，让rooterview宽度充满recyclerview
-            layoutManager.setSpanSizeLookup(new XSpanSizeLookup((UltimateViewAdapter) recyclerView.getAdapter(), layoutManager.getSpanCount()));
-        }else{
-            //当layoutmanager为LinearLayoutManager或者为StaggeredGridLayoutManager时不需要做操作
-        }
     }
 
     private void initData() {

@@ -110,6 +110,9 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
             Footer++;
         return getAdapterItemCount() + Footer;
     }
+    public View getFooterView(){
+        return customLoadMoreView;
+    }
 
     /**
      * Returns the number of items in the adapter bound to the parent

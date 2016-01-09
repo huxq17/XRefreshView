@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -20,6 +21,7 @@ import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.UltimateViewAdapter;
+import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
@@ -150,6 +152,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mRecyclerViewScrollListener.onScrollStateChanged(
                                 recyclerView, newState);
                     }
+                    refreshAdapter(adapter,null);
                 }
 
                 @Override
@@ -165,9 +168,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     if (layoutManager == null) {
                         layoutManager = recyclerView.getLayoutManager();
                     }
-                    getRecyclerViewInfo(layoutManager);
+                    getRecyclerViewInfo(layoutManager, adapter);
                     // if (mIsLoadingMore) {
-                    // // admob adapter
                     // if (mTotalItemCount > previousTotal) {
                     // mIsLoadingMore = false;
                     // previousTotal = mTotalItemCount;
@@ -248,17 +250,27 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     private boolean mRefreshAdapter = false;
 
     private void refreshAdapter(UltimateViewAdapter adapter, RecyclerView.LayoutManager manager) {
-        if (!(manager instanceof GridLayoutManager) && adapter != null && !mRefreshAdapter) {
-            adapter.notifyDataSetChanged();
-            mRefreshAdapter = true;
+        if (adapter != null && !mRefreshAdapter) {
+            if (!(manager instanceof GridLayoutManager)) {
+                View footerView = adapter.getFooterView();
+                if (footerView != null) {
+                    ViewGroup.LayoutParams layoutParams = footerView.getLayoutParams();
+                    if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                        ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
+                        mRefreshAdapter = true;
+                    }
+                }
+            }
         }
     }
 
-    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager) {
+    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager, UltimateViewAdapter adapter) {
         int[] lastPositions = null;
         if (layoutManagerType == null) {
             if (layoutManager instanceof GridLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+                gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
             } else if (layoutManager instanceof LinearLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.LINEAR;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {
