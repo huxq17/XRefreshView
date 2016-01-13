@@ -38,10 +38,18 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
 
     public abstract VH onCreateViewHolder(ViewGroup parent);
 
+    /**
+     * 替代onBindViewHolder方法，实现这个方法就行了
+     *
+     * @param holder
+     * @param position
+     */
+    public abstract void onBindViewHolder(VH holder, int position,boolean isItem);
+
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public final void onBindViewHolder(VH holder, int position) {
         if (position < getAdapterItemCount()) {
-            onBindView(holder, position);
+            onBindViewHolder(holder, position,true);
         } else {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
@@ -49,8 +57,6 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
             }
         }
     }
-
-    public abstract void onBindView(VH holder, int position);
 
     /**
      * Using a custom LoadMoreView
@@ -66,7 +72,8 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
         }
         notifyDataSetChanged();
     }
-    public boolean isFooterShowing(int position){
+
+    public boolean isFooterShowing(int position) {
         return position >= getAdapterItemCount();
     }
 
@@ -110,7 +117,8 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
             Footer++;
         return getAdapterItemCount() + Footer;
     }
-    public View getFooterView(){
+
+    public View getFooterView() {
         return customLoadMoreView;
     }
 

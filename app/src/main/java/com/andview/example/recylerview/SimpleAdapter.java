@@ -20,8 +20,8 @@ public class SimpleAdapter extends
     }
 
     @Override
-    public void onBindView(final SimpleAdapterViewHolder holder,
-                           int position) {
+    public void onBindViewHolder(final SimpleAdapterViewHolder holder,
+                           int position,boolean isItem) {
         Person person = list.get(position);
         holder.nameTv.setText(String.valueOf(person.getName()));
         holder.ageTv.setText(person.getAge());
