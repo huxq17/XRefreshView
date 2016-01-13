@@ -135,6 +135,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
         } else if (child instanceof RecyclerView) {
             final RecyclerView recyclerView = (RecyclerView) child;
+            if (recyclerView.getAdapter() == null) {
+                return;
+            }
             if (!(recyclerView.getAdapter() instanceof UltimateViewAdapter)) {
                 throw new RuntimeException("Recylerview的adapter请继承 UltimateViewAdapter");
             }
@@ -152,7 +155,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mRecyclerViewScrollListener.onScrollStateChanged(
                                 recyclerView, newState);
                     }
-                    refreshAdapter(adapter,null);
+                    refreshAdapter(adapter, null);
                 }
 
                 @Override
