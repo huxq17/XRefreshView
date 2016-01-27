@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
-import com.andview.refreshview.utils.LogUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -138,7 +137,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     @Override
     public int getItemViewType(int position) {
         if (isHeader(position)) {
-            LogUtils.i("getItemViewType  VIEW_TYPES.HEADER");
             return VIEW_TYPES.HEADER;
         } else if (isFooter(position)) {
             if (isLoadMoreChanged) {
