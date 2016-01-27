@@ -68,8 +68,7 @@ public class BannerRecyclerViewActivity extends Activity {
         xRefreshView.setAutoLoadMore(true);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
-//        adapter.setCustomHeaderView(adHeader, recyclerView);
-        adapter.setCustomHeaderView(headerView, recyclerView);
+//        adapter.setHeaderView(headerView, recyclerView);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 
 //		xRefreshView.setPullLoadEnable(false);

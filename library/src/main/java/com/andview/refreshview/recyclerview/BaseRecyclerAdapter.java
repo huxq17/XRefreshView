@@ -84,7 +84,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public void setCustomHeaderView(View headerView, RecyclerView recyclerView) {
+    public void setHeaderView(View headerView, RecyclerView recyclerView) {
         if (recyclerView == null) return;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
