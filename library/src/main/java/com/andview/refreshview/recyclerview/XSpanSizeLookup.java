@@ -7,10 +7,10 @@ import android.support.v7.widget.GridLayoutManager;
  */
 public class XSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
-    private UltimateViewAdapter adapter;
+    private BaseRecyclerAdapter adapter;
     private int mSpanSize = 1;
 
-    public XSpanSizeLookup(UltimateViewAdapter adapter, int spanSize) {
+    public XSpanSizeLookup(BaseRecyclerAdapter adapter, int spanSize) {
         this.adapter = adapter;
         this.mSpanSize = spanSize;
     }

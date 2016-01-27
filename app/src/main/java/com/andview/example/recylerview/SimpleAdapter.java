@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andview.example.R;
-import com.andview.refreshview.recyclerview.UltimateViewAdapter;
+import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 
 import java.util.List;
 
-public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
+public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
     private List<Person> list;
 
     public SimpleAdapter(List<Person> list) {

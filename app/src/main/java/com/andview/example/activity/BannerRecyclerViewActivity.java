@@ -7,12 +7,10 @@ import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.andview.example.IndexPageAdapter;
 import com.andview.example.R;
@@ -58,8 +56,8 @@ public class BannerRecyclerViewActivity extends Activity {
 //		xRefreshView.setSlienceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
-        FrameLayout rootview = new FrameLayout(this);
-        headerView = LayoutInflater.from(this).inflate(R.layout.bannerview, rootview);
+        headerView =adapter.setHeaderView(R.layout.bannerview,recyclerView);
+//        LayoutInflater.from(this).inflate(R.layout.bannerview, rootview);
         mLoopViewPager = (LoopViewPager) headerView.findViewById(R.id.index_viewpager);
 
 //        adHeader = new AdHeader(this);

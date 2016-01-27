@@ -1,9 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.andview.example.ui.LoopViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/index_viewpager"
     android:layout_width="match_parent"
     android:layout_height="150dp">
 
-    <com.andview.example.ui.LoopViewPager
-        android:id="@+id/index_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</RelativeLayout>
+</com.andview.example.ui.LoopViewPager>

@@ -1,10 +1,14 @@
 package com.andview.refreshview.recyclerview;
 
+import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.utils.LogUtils;
@@ -15,11 +19,12 @@ import java.util.List;
 /**
  * An abstract adapter which can be extended for Recyclerview
  */
-public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
+public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
+    private int id;
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -79,15 +84,30 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public void setCustomHeaderView(View headerView,RecyclerView recyclerView) {
-        if(recyclerView==null)return;
+    public void setCustomHeaderView(View headerView, RecyclerView recyclerView) {
+        if (recyclerView == null) return;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if(layoutManager!=null&&layoutManager instanceof GridLayoutManager){
+        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
         customHeaderView = headerView;
         notifyDataSetChanged();
+    }
+
+    public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
+        this.id = id;
+        if (recyclerView == null) return null;
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
+        }
+        Context context = recyclerView.getContext();
+        FrameLayout rootview = new FrameLayout(recyclerView.getContext());
+        customHeaderView = LayoutInflater.from(context).inflate(id, rootview);
+        notifyDataSetChanged();
+        return customHeaderView;
     }
 
     public boolean isFooter(int position) {

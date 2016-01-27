@@ -20,7 +20,7 @@ import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
-import com.andview.refreshview.recyclerview.UltimateViewAdapter;
+import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 
@@ -138,10 +138,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             if (recyclerView.getAdapter() == null) {
                 return;
             }
-            if (!(recyclerView.getAdapter() instanceof UltimateViewAdapter)) {
-                throw new RuntimeException("Recylerview的adapter请继承 UltimateViewAdapter");
+            if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
+                throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
             }
-            final UltimateViewAdapter adapter = (UltimateViewAdapter) recyclerView
+            final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView
                     .getAdapter();
             recyclerView.removeOnScrollListener(mOnScrollListener);
 
@@ -252,7 +252,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     private boolean mRefreshAdapter = false;
 
-    private void refreshAdapter(UltimateViewAdapter adapter, RecyclerView.LayoutManager manager) {
+    private void refreshAdapter(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager manager) {
         if (adapter != null && !mRefreshAdapter) {
             if (!(manager instanceof GridLayoutManager)) {
                 View footerView = adapter.getFooterView();
@@ -267,7 +267,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager, UltimateViewAdapter adapter) {
+    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager, BaseRecyclerAdapter adapter) {
         int[] lastPositions = null;
         if (layoutManagerType == null) {
             if (layoutManager instanceof GridLayoutManager) {
