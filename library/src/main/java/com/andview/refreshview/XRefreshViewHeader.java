@@ -3,15 +3,14 @@ package com.andview.refreshview;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.andview.refreshview.callback.IHeaderCallBack;
@@ -20,7 +19,7 @@ import com.andview.refreshview.utils.Utils;
 import java.util.Calendar;
 
 public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack {
-	private RelativeLayout mContent;
+	private ViewGroup mContent;
 	private ImageView mArrowImageView;
 	private ImageView mOkImageView;
 	private ProgressBar mProgressBar;
@@ -45,10 +44,8 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 	}
 
 	private void initView(Context context) {
-		mContent = (RelativeLayout) LayoutInflater.from(context).inflate(
-				R.layout.xrefreshview_header, null);
-		addView(mContent);
-		setGravity(Gravity.BOTTOM);
+		mContent = (ViewGroup) LayoutInflater.from(context).inflate(
+				R.layout.xrefreshview_header, this);
 		mArrowImageView = (ImageView) findViewById(R.id.xrefreshview_header_arrow);
 		mOkImageView = (ImageView) findViewById(R.id.xrefreshview_header_ok);
 		mHintTextView = (TextView) findViewById(R.id.xrefreshview_header_hint_textview);
@@ -56,8 +53,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
 		mProgressBar = (ProgressBar) findViewById(R.id.xrefreshview_header_progressbar);
 
 		mRotateUpAnim = new RotateAnimation(0.0f, -180.0f,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,0.5f);
 		mRotateUpAnim.setDuration(ROTATE_ANIM_DURATION);
 		mRotateUpAnim.setFillAfter(true);
 		mRotateDownAnim = new RotateAnimation(-180.0f, 0.0f,
