@@ -17,7 +17,7 @@ public class XSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
     @Override
     public int getSpanSize(int position) {
-        boolean isHeaderOrFooter =  adapter.isFooterShowing(position);
+        boolean isHeaderOrFooter = adapter.isFooter(position) || adapter.isHeader(position);
         return isHeaderOrFooter ? mSpanSize : 1;
     }
 }

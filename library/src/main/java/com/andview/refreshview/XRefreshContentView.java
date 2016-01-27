@@ -273,7 +273,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             if (layoutManager instanceof GridLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-                gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
+                GridLayoutManager.SpanSizeLookup lookup = gridLayoutManager.getSpanSizeLookup();
+                if (lookup==null || !(lookup instanceof XSpanSizeLookup)) {
+                    gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
+                }
             } else if (layoutManager instanceof LinearLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.LINEAR;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {

@@ -11,8 +11,7 @@ import com.andview.refreshview.recyclerview.UltimateViewAdapter;
 
 import java.util.List;
 
-public class SimpleAdapter extends
-        UltimateViewAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
+public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
     private List<Person> list;
 
     public SimpleAdapter(List<Person> list) {
@@ -23,7 +22,7 @@ public class SimpleAdapter extends
     public void onBindViewHolder(final SimpleAdapterViewHolder holder,
                                  int position, boolean isItem) {
         Person person = list.get(position);
-        holder.nameTv.setText(String.valueOf(person.getName()));
+        holder.nameTv.setText(person.getName());
         holder.ageTv.setText(person.getAge());
     }
 

@@ -21,6 +21,7 @@
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.WebViewActivity" />
         <activity android:name=".activity.RecyclerViewActivity" />
+        <activity android:name=".activity.BannerRecyclerViewActivity" />
         <activity android:name=".activity.ScrollViewActivity" />
         <activity android:name=".activity.HeadAdActivity" />
         <activity android:name=".activity.RainDropActivity" />

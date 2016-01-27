@@ -51,8 +51,7 @@ public class HeadAdActivity extends Activity {
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 
 		headerView = new AdHeader(this);
-		mLoopViewPager = (LoopViewPager) headerView
-				.findViewById(R.id.index_viewpager);
+		mLoopViewPager = (LoopViewPager) headerView.findViewById(R.id.index_viewpager);
 		initViewPager();
 		
 		outView.setPullLoadEnable(true);

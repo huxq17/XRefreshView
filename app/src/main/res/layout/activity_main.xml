@@ -49,7 +49,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:onClick="onClick"
-        android:text="RecylerView" />
+        android:text="普通RecylerView" />
+
+    <Button
+        android:id="@+id/bt_banner_recylerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="带Banner的Recyclerview" />
     <Button
         android:id="@+id/bt_headAd"
         android:layout_width="wrap_content"

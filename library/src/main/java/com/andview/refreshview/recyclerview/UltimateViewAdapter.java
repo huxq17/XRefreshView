@@ -1,11 +1,13 @@
 package com.andview.refreshview.recyclerview;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.andview.refreshview.callback.IFooterCallBack;
+import com.andview.refreshview.utils.LogUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 
     protected View customLoadMoreView = null;
+    protected View customHeaderView = null;
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,6 +32,9 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
             VH viewHolder = getViewHolder(customLoadMoreView);
             if (getAdapterItemCount() == 0)
                 viewHolder.itemView.setVisibility(View.GONE);
+            return viewHolder;
+        } else if (viewType == VIEW_TYPES.HEADER) {
+            VH viewHolder = getViewHolder(customHeaderView);
             return viewHolder;
         }
         return onCreateViewHolder(parent);
@@ -44,17 +50,18 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      * @param holder
      * @param position
      */
-    public abstract void onBindViewHolder(VH holder, int position,boolean isItem);
+    public abstract void onBindViewHolder(VH holder, int position, boolean isItem);
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
-        if (position < getAdapterItemCount()) {
-            onBindViewHolder(holder, position,true);
-        } else {
+        int start = getStart();
+        if (isHeader(position) || isFooter(position)) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                 ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
             }
+        } else {
+            onBindViewHolder(holder, position - start, true);
         }
     }
 
@@ -67,14 +74,29 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
         } else {
-            throw new RuntimeException(
-                    "footerView must be implementes IFooterCallBack!");
+            throw new RuntimeException("footerView must be implementes IFooterCallBack!");
         }
         notifyDataSetChanged();
     }
 
-    public boolean isFooterShowing(int position) {
-        return position >= getAdapterItemCount();
+    public void setCustomHeaderView(View headerView,RecyclerView recyclerView) {
+        if(recyclerView==null)return;
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if(layoutManager!=null&&layoutManager instanceof GridLayoutManager){
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
+        }
+        customHeaderView = headerView;
+        notifyDataSetChanged();
+    }
+
+    public boolean isFooter(int position) {
+        int start = getStart();
+        return customLoadMoreView != null && position >= getAdapterItemCount() + start;
+    }
+
+    public boolean isHeader(int position) {
+        return getStart() > 0 && position == 0;
     }
 
     /**
@@ -95,14 +117,22 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 1 && customLoadMoreView != null) {
+        if (isHeader(position)) {
+            LogUtils.i("getItemViewType  VIEW_TYPES.HEADER");
+            return VIEW_TYPES.HEADER;
+        } else if (isFooter(position)) {
             if (isLoadMoreChanged) {
                 return VIEW_TYPES.CHANGED_FOOTER;
             } else {
                 return VIEW_TYPES.FOOTER;
             }
-        } else
+        } else {
             return VIEW_TYPES.NORMAL;
+        }
+    }
+
+    public int getStart() {
+        return customHeaderView == null ? 0 : 1;
     }
 
     /**
@@ -112,10 +142,12 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      */
     @Override
     public int getItemCount() {
-        int Footer = 0;
-        if (customLoadMoreView != null)
-            Footer++;
-        return getAdapterItemCount() + Footer;
+        int count = getAdapterItemCount();
+        count += getStart();
+        if (customLoadMoreView != null) {
+            count++;
+        }
+        return count;
     }
 
     public View getFooterView() {
@@ -129,18 +161,6 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      * @return The number of items in the bound adapter
      */
     public abstract int getAdapterItemCount();
-
-    public void toggleSelection(int pos) {
-        notifyItemChanged(pos);
-    }
-
-    public void clearSelection(int pos) {
-        notifyItemChanged(pos);
-    }
-
-    public void setSelected(int pos) {
-        notifyItemChanged(pos);
-    }
 
     /**
      * Swap the item of list
@@ -163,7 +183,7 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      */
     public <T> void insert(List<T> list, T object, int position) {
         list.add(position, object);
-        notifyItemInserted(position);
+        notifyItemInserted(position + getStart());
     }
 
     /**
@@ -174,7 +194,7 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      */
     public void remove(List<?> list, int position) {
         if (list.size() > 0) {
-            notifyItemRemoved(position);
+            notifyItemRemoved(position + getStart());
         }
     }
 
@@ -184,15 +204,17 @@ public abstract class UltimateViewAdapter<VH extends RecyclerView.ViewHolder>
      * @param list data list
      */
     public void clear(List<?> list) {
-        int size = list.size();
+        int start = getStart();
+        int size = list.size() + start;
         list.clear();
-        notifyItemRangeRemoved(0, size);
+        notifyItemRangeRemoved(start, size);
     }
 
     protected class VIEW_TYPES {
         public static final int NORMAL = 0;
         public static final int FOOTER = 2;
         public static final int CHANGED_FOOTER = 3;
+        public static final int HEADER = 4;
     }
 
     protected enum AdapterAnimationType {
