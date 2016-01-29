@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.andview.example.IndexPageAdapter;
 import com.andview.example.R;
@@ -21,7 +22,6 @@ import com.andview.example.ui.LoopViewPager;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
-import com.andview.refreshview.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +154,6 @@ public class BannerRecyclerViewActivity extends Activity {
                         break;
                 }
                 return false;
-
             }
         });
     }
@@ -165,14 +164,11 @@ public class BannerRecyclerViewActivity extends Activity {
     private class ScrollTask implements Runnable {
 
         public void run() {
-            LogUtils.i("PagerPager mUiHandler == null is " + (mUiHandler == null));
 //			synchronized (mLoopViewPager) {
             mCurrentItem = (mCurrentItem + 1) % mImageIds.length;
             Message msg = mUiHandler.obtainMessage();
             msg.what = 1000;
-            LogUtils.i("PagerPager2");
             msg.sendToTarget(); // 通过Handler切换图片
-            LogUtils.i("PagerPager3");
 //			}
         }
     }
@@ -208,6 +204,7 @@ public class BannerRecyclerViewActivity extends Activity {
         public void onPageSelected(int position) {
             mCurrentItem = position;
             oldPosition = position;
+            Toast.makeText(BannerRecyclerViewActivity.this,"mCurrentItem="+mCurrentItem,0).show();
         }
     }
 

@@ -87,6 +87,10 @@ public class LoopViewPager extends ViewPager {
 		setCurrentItem(0, false);
 	}
 
+	public void notifyDatasetChanged() {
+		mAdapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public PagerAdapter getAdapter() {
 		return mAdapter != null ? mAdapter.getRealAdapter() : mAdapter;
@@ -110,10 +114,16 @@ public class LoopViewPager extends ViewPager {
 		}
 	}
 
+
 	@Override
-	public void setOnPageChangeListener(OnPageChangeListener listener) {
-		mOuterPageChangeListener = listener;
-	};
+	public void setOnPageChangeListener(OnPageChangeListener onPageChangeListener) {
+		this.onPageChangeListener = onPageChangeListener;
+	}
+
+	@Override
+	public void addOnPageChangeListener(OnPageChangeListener listener) {
+		this.onPageChangeListener = listener;
+	}
 
 	public LoopViewPager(Context context) {
 		super(context);
@@ -126,7 +136,7 @@ public class LoopViewPager extends ViewPager {
 	}
 
 	private void init() {
-		super.setOnPageChangeListener(onPageChangeListener);
+		super.addOnPageChangeListener(onPageChangeListener);
 	}
 
 	private OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
