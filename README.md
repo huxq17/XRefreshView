@@ -18,6 +18,14 @@ dependencies {
 
 
 效果图
+###带Banner的Recyclerview
+![带Banner的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495536_4324.gif)
+###LinearLayout样式的Recyclerview
+![LinearLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9614.gif) 
+###GridLayout样式的Recyclerview
+![GridLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495517_6621.gif) 
+###Staggered样式的Recyclerview
+![Staggered样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9854.gif)
 
 ![效果图](http://img.my.csdn.net/uploads/201507/19/1437313097_4690.gif) 
 ###自定义头部

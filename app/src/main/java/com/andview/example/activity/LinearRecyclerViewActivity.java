@@ -39,7 +39,7 @@ public class LinearRecyclerViewActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
         initData();
-        adapter = new SimpleAdapter(personList);
+        adapter = new SimpleAdapter(personList,this);
         // 设置静默加载模式
 //		xRefreshView.setSlienceLoadMore();
         layoutManager = new LinearLayoutManager(this);

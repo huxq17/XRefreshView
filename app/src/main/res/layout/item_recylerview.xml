@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler_view_test_item_person_view"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#aabbcc"
-    android:orientation="vertical"
-    android:padding="15dp">
+    android:layout_height="100dp"
+    android:layout_gravity="center"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardBackgroundColor="@android:color/white"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="4dp"
+    >
 
-    <TextView
-        android:id="@+id/recycler_view_test_item_person_name_tv"
+    <LinearLayout
+        android:id="@+id/recycler_view_test_item_person_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ccbbaa"
-        android:textSize="18sp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp">
 
-    <TextView
-        android:id="@+id/recycler_view_test_item_person_age_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#aaccbb"
-        android:paddingLeft="5dp"
-        android:textSize="15sp" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/recycler_view_test_item_person_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/recycler_view_test_item_person_age_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

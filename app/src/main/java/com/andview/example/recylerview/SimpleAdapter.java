@@ -1,11 +1,14 @@
 package com.andview.example.recylerview;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.andview.example.DensityUtil;
 import com.andview.example.R;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 
@@ -13,9 +16,12 @@ import java.util.List;
 
 public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
     private List<Person> list;
+    private int largeCardHeight, smallCardHeight;
 
-    public SimpleAdapter(List<Person> list) {
+    public SimpleAdapter(List<Person> list, Context context) {
         this.list = list;
+        largeCardHeight = DensityUtil.dip2px(context, 150);
+        smallCardHeight = DensityUtil.dip2px(context, 100);
     }
 
     @Override
@@ -24,6 +30,10 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
         Person person = list.get(position);
         holder.nameTv.setText(person.getName());
         holder.ageTv.setText(person.getAge());
+        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+        if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+            holder.rootView.getLayoutParams().height = position % 2 != 0 ? largeCardHeight : smallCardHeight;
+        }
     }
 
     @Override
@@ -71,7 +81,7 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
                 ageTv = (TextView) itemView
                         .findViewById(R.id.recycler_view_test_item_person_age_tv);
                 rootView = itemView
-                        .findViewById(R.id.recycler_view_test_item_person_view);
+                        .findViewById(R.id.card_view);
             }
 
         }
