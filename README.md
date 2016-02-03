@@ -15,8 +15,7 @@ dependencies {
 ```
 
 ##最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46982115 "description")
-###效果图
-![效果图](http://img.my.csdn.net/uploads/201507/19/1437313097_4690.gif) 
+##效果图
 ###带Banner的Recyclerview
 ![带Banner的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495536_4324.gif)
 ###LinearLayout样式的Recyclerview
@@ -25,9 +24,11 @@ dependencies {
 ![GridLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495517_6621.gif) 
 ###Staggered样式的Recyclerview
 ![Staggered样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9854.gif)
-
-###自定义头部
+###GridView
+![自带的头部](http://img.my.csdn.net/uploads/201508/25/1440465457_8215.gif)
+###自定义View
 ![自定义头部](http://img.my.csdn.net/uploads/201508/25/1440465306_9400.gif) 
-###XRefreshView自带的头部
-![自带的头部](http://img.my.csdn.net/uploads/201508/25/1440465457_8215.gif) 
+
+还有其他的scrollview，webview等其他的view就不一一截图了。
+
 
