@@ -29,6 +29,6 @@ dependencies {
 ###自定义View
 ![自定义头部](http://img.my.csdn.net/uploads/201508/25/1440465306_9400.gif) 
 
-还有其他的scrollview，webview等其他的view就不一一截图了。
+还有scrollview，webview等其他的view就不一一截图了。
 
 
