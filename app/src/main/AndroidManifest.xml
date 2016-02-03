@@ -20,11 +20,14 @@
         <activity android:name=".activity.GridViewActivity" />
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.WebViewActivity" />
-        <activity android:name=".activity.RecyclerViewActivity" />
+        <activity android:name=".activity.LinearRecyclerViewActivity" />
         <activity android:name=".activity.BannerRecyclerViewActivity" />
         <activity android:name=".activity.ScrollViewActivity" />
         <activity android:name=".activity.HeadAdActivity" />
         <activity android:name=".activity.RainDropActivity" />
+        <activity android:name=".activity.RecyclerViewsActivity" />
+        <activity android:name=".activity.GridRecyclerViewActivity" />
+        <activity android:name=".activity.StaggeredRecyclerViewActivity" />
     </application>
 
 </manifest>

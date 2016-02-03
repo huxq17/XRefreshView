@@ -46,13 +46,22 @@
     </declare-styleable>
 
     <declare-styleable name="RainDropView">
-        <attr name="max_circle_radius" format="dimension"/>
-        <attr name="min_circle_radius" format="dimension"/>
-        <attr name="waterdrop_color" format="color"/>
-        <attr name="topcircle_x" format="dimension"/>
-        <attr name="topcircle_y" format="dimension"/>
-        <attr name="bottomcircle_x" format="dimension"/>
-        <attr name="bottomcircle_y" format="dimension"/>
+        <attr name="max_circle_radius" format="dimension" />
+        <attr name="min_circle_radius" format="dimension" />
+        <attr name="waterdrop_color" format="color" />
+        <attr name="topcircle_x" format="dimension" />
+        <attr name="topcircle_y" format="dimension" />
+        <attr name="bottomcircle_x" format="dimension" />
+        <attr name="bottomcircle_y" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="GifView">
+        <attr name="gif" format="reference" />
+        <attr name="paused" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomTheme">
+        <attr name="gifViewStyle" format="reference" />
     </declare-styleable>
 
 </resources>

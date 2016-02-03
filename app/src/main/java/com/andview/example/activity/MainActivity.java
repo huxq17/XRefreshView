@@ -31,10 +31,7 @@ public class MainActivity extends Activity {
                 intent = new Intent(this, CustomViewActivity.class);
                 break;
             case R.id.bt_recylerView:
-                intent = new Intent(this, RecyclerViewActivity.class);
-                break;
-            case R.id.bt_banner_recylerView:
-                intent = new Intent(this, BannerRecyclerViewActivity.class);
+                intent = new Intent(this, RecyclerViewsActivity.class);
                 break;
             case R.id.bt_scrollview:
                 intent = new Intent(this, ScrollViewActivity.class);

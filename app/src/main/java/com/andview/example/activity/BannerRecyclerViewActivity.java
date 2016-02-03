@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import com.andview.example.R;
 import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.example.ui.AdHeader;
+import com.andview.example.ui.GifHeader;
 import com.andview.example.ui.LoopViewPager;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
@@ -56,14 +58,14 @@ public class BannerRecyclerViewActivity extends Activity {
 //		xRefreshView.setSlienceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
-        headerView =adapter.setHeaderView(R.layout.bannerview,recyclerView);
+        headerView = adapter.setHeaderView(R.layout.bannerview, recyclerView);
 //        LayoutInflater.from(this).inflate(R.layout.bannerview, rootview);
         mLoopViewPager = (LoopViewPager) headerView.findViewById(R.id.index_viewpager);
 
 //        adHeader = new AdHeader(this);
 //        mLoopViewPager = (LoopViewPager) adHeader.findViewById(R.id.index_viewpager);
         initViewPager();
-        // 静默加载模式不能设置footerview
+        xRefreshView.setCustomHeaderView(new GifHeader(this));
         recyclerView.setAdapter(adapter);
         xRefreshView.setAutoLoadMore(true);
         xRefreshView.setPinnedTime(1000);
@@ -204,7 +206,7 @@ public class BannerRecyclerViewActivity extends Activity {
         public void onPageSelected(int position) {
             mCurrentItem = position;
             oldPosition = position;
-            Toast.makeText(BannerRecyclerViewActivity.this,"mCurrentItem="+mCurrentItem,0).show();
+            Toast.makeText(BannerRecyclerViewActivity.this, "mCurrentItem=" + mCurrentItem, 0).show();
         }
     }
 

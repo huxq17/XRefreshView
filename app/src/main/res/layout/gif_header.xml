@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <com.andview.example.ui.GifView
+        android:id="@+id/gif1"
+        android:layout_width="15dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="10dp"
+        android:enabled="false" />
+
+    <com.andview.example.ui.GifView
+        android:id="@+id/gif2"
+        android:layout_width="24dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="10dp"
+        android:enabled="false" />
+
+    <TextView
+        android:id="@+id/gif_header_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/xrefreshview_header_hint_normal"
+        android:textColor="#222222" />
+
+</LinearLayout>

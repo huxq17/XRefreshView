@@ -4,7 +4,7 @@
     <string name="app_name">app_name</string>
     <string name="xrefreshview_header_hint_normal">下拉刷新</string>
     <string name="xrefreshview_header_hint_ready">松开刷新数据</string>
-    <string name="xrefreshview_header_hint_refreshing">正在刷新</string>
+    <string name="xrefreshview_header_hint_refreshing">正在刷新...</string>
     <string name="xrefreshview_header_hint_loading">正在加载...</string>
     <string name="xrefreshview_header_hint_loaded">加载完成</string>
     <string name="xrefreshview_header_last_time">上次更新时间：</string>

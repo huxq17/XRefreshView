@@ -18,7 +18,7 @@ import com.andview.refreshview.XRefreshViewFooter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewActivity extends Activity {
+public class GridRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
     SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
@@ -41,7 +41,7 @@ public class RecyclerViewActivity extends Activity {
         adapter = new SimpleAdapter(personList);
         // 设置静默加载模式
 //		xRefreshView.setSlienceLoadMore();
-        layoutManager = new GridLayoutManager(this, 2);
+        layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
