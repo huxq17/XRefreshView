@@ -17,7 +17,7 @@ dependencies {
 ##最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46982115 "description")
 ##效果图
 ###带Banner的Recyclerview
-![带Banner的Recyclerview](http://img.my.csdn.net/uploads/201602/15/1455500828_1365.gif)
+![带Banner的Recyclerview](http://img.my.csdn.net/uploads/201602/15/1455502311_5774.gif)
 ###LinearLayout样式的Recyclerview
 ![LinearLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9614.gif) 
 ###GridLayout样式的Recyclerview
