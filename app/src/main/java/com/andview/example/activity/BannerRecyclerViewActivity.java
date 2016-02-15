@@ -7,12 +7,10 @@ import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.andview.example.IndexPageAdapter;
 import com.andview.example.R;
@@ -53,7 +51,7 @@ public class BannerRecyclerViewActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
         initData();
-        adapter = new SimpleAdapter(personList,this);
+        adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
 //		xRefreshView.setSlienceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
@@ -65,7 +63,8 @@ public class BannerRecyclerViewActivity extends Activity {
 //        adHeader = new AdHeader(this);
 //        mLoopViewPager = (LoopViewPager) adHeader.findViewById(R.id.index_viewpager);
         initViewPager();
-        xRefreshView.setCustomHeaderView(new GifHeader(this));
+        GifHeader header = new GifHeader(this);
+        xRefreshView.setCustomHeaderView(header);
         recyclerView.setAdapter(adapter);
         xRefreshView.setAutoLoadMore(true);
         xRefreshView.setPinnedTime(1000);
@@ -206,7 +205,6 @@ public class BannerRecyclerViewActivity extends Activity {
         public void onPageSelected(int position) {
             mCurrentItem = position;
             oldPosition = position;
-            Toast.makeText(BannerRecyclerViewActivity.this, "mCurrentItem=" + mCurrentItem, 0).show();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.andview.example.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ public class GifHeader extends LinearLayout implements IHeaderCallBack {
 
     public GifHeader(Context context) {
         super(context);
+        setBackgroundColor(Color.parseColor("#f3f3f3"));
         initView(context);
     }
 
