@@ -279,7 +279,7 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
-    private boolean isIntercepted;
+    private boolean isIntercepted = false;
     private int mHeadMoveDistence;
 
     @Override
@@ -317,9 +317,12 @@ public class XRefreshView extends LinearLayout {
                 mLastY = currentY;
                 mLastX = currentX;
                 // intercept the MotionEvent only when user is not scrolling
-                if (!isIntercepted && (Math.abs(deltaY) < mTouchSlop)) {
-                    isIntercepted = true;
-                    return super.dispatchTouchEvent(ev);
+                if (!isIntercepted) {
+                    if (Math.abs(deltaY) >= mTouchSlop) {
+                        isIntercepted = true;
+                    } else {
+                        return super.dispatchTouchEvent(ev);
+                    }
                 }
                 if (isForHorizontalMove && !mMoveForHorizontal && Math.abs(deltaX) > mTouchSlop
                         && Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -381,7 +384,7 @@ public class XRefreshView extends LinearLayout {
                 }
                 mLastY = -1; // reset
                 mInitialMotionY = 0;
-                isIntercepted = true;
+                isIntercepted = false;
                 mMoveForHorizontal = false;
                 mIsIntercept = false;
                 break;
