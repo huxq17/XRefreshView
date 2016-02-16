@@ -293,6 +293,7 @@ public class XRefreshView extends LinearLayout {
                 mHasSendDownEvent = false;
                 mLastY = (int) ev.getRawY();
                 mLastX = (int) ev.getRawX();
+
                 mInitialMotionY = mLastY;
 
                 // if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading)
@@ -318,7 +319,7 @@ public class XRefreshView extends LinearLayout {
                 mLastX = currentX;
                 // intercept the MotionEvent only when user is not scrolling
                 if (!isIntercepted) {
-                    if (Math.abs(deltaY) >= mTouchSlop) {
+                    if (Math.abs(currentY - mInitialMotionY) >= mTouchSlop) {
                         isIntercepted = true;
                     } else {
                         return super.dispatchTouchEvent(ev);
@@ -333,20 +334,16 @@ public class XRefreshView extends LinearLayout {
                 if (mMoveForHorizontal) {
                     return super.dispatchTouchEvent(ev);
                 }
-                LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom="
-                        + mContentView.isBottom());
-                if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence
-                        || deltaY < 0) {
+                LogUtils.d("isTop=" + mContentView.isTop() + ";isBottom=" + mContentView.isBottom());
+                if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence || deltaY < 0) {
                     deltaY = (int) (deltaY / OFFSET_RADIO);
                 } else {
                     deltaY = 0;
                 }
-                if (mContentView.isTop()
-                        && (deltaY > 0 || (deltaY < 0 && mHolder
-                        .hasHeaderPullDown()))) {
+                if (!mPullLoading && mContentView.isTop() && (deltaY > 0 || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
                     sendCancelEvent();
                     updateHeaderHeight(currentY, deltaY);
-                } else if (needAddFooterView() && mContentView.isBottom()
+                } else if (!mPullRefreshing && needAddFooterView() && mContentView.isBottom()
                         && (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
                     sendCancelEvent();
                     updateFooterHeight(deltaY);
@@ -383,6 +380,7 @@ public class XRefreshView extends LinearLayout {
                     }
                 }
                 mLastY = -1; // reset
+                mLastX = -1;
                 mInitialMotionY = 0;
                 isIntercepted = false;
                 mMoveForHorizontal = false;
