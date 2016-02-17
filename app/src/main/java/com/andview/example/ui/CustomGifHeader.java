@@ -11,12 +11,12 @@ import android.widget.TextView;
 import com.andview.example.R;
 import com.andview.refreshview.callback.IHeaderCallBack;
 
-public class GifHeader extends LinearLayout implements IHeaderCallBack {
+public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
     private GifView gifView1;
     private GifView gifView2;
     private TextView mHintTextView;
 
-    public GifHeader(Context context) {
+    public CustomGifHeader(Context context) {
         super(context);
         setBackgroundColor(Color.parseColor("#f3f3f3"));
         initView(context);
@@ -26,7 +26,7 @@ public class GifHeader extends LinearLayout implements IHeaderCallBack {
      * @param context
      * @param attrs
      */
-    public GifHeader(Context context, AttributeSet attrs) {
+    public CustomGifHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
     }
