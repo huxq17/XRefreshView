@@ -17,7 +17,7 @@ import com.andview.example.R;
 import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.example.ui.AdHeader;
-import com.andview.example.ui.GifHeader;
+import com.andview.example.ui.CustomGifHeader;
 import com.andview.example.ui.LoopViewPager;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
@@ -63,7 +63,7 @@ public class BannerRecyclerViewActivity extends Activity {
 //        adHeader = new AdHeader(this);
 //        mLoopViewPager = (LoopViewPager) adHeader.findViewById(R.id.index_viewpager);
         initViewPager();
-        GifHeader header = new GifHeader(this);
+        CustomGifHeader header = new CustomGifHeader(this);
         xRefreshView.setCustomHeaderView(header);
         recyclerView.setAdapter(adapter);
         xRefreshView.setAutoLoadMore(true);
