@@ -129,8 +129,7 @@ public class HeadAdActivity extends Activity {
     }
 
     private void initViewPager() {
-        IndexPageAdapter pageAdapter = new IndexPageAdapter(this,
-                mImageIds);
+        IndexPageAdapter pageAdapter = new IndexPageAdapter(this, mImageIds);
         mLoopViewPager.setAdapter(pageAdapter);
     }
 }
