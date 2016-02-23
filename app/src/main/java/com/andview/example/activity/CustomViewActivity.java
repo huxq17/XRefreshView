@@ -37,7 +37,7 @@ public class CustomViewActivity extends Activity {
 		refreshView = (XRefreshView) findViewById(R.id.custom_view);
 		refreshView.setPullLoadEnable(true);
 		refreshView.setAutoRefresh(true);
-		refreshView.setPinnedTime(1000);
+//		refreshView.setPinnedTime(0);
 		refreshView.setCustomHeaderView(new CustomHeader(this));
 		refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
@@ -76,7 +76,7 @@ public class CustomViewActivity extends Activity {
 					public void run() {
 						refreshView.stopRefresh();
 					}
-				}, 1000);
+				}, 10000);
 			}
 
 			@Override

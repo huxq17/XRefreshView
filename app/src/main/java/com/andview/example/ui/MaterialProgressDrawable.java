@@ -49,8 +49,7 @@ import java.util.ArrayList;
 /**
  * Fancy progress indicator for Material theme. It's taken from
  * {@link android.support.v4.widget}. I've done some slight changes.
- * 
- * @hide
+ *
  */
 public class MaterialProgressDrawable extends Drawable implements Animatable {
 
@@ -181,7 +180,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 	/**
 	 * Set the overall size for the progress spinner. This updates the radius
 	 * and stroke width of the ring.
-	 * 
+	 *
 	 * @param size
 	 *            One of {@link MaterialProgressDrawable#LARGE} or
 	 *            {@link MaterialProgressDrawable#DEFAULT}
@@ -215,7 +214,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 
 	/**
 	 * Set the start and end trim for the progress spinner arc.
-	 * 
+	 *
 	 * @param startAngle
 	 *            start angle
 	 * @param endAngle
@@ -228,7 +227,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 
 	/**
 	 * Set the amount of rotation to apply to the progress spinner.
-	 * 
+	 *
 	 * @param rotation
 	 *            Rotation is from [0..1]
 	 */
@@ -248,7 +247,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 	 * Set the colors used in the progress animation from color resources. The
 	 * first color will also be the color of the bar that grows in response to a
 	 * user swipe gesture.
-	 * 
+	 *
 	 * @param colors
 	 */
 	public void setColorSchemeColors(int... colors) {
@@ -489,7 +488,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 
 		/**
 		 * Set the dimensions of the arrowhead.
-		 * 
+		 *
 		 * @param width
 		 *            Width of the hypotenuse of the arrow head
 		 * @param height
@@ -560,7 +559,7 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
 
 		/**
 		 * Set the colors the progress spinner alternates between.
-		 * 
+		 *
 		 * @param colors
 		 *            Array of integers describing the colors. Must be non-
 		 *            <code>null</code>.

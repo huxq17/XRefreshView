@@ -301,11 +301,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             case STAGGERED_GRID:
                 StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
                 if (lastPositions == null)
-                    lastPositions = new int[staggeredGridLayoutManager
-                            .getSpanCount()];
+                    lastPositions = new int[staggeredGridLayoutManager.getSpanCount()];
 
-                staggeredGridLayoutManager
-                        .findLastVisibleItemPositions(lastPositions);
+                staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
                 mLastVisibleItemPosition = findMax(lastPositions);
 
                 staggeredGridLayoutManager
