@@ -36,6 +36,7 @@ public class WebViewActivity extends Activity {
 		});
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
+		outView.setPinnedTime(1000);
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
