@@ -12,6 +12,7 @@ import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
 public class WebViewActivity extends Activity {
 	private XRefreshView outView;
+	//项目里不要这么写，最好保存到本地
 	public static long lastRefreshTime;
 	private WebView mWebView;
 
