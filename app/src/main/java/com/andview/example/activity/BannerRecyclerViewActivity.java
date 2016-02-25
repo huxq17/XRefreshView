@@ -137,7 +137,10 @@ public class BannerRecyclerViewActivity extends Activity {
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();
+//                xRefreshView.setPullRefreshEnable(true);
+//                xRefreshView.setPullLoadEnable(!xRefreshView.getPullLoadEnable());
                 break;
+
         }
         return super.onOptionsItemSelected(item);
     }

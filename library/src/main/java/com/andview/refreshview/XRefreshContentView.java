@@ -274,7 +274,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
                 GridLayoutManager.SpanSizeLookup lookup = gridLayoutManager.getSpanSizeLookup();
-                if (lookup==null || !(lookup instanceof XSpanSizeLookup)) {
+                if (lookup == null || !(lookup instanceof XSpanSizeLookup)) {
                     gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
                 }
             } else if (layoutManager instanceof LinearLayoutManager) {
@@ -349,8 +349,25 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (!hasComplete) {
-            mFooterCallBack.show();
+            if (mEnablePullLoad) {
+                mFooterCallBack.show();
+            }
             mIsLoadingMore = false;
+        }
+    }
+
+    private boolean mEnablePullLoad;
+
+    /**
+     * 设置显示和隐藏Recyclerview中的footerview
+     * @param enablePullLoad
+     */
+    public void setEnablePullLoad(boolean enablePullLoad) {
+        mEnablePullLoad = enablePullLoad;
+        if (mEnablePullLoad) {
+            mFooterCallBack.show();
+        } else {
+            mFooterCallBack.hide();
         }
     }
 
@@ -427,8 +444,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                          int visibleItemCount, int totalItemCount) {
         mTotalItemCount = totalItemCount;
         if (mAbsListViewScrollListener != null) {
-            mAbsListViewScrollListener.onScroll(view, firstVisibleItem,
-                    visibleItemCount, totalItemCount);
+            mAbsListViewScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 

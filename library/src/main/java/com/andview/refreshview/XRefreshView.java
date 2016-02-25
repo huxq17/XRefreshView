@@ -187,11 +187,7 @@ public class XRefreshView extends LinearLayout {
         addView(mHeaderView, 0);
         mHeaderView.measure(0, 0);
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
-        if (autoLoadMore) {
-            mContentView.setContainer(this);
-        } else {
-            mContentView.setContainer(null);
-        }
+        mContentView.setContainer(autoLoadMore ? this : null);
         mContentView.setContentViewLayoutParams(isHeightMatchParent,
                 isWidthMatchParent);
         mHeaderCallBack = (IHeaderCallBack) mHeaderView;
@@ -205,9 +201,8 @@ public class XRefreshView extends LinearLayout {
         LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
         mContentView.setHolder(mHolder);
         mContentView.setScrollListener();
-        if (mEnablePullLoad && needAddFooterView()) {
-            Log.i("CustomView", "add footView" + ";mHeaderViewHeight="
-                    + mHeaderViewHeight);
+        if (needAddFooterView()) {
+            Log.i("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             addView(mFooterView);
         }
         // 移除视图树监听器
@@ -467,6 +462,19 @@ public class XRefreshView extends LinearLayout {
     public void setPullLoadEnable(boolean enable) {
         mEnablePullLoad = enable;
         setAutoLoadMore(false);
+        if (needAddFooterView()) {
+            checkPullLoadEnable();
+        } else {
+            mContentView.setEnablePullLoad(enable);
+        }
+    }
+
+    public boolean getPullLoadEnable() {
+        return mEnablePullLoad;
+    }
+
+    public boolean getPullRefreshEnable() {
+        return mEnablePullRefresh;
     }
 
     /**
@@ -476,9 +484,13 @@ public class XRefreshView extends LinearLayout {
      */
     public void setPullRefreshEnable(boolean enable) {
         mEnablePullRefresh = enable;
+        checkPullRefreshEnable();
     }
 
     private void checkPullRefreshEnable() {
+        if (mHeaderCallBack == null) {
+            return;
+        }
         if (!mEnablePullRefresh) {
             mHeaderCallBack.hide();
         } else {
@@ -487,6 +499,9 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void checkPullLoadEnable() {
+        if (mFooterCallBack == null) {
+            return;
+        }
         if (!mEnablePullLoad) {
             mFooterCallBack.hide();
         } else {
@@ -564,7 +579,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     public void startRefresh() {
-        if (mHolder.mOffsetY != 0 || mContentView.isLoading() || !isEnabled()) {
+        if (!mEnablePullRefresh || mHolder.mOffsetY != 0 || mContentView.isLoading() || !isEnabled()) {
             return;
         }
         // 如果条件成立，代表布局还没有初始化完成，改变标记，等待该方法再次调用，完成开始刷新
@@ -730,7 +745,7 @@ public class XRefreshView extends LinearLayout {
         mHasLoadComplete = hasComplete;
         stopLoadMore();
         if (needAddFooterView()) {
-            if (!hasComplete) {
+            if (!hasComplete && mEnablePullLoad) {
                 mFooterCallBack.onStateRefreshing();
                 mFooterCallBack.show();
             }

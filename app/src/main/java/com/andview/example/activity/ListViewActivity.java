@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.andview.example.R;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.utils.LogUtils;
 
 import java.util.ArrayList;
@@ -46,6 +47,13 @@ public class ListViewActivity extends Activity {
 		refreshView.restoreLastRefreshTime(lastRefreshTime);
 		// 设置时候可以自动刷新
 		refreshView.setAutoRefresh(false);
+//		refreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {
+//			@Override
+//			public boolean isBottom() {
+//				return false;
+//			}
+//		});
+
 		refreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
