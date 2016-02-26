@@ -389,7 +389,7 @@ public class XRefreshView extends LinearLayout {
         if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh
                 && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
-            if (offset > 0) {
+            if (offset != 0) {
                 startScroll(offset, SCROLL_DURATION);
             }
             if (!mPullLoading) {

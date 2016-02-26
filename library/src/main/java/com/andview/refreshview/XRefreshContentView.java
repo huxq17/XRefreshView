@@ -113,8 +113,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         } else if (child instanceof ScrollView) {
             if (child instanceof XScrollView) {
                 XScrollView scrollView = (XScrollView) child;
-                scrollView
-                        .registerOnBottomListener(new OnScrollBottomListener() {
+                scrollView.registerOnBottomListener(new OnScrollBottomListener() {
 
                             @Override
                             public void srollToBottom() {
@@ -129,11 +128,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             }
                         });
             } else {
-                throw new RuntimeException(
-                        "please use XScrollView instead of ScrollView!");
+                throw new RuntimeException("please use XScrollView instead of ScrollView!");
             }
 
-        } else if (child instanceof RecyclerView) {
+        }else if (child instanceof RecyclerView) {
             final RecyclerView recyclerView = (RecyclerView) child;
             if (recyclerView.getAdapter() == null) {
                 return;
@@ -497,8 +495,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         } else if (child instanceof WebView) {
             WebView webview = (WebView) child;
             return canScrollVertically(child, 1)
-                    || webview.getContentHeight() * webview.getScale() != webview
-                    .getHeight() + webview.getScrollY();
+                    || webview.getContentHeight() * webview.getScale() != webview.getHeight() + webview.getScrollY();
         } else if (child instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child;
             View childView = scrollView.getChildAt(0);
@@ -555,7 +552,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         return min;
     }
 
-    public static enum LAYOUT_MANAGER_TYPE {
+    public enum LAYOUT_MANAGER_TYPE {
         LINEAR, GRID, STAGGERED_GRID
     }
 
