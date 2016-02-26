@@ -52,6 +52,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     private boolean mHasLoadComplete = false;
     private int mPinnedTime;
     private XRefreshHolder mHolder;
+    public XRefreshView mParent;
+
+    public void setParent(XRefreshView parent) {
+        mParent = parent;
+    }
 
     public void setContentViewLayoutParams(boolean isHeightMatchParent,
                                            boolean isWidthMatchParent) {
@@ -115,23 +120,23 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 XScrollView scrollView = (XScrollView) child;
                 scrollView.registerOnBottomListener(new OnScrollBottomListener() {
 
-                            @Override
-                            public void srollToBottom() {
-                                if (mSlienceLoadMore) {
-                                    if (mRefreshViewListener != null) {
-                                        mRefreshViewListener.onLoadMore(true);
-                                    }
-                                } else if (mContainer != null
-                                        && !mContainer.hasLoadCompleted()) {
-                                    mContainer.invokeLoadMore();
-                                }
+                    @Override
+                    public void srollToBottom() {
+                        if (mSlienceLoadMore) {
+                            if (mRefreshViewListener != null) {
+                                mRefreshViewListener.onLoadMore(true);
                             }
-                        });
+                        } else if (mContainer != null
+                                && !mContainer.hasLoadCompleted()) {
+                            mContainer.invokeLoadMore();
+                        }
+                    }
+                });
             } else {
                 throw new RuntimeException("please use XScrollView instead of ScrollView!");
             }
 
-        }else if (child instanceof RecyclerView) {
+        } else if (child instanceof RecyclerView) {
             final RecyclerView recyclerView = (RecyclerView) child;
             if (recyclerView.getAdapter() == null) {
                 return;
@@ -241,8 +246,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 mFooterCallBack = (IFooterCallBack) footerView;
                 // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (null == mContainer) {
-                    mFooterCallBack
-                            .callWhenNotAutoLoadMore(mRefreshViewListener);
+                    mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                 }
             }
         }
@@ -347,22 +351,20 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (!hasComplete) {
-            if (mEnablePullLoad) {
+            if (mParent.getPullLoadEnable()) {
                 mFooterCallBack.show();
             }
             mIsLoadingMore = false;
         }
     }
 
-    private boolean mEnablePullLoad;
-
     /**
      * 设置显示和隐藏Recyclerview中的footerview
+     *
      * @param enablePullLoad
      */
     public void setEnablePullLoad(boolean enablePullLoad) {
-        mEnablePullLoad = enablePullLoad;
-        if (mEnablePullLoad) {
+        if (enablePullLoad) {
             mFooterCallBack.show();
         } else {
             mFooterCallBack.hide();

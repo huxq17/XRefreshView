@@ -24,6 +24,8 @@ public class ScrollViewActivity extends Activity {
 		outView.setAutoRefresh(false);
 		outView.setPullLoadEnable(true);
 		outView.setPinnedTime(1000);
+		outView.setAutoLoadMore(true);
+//		outView.setAutoLoadMore(true);
 //		outView.setSlienceLoadMore();
 
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {

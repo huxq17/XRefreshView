@@ -200,6 +200,7 @@ public class XRefreshView extends LinearLayout {
         mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
         LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
         mContentView.setHolder(mHolder);
+        mContentView.setParent(this);
         mContentView.setScrollListener();
         if (needAddFooterView()) {
             Log.i("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);

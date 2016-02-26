@@ -37,7 +37,7 @@ public class GridViewActivity extends Activity {
 				android.R.layout.simple_list_item_1, str_name);
 		gv.setAdapter(adapter);
 		outView.setPinnedTime(1000);
-		outView.setAutoLoadMore(false);
+		outView.setAutoLoadMore(true);
 //		outView.setCustomHeaderView(new CustomHeader(this));
 //		outView.setCustomHeaderView(new XRefreshViewHeader(this));
 		outView.setMoveForHorizontal(true);

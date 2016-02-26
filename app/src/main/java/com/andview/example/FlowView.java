@@ -52,7 +52,7 @@ public class FlowView extends ViewGroup {
 			int width = childView.getMeasuredWidth();
 			int height = childView.getMeasuredHeight();
 
-			FlowView.LayoutParams margins = (LayoutParams) childView
+			LayoutParams margins = (LayoutParams) childView
 					.getLayoutParams();
 			int topMargin = margins.topMargin;
 			int bottomMargin = margins.bottomMargin;
