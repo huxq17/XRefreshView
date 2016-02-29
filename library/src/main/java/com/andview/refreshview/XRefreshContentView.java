@@ -137,6 +137,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             }
 
         } else if (child instanceof RecyclerView) {
+            layoutManagerType = null;
             final RecyclerView recyclerView = (RecyclerView) child;
             if (recyclerView.getAdapter() == null) {
                 return;
@@ -181,8 +182,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     // previousTotal = mTotalItemCount;
                     // }
                     // }
-                    LogUtils.d("pre onLoadMore mIsLoadingMore="
-                            + mIsLoadingMore);
+                    LogUtils.d("pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
                     if (mSlienceLoadMore) {
                         if (!mIsLoadingMore
                                 && (mTotalItemCount - 1 - mPreLoadCount) <= mLastVisibleItemPosition) {

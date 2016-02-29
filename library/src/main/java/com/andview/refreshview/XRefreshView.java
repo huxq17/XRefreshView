@@ -147,6 +147,13 @@ public class XRefreshView extends LinearLayout {
         setPullLoadEnable(false);
     }
 
+    /**
+     * 当切换layoutManager时，需调用此方法
+     */
+    public void notifyLayoutManagerChanged() {
+        mContentView.setScrollListener();
+    }
+
     private void initWithContext(Context context, AttributeSet attrs) {
 
         // 根据属性设置参数
@@ -201,7 +208,7 @@ public class XRefreshView extends LinearLayout {
         LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
         mContentView.setHolder(mHolder);
         mContentView.setParent(this);
-        mContentView.setScrollListener();
+        notifyLayoutManagerChanged();
         if (needAddFooterView()) {
             Log.i("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             addView(mFooterView);
