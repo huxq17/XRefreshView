@@ -53,7 +53,6 @@ public class LinearRecyclerViewActivity extends Activity {
 //		xRefreshView.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
 //		xRefreshView.setPreLoadCount(2);
-
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
             @Override
