@@ -154,8 +154,6 @@ public class LinearRecyclerViewActivity extends Activity {
                 }
                 //当切换layoutManager时，需调用此方法
                 xRefreshView.notifyLayoutManagerChanged();
-                adapter.notifyDataSetChanged();
-//切换布局时底部加载更多的布局变小，如何解决
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();
