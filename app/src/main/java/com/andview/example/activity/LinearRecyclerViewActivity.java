@@ -24,7 +24,6 @@ public class LinearRecyclerViewActivity extends Activity {
     List<Person> personList = new ArrayList<Person>();
     XRefreshView xRefreshView;
     int lastVisibleItem = 0;
-//    GridLayoutManager layoutManager;
     LinearLayoutManager layoutManager;
     private boolean isBottom = false;
     private int mLoadCount = 0;
