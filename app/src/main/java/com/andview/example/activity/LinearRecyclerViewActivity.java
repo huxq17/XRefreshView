@@ -146,10 +146,8 @@ public class LinearRecyclerViewActivity extends Activity {
                 if (isList) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                     layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//            mRecyclerView.addItemDecoration(new SpacesItemDecoration(context, R.dimen.size_0_5));
                     recyclerView.setLayoutManager(layoutManager);
                 } else {
-//            mRecyclerView.addItemDecoration(new SpacesItemDecoration(context, R.dimen.height_7));
                     recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                 }
                 //当切换layoutManager时，需调用此方法
