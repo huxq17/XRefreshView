@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.andview.example.R;
 import com.andview.example.recylerview.Person;
@@ -51,7 +50,7 @@ public class LinearRecyclerViewActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView.setAutoLoadMore(true);
         //设置刷新完成以后，headerview固定的时间
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
@@ -85,7 +84,6 @@ public class LinearRecyclerViewActivity extends Activity {
             public void onLoadMore(boolean isSlience) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "loadMore", Toast.LENGTH_LONG).show();
                         for (int i = 0; i < 6; i++) {
                             adapter.insert(new Person("More ", "21"),
                                     adapter.getAdapterItemCount());

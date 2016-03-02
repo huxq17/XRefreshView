@@ -63,7 +63,7 @@ public class BannerRecyclerViewActivity extends Activity {
         CustomGifHeader header = new CustomGifHeader(this);
         xRefreshView.setCustomHeaderView(header);
         recyclerView.setAdapter(adapter);
-        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView.setAutoLoadMore(true);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
 //        adapter.setHeaderView(headerView, recyclerView);

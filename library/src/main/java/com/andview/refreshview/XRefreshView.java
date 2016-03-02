@@ -469,7 +469,6 @@ public class XRefreshView extends LinearLayout {
      */
     public void setPullLoadEnable(boolean enable) {
         mEnablePullLoad = enable;
-        setAutoLoadMore(false);
         if (needAddFooterView()) {
             checkPullLoadEnable();
         } else {
