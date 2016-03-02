@@ -60,6 +60,8 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
         mHintTextView.setText(R.string.xrefreshview_header_hint_normal);
         gifView1.setVisibility(View.VISIBLE);
         gifView2.setVisibility(View.GONE);
+        gifView1.setPaused(false);
+        gifView2.setPaused(true);
     }
 
     @Override
@@ -72,6 +74,8 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
         mHintTextView.setText(R.string.xrefreshview_header_hint_refreshing);
         gifView1.setVisibility(View.GONE);
         gifView2.setVisibility(View.VISIBLE);
+        gifView1.setPaused(true);
+        gifView2.setPaused(false);
     }
 
     @Override
@@ -79,6 +83,7 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
         mHintTextView.setText(R.string.xrefreshview_header_hint_loaded);
 //        gifView1.setVisibility(View.VISIBLE);
         gifView2.setVisibility(View.GONE);
+        gifView2.setPaused(true);
     }
 
     @Override
