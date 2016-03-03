@@ -35,5 +35,13 @@
         android:onClick="onClick"
         android:text="带Banner的Recyclerview" />
 
+    <Button
+        android:id="@+id/bt_slience"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="静默加载的Recyclerview" />
+
 
 </com.andview.example.FlowView>

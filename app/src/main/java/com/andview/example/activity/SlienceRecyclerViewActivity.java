@@ -3,8 +3,9 @@ package com.andview.example.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,20 +14,26 @@ import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
-import com.andview.refreshview.XRefreshViewFooter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaggeredRecyclerViewActivity extends Activity {
+/**
+ * 设置Recyclerview的静默加载和预加载，让滑动更顺滑。静默加载模式中footerview是不可见的
+ */
+public class SlienceRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
     SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
     XRefreshView xRefreshView;
     int lastVisibleItem = 0;
-    StaggeredGridLayoutManager layoutManager;
+    //    GridLayoutManager layoutManager;
+    LinearLayoutManager layoutManager;
     private boolean isBottom = false;
     private int mLoadCount = 0;
+
+
+    private boolean isList = true;//false 为grid布局
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +45,21 @@ public class StaggeredRecyclerViewActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
         initData();
-        adapter = new SimpleAdapter(personList,this);
+        adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//		xRefreshView.setSlienceLoadMore();
-        layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        xRefreshView.setSlienceLoadMore();
+        layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
 //        xRefreshView.setAutoLoadMore(true);
+        //设置刷新完成以后，headerview固定的时间
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
-        adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+//        adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 //		xRefreshView.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
-//		xRefreshView.setPreLoadCount(2);
+        xRefreshView.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -62,7 +70,7 @@ public class StaggeredRecyclerViewActivity extends Activity {
                     public void run() {
                         xRefreshView.stopRefresh();
                     }
-                }, 2000);
+                }, 1000);
             }
 
             @Override
@@ -70,18 +78,19 @@ public class StaggeredRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 6; i++) {
-                            adapter.insert(new Person("More ", "21"),
+                            adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
                         mLoadCount++;
-                        if (mLoadCount >= 3) {
+
+                        if (mLoadCount >= 5) {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载
                             xRefreshView.stopLoadMore();
                         }
                     }
-                }, 1000);
+                }, 200);
             }
         });
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
@@ -122,6 +131,18 @@ public class StaggeredRecyclerViewActivity extends Activity {
             case R.id.menu_clear:
                 mLoadCount = 0;
                 xRefreshView.setLoadComplete(false);
+                //切换布局
+                isList = !isList;
+
+                if (isList) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(layoutManager);
+                } else {
+                    recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                }
+                //当切换layoutManager时，需调用此方法
+                xRefreshView.notifyLayoutManagerChanged();
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();

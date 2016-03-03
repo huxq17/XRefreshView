@@ -29,6 +29,7 @@
         <activity android:name=".activity.RecyclerViewsActivity" />
         <activity android:name=".activity.GridRecyclerViewActivity" />
         <activity android:name=".activity.StaggeredRecyclerViewActivity" />
+        <activity android:name=".activity.SlienceRecyclerViewActivity" />
     </application>
 
 </manifest>

@@ -30,6 +30,9 @@ public class RecyclerViewsActivity extends Activity {
             case R.id.bt_banner:
                 intent = new Intent(this, BannerRecyclerViewActivity.class);
                 break;
+            case R.id.bt_slience:
+                intent = new Intent(this, SlienceRecyclerViewActivity.class);
+                break;
             default:
                 break;
         }

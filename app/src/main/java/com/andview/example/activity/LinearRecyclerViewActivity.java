@@ -45,19 +45,18 @@ public class LinearRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//		xRefreshView.setSlienceLoadMore();
+//        xRefreshView.setSlienceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(true);
         //设置刷新完成以后，headerview固定的时间
         xRefreshView.setPinnedTime(1000);
+        xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-//		xRefreshView.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
-//		xRefreshView.setPreLoadCount(2);
+//        xRefreshView.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -68,16 +67,7 @@ public class LinearRecyclerViewActivity extends Activity {
                     public void run() {
                         xRefreshView.stopRefresh();
                     }
-                }, 2000);
-//                for (int i = 0; i < personList.size(); i++) {
-//                    adapter.remove(personList, i);
-//                }
-                adapter.clear(personList);
-                for (int i = 0; i < 8; i++) {
-                    adapter.insert(new Person("refresh ", "21"),
-                            adapter.getAdapterItemCount());
-                }
-                adapter.notifyDataSetChanged();//这里不加这句，则会自动进行一次loadmore 还可以通过设置xRefreshView.setLoadComplete(true);控制不去加载更多
+                }, 500);
             }
 
             @Override
@@ -85,12 +75,12 @@ public class LinearRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 6; i++) {
-                            adapter.insert(new Person("More ", "21"),
+                            adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
                         mLoadCount++;
 
-                        if (mLoadCount >= 3) {
+                        if (mLoadCount >= 5) {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载

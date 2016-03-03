@@ -29,13 +29,11 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPES.FOOTER) {
             VH viewHolder = getViewHolder(customLoadMoreView);
-            if (getAdapterItemCount() == 0)
-                viewHolder.itemView.setVisibility(View.GONE);
+            hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.CHANGED_FOOTER) {
             VH viewHolder = getViewHolder(customLoadMoreView);
-            if (getAdapterItemCount() == 0)
-                viewHolder.itemView.setVisibility(View.GONE);
+            hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
             VH viewHolder = getViewHolder(customHeaderView);
@@ -43,6 +41,13 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         }
         return onCreateViewHolder(parent);
     }
+
+    private void hideFooter(View view) {
+        if (getAdapterItemCount() == 0 && view instanceof IFooterCallBack) {
+            ((IFooterCallBack) view).show(false);
+        }
+    }
+
 
     public abstract VH getViewHolder(View view);
 
@@ -166,10 +171,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             count++;
         }
         return count;
-    }
-
-    public View getFooterView() {
-        return customLoadMoreView;
     }
 
     /**

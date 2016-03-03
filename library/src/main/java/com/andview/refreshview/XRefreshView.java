@@ -510,10 +510,10 @@ public class XRefreshView extends LinearLayout {
             return;
         }
         if (!mEnablePullLoad) {
-            mFooterCallBack.hide();
+            mFooterCallBack.show(false);
         } else {
             mPullLoading = false;
-            mFooterCallBack.show();
+            mFooterCallBack.show(true);
             mFooterCallBack.onStateRefreshing();
         }
     }
@@ -583,6 +583,7 @@ public class XRefreshView extends LinearLayout {
      */
     public void setAutoLoadMore(boolean autoLoadMore) {
         this.autoLoadMore = autoLoadMore;
+        setPullLoadEnable(true);
     }
 
     public void startRefresh() {
@@ -752,13 +753,12 @@ public class XRefreshView extends LinearLayout {
         mHasLoadComplete = hasComplete;
         stopLoadMore();
         if (needAddFooterView()) {
-            if (!hasComplete && mEnablePullLoad) {
+            if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
-                mFooterCallBack.show();
+                mFooterCallBack.show(true);
             }
-        } else {
-            mContentView.setLoadComplete(hasComplete);
         }
+        mContentView.setLoadComplete(hasComplete);
     }
 
     public boolean hasLoadCompleted() {
@@ -769,7 +769,7 @@ public class XRefreshView extends LinearLayout {
         startScroll(-mHolder.mOffsetY, 0);
         mFooterCallBack.onStateRefreshing();
         if (mHasLoadComplete) {
-            mFooterCallBack.hide();
+            mFooterCallBack.show(false);
         }
     }
 
