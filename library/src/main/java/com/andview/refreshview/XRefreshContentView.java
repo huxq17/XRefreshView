@@ -255,7 +255,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public void ensureFooterShowWhenScrolling() {
-        if (mState != XRefreshViewState.STATE_COMPLETE && !mFooterCallBack.isShowing()) {
+        if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()
+                && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
             mFooterCallBack.show(true);
         }
     }
