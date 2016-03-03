@@ -169,7 +169,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         layoutManager = recyclerView.getLayoutManager();
                     }
                     getRecyclerViewInfo(layoutManager, adapter);
-                    LogUtils.d("pre onLoadMore mIsLoadingMore=" + mIsLoadingMore + "; mFooterCallBack.isShowing()=" + mFooterCallBack.isShowing());
+                    LogUtils.d("pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
                     if (mSlienceLoadMore) {
                         if (!mIsLoadingMore && isOnRecyclerViewBottom() && !mContainer.hasLoadCompleted()) {
                             if (mRefreshViewListener != null) {
