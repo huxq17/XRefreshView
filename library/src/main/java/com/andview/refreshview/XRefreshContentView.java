@@ -192,12 +192,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                     mIsLoadingMore = true;
                                     previousTotal = mTotalItemCount;
                                     mFooterCallBack.onStateRefreshing();
-                                    mState = XRefreshViewState.STATE_LOADING;
+                                    setState(XRefreshViewState.STATE_LOADING);
                                 } else {
                                     loadCompleted();
                                 }
                             } else {
-                                mState = XRefreshViewState.STATE_NORMAL;
+                                setState(XRefreshViewState.STATE_NORMAL);
                             }
                         } else if (null == mContainer) {
                             if (!mIsLoadingMore && isOnRecyclerViewBottom()) {
@@ -205,13 +205,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                 if (!mContainer.hasLoadCompleted()) {
                                     if (mState != XRefreshViewState.STATE_READY) {
                                         mFooterCallBack.onStateReady();
-                                        mState = XRefreshViewState.STATE_READY;
+                                        setState(XRefreshViewState.STATE_READY);
                                     }
                                 } else {
                                     loadCompleted();
                                 }
                             } else {
-                                mState = XRefreshViewState.STATE_NORMAL;
+                                setState(XRefreshViewState.STATE_NORMAL);
                             }
                         }
                     }
@@ -341,7 +341,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void loadCompleted() {
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
-            mState = XRefreshViewState.STATE_COMPLETE;
+            setState(XRefreshViewState.STATE_COMPLETE);
             mPinnedTime = mPinnedTime < 1000 ? 1000 : mPinnedTime;
             mHandler.postDelayed(new Runnable() {
 
@@ -353,12 +353,16 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    private void setState(XRefreshViewState state) {
+        if (mState != XRefreshViewState.STATE_COMPLETE) {
+            mState = state;
+        }
+    }
+
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
+        setState(XRefreshViewState.STATE_NORMAL);
         if (!hasComplete) {
-            if (mParent.getPullLoadEnable() && mFooterCallBack != null) {
-                mFooterCallBack.show(true);
-            }
             mIsLoadingMore = false;
         }
     }
