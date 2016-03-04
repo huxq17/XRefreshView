@@ -2,6 +2,7 @@ package com.andview.refreshview.utils;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.WindowManager;
 
 public class Utils {
@@ -21,5 +22,11 @@ public class Utils {
                 .getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point(wm.getDefaultDisplay().getWidth(), wm.getDefaultDisplay().getHeight());
         return point;
+    }
+
+    public static void setFullSpan(StaggeredGridLayoutManager.LayoutParams layoutParams) {
+        if (layoutParams != null && !layoutParams.isFullSpan()) {
+            layoutParams.setFullSpan(true);
+        }
     }
 }

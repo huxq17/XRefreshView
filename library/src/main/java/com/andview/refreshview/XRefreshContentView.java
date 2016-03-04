@@ -22,6 +22,7 @@ import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
+import com.andview.refreshview.utils.Utils;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         OnBottomLoadMoreTime {
@@ -50,7 +51,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     private boolean mHasLoadComplete = false;
     private int mPinnedTime;
     private XRefreshHolder mHolder;
-    public XRefreshView mParent;
+    private XRefreshView mParent;
 
     public void setParent(XRefreshView parent) {
         mParent = parent;
@@ -268,7 +269,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 if (footerView != null) {
                     ViewGroup.LayoutParams layoutParams = footerView.getLayoutParams();
                     if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                        ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
+                        Utils.setFullSpan((StaggeredGridLayoutManager.LayoutParams) layoutParams);
                         mRefreshAdapter = true;
                     }
                 }

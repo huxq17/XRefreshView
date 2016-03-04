@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
+import com.andview.refreshview.utils.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +68,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         if (isHeader(position) || isFooter(position)) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
+                Utils.setFullSpan((StaggeredGridLayoutManager.LayoutParams) layoutParams);
             }
         } else {
             onBindViewHolder(holder, position - start, true);
