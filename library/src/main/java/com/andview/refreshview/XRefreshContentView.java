@@ -110,6 +110,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         mSlienceLoadMore = slienceLoadMore;
     }
 
+    private boolean hasIntercepted = false;
+
     public void setScrollListener() {
         if (child instanceof AbsListView) {
             AbsListView absListView = (AbsListView) child;
@@ -155,6 +157,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mRecyclerViewScrollListener.onScrollStateChanged(recyclerView, newState);
                     }
                     refreshAdapter(adapter, null);
+                    hasIntercepted = false;
                 }
 
                 @Override
@@ -182,6 +185,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         }
                     } else {
                         ensureFooterShowWhenScrolling();
+                        if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
+                            mFooterCallBack.show(false);
+                            hasIntercepted = true;
+                        }
+                        if (hasIntercepted) {
+                            return;
+                        }
                         if (mContainer != null) {
                             if (!mIsLoadingMore && isOnRecyclerViewBottom()) {
                                 if (!mContainer.hasLoadCompleted()) {
