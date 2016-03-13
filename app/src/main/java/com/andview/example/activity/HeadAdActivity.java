@@ -14,6 +14,7 @@ import com.andview.example.IndexPageAdapter;
 import com.andview.example.R;
 import com.andview.example.ui.AdHeader;
 import com.andview.example.ui.BannerViewPager;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
@@ -51,6 +52,7 @@ public class HeadAdActivity extends Activity {
         outView.setPinnedTime(1000);
         // outView.setAutoLoadMore(false);
         outView.setCustomHeaderView(headerView);
+        outView.setCustomFooterView(new CustomerFooter(this));
         // outView.setCustomHeaderView(new XRefreshViewHeader(this));
         outView.setMoveForHorizontal(true);
         outView.setPinnedContent(true);

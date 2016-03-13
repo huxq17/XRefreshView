@@ -11,6 +11,7 @@ import com.andview.example.StickyListBean;
 import com.andview.example.StickylistAdapter;
 import com.andview.example.stickyListHeaders.StickyListHeadersListView;
 import com.andview.example.ui.CustomHeader;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
@@ -39,6 +40,7 @@ public class CustomViewActivity extends Activity {
 		refreshView.setAutoRefresh(true);
 //		refreshView.setPinnedTime(0);
 		refreshView.setCustomHeaderView(new CustomHeader(this));
+		refreshView.setCustomFooterView(new CustomerFooter(this));
 		refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
 			@Override

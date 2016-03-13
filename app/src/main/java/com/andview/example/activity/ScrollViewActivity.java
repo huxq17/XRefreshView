@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.andview.example.R;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
@@ -27,6 +28,7 @@ public class ScrollViewActivity extends Activity {
 		outView.setAutoLoadMore(true);
 //		outView.setAutoLoadMore(true);
 //		outView.setSlienceLoadMore();
+		outView.setCustomFooterView(new CustomerFooter(this));
 
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 

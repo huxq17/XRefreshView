@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import com.andview.example.R;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
@@ -41,6 +42,7 @@ public class GridViewActivity extends Activity {
 //		outView.setCustomHeaderView(new CustomHeader(this));
 //		outView.setCustomHeaderView(new XRefreshViewHeader(this));
 		outView.setMoveForHorizontal(true);
+		outView.setCustomFooterView(new CustomerFooter(this));
 //		outView.setPinnedContent(true);
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 			@Override

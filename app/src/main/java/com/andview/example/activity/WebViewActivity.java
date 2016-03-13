@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.andview.example.R;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
@@ -28,6 +29,7 @@ public class WebViewActivity extends Activity {
 				view.loadUrl(url);
 				return true;
 			}
+
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				outView.stopRefresh();
@@ -38,6 +40,7 @@ public class WebViewActivity extends Activity {
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
 		outView.setPinnedTime(1000);
+		outView.setCustomFooterView(new CustomerFooter(this));
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
