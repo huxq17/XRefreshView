@@ -54,6 +54,7 @@ public class LinearRecyclerViewActivity extends Activity {
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
+        xRefreshView.setAutoLoadMore(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);
