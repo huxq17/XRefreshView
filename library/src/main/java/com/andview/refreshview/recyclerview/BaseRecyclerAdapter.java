@@ -40,7 +40,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             VH viewHolder = getViewHolder(customHeaderView);
             return viewHolder;
         }
-        return onCreateViewHolder(parent);
+        return onCreateViewHolder(parent, viewType, true);
     }
 
     private void hideFooter(View view) {
@@ -52,7 +52,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     public abstract VH getViewHolder(View view);
 
-    public abstract VH onCreateViewHolder(ViewGroup parent);
+    /**
+     * @param parent
+     * @param viewType
+     * @param isItem   如果是true，才需要做处理 ,但是这个值总是true
+     */
+    public abstract VH onCreateViewHolder(ViewGroup parent, int viewType, boolean isItem);
 
     /**
      * 替代onBindViewHolder方法，实现这个方法就行了

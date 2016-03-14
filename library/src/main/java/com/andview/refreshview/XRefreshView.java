@@ -257,26 +257,35 @@ public class XRefreshView extends LinearLayout {
         LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
         mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
         int childCount = getChildCount();
-        int top = getPaddingTop() + mHolder.mOffsetY;
+        t += getPaddingTop() + mHolder.mOffsetY;
+        l += getPaddingLeft();
+        r -= getPaddingRight();
+        b -= getPaddingBottom();
         int adHeight = 0;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
+            LayoutParams margins = (LayoutParams) child.getLayoutParams();
+            int topMargin = margins.topMargin;
+            int bottomMargin = margins.bottomMargin;
+            int leftMargin = margins.leftMargin;
+            int rightMargin = margins.rightMargin;
+            l += leftMargin;
+            t += topMargin;
+            r -= rightMargin;
+            b -= bottomMargin;
             if (child.getVisibility() != View.GONE) {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
                     // 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
-                    child.layout(0, top - mHeaderViewHeight,
-                            child.getMeasuredWidth(), top + adHeight);
-                    top += adHeight;
+                    child.layout(l, t - mHeaderViewHeight, r, t + adHeight);
+                    t += adHeight;
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
-                    child.layout(0, top, child.getMeasuredWidth(), childHeight
-                            + top);
-                    top += childHeight;
+                    child.layout(l, t, r, childHeight + t);
+                    t += childHeight;
                 } else {
-                    child.layout(0, top, child.getMeasuredWidth(),
-                            child.getMeasuredHeight() + top);
-                    top += child.getMeasuredHeight();
+                    child.layout(l, t, r, child.getMeasuredHeight() + t);
+                    t += child.getMeasuredHeight();
                 }
             }
         }
