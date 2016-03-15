@@ -37,6 +37,11 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
     }
 
     @Override
+    public int getAdapterItemViewType(int position) {
+        return 0;
+    }
+
+    @Override
     public int getAdapterItemCount() {
         return list.size();
     }

@@ -156,9 +156,18 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
                 return VIEW_TYPES.FOOTER;
             }
         } else {
-            return VIEW_TYPES.NORMAL;
+            position = getStart() > 0 ? position - 1 : position;
+            return getAdapterItemViewType(position);
         }
     }
+
+    /**
+     * 实现此方法来设置view的type
+     *
+     * @param position
+     * @return
+     */
+    public abstract int getAdapterItemViewType(int position);
 
     public int getStart() {
         return customHeaderView == null ? 0 : 1;
@@ -237,9 +246,9 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected class VIEW_TYPES {
         public static final int NORMAL = 0;
-        public static final int FOOTER = 2;
-        public static final int CHANGED_FOOTER = 3;
-        public static final int HEADER = 4;
+        public static final int FOOTER = -1;
+        public static final int CHANGED_FOOTER = -2;
+        public static final int HEADER = -3;
     }
 
     protected enum AdapterAnimationType {
