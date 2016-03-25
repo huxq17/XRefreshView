@@ -39,6 +39,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
+            Utils.removeViewFromParent(customHeaderView);
             VH viewHolder = getViewHolder(customHeaderView);
             return viewHolder;
         }
@@ -104,6 +105,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
+        Utils.removeViewFromParent(customLoadMoreView);
         customHeaderView = headerView;
         notifyDataSetChanged();
     }
@@ -117,8 +119,8 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
         Context context = recyclerView.getContext();
-        FrameLayout rootview = new FrameLayout(recyclerView.getContext());
-        customHeaderView = LayoutInflater.from(context).inflate(id, rootview);
+        FrameLayout headerview = new FrameLayout(recyclerView.getContext());
+        customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
         notifyDataSetChanged();
         return customHeaderView;
     }

@@ -52,6 +52,14 @@
         android:text="ScrollView" />
 
     <Button
+        android:id="@+id/bt_not_full_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="数据不满一屏" />
+
+    <Button
         android:id="@+id/bt_headAd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -30,6 +30,7 @@
         <activity android:name=".activity.GridRecyclerViewActivity" />
         <activity android:name=".activity.StaggeredRecyclerViewActivity" />
         <activity android:name=".activity.SlienceRecyclerViewActivity" />
+        <activity android:name=".activity.NotFullScreenActivity" />
     </application>
 
 </manifest>
