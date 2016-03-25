@@ -90,7 +90,7 @@ public class SlienceRecyclerViewActivity extends Activity {
                             xRefreshView.stopLoadMore();
                         }
                     }
-                }, 200);
+                }, 2000);
             }
         });
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由

@@ -176,7 +176,7 @@ public class XRefreshView extends LinearLayout {
                 a.recycle();
             }
         }
-        mHeaderView = new XRefreshViewHeader(getContext());
+        mHeaderView = new XRefreshViewHeader(context);
         mFooterView = new XRefreshViewFooter(context);
         this.getViewTreeObserver().addOnGlobalLayoutListener(
                 new OnGlobalLayoutListener() {
@@ -191,6 +191,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void addHeaderView() {
+        Utils.removeViewFromParent(mHeaderView);
         addView(mHeaderView, 0);
         mHeaderView.measure(0, 0);
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
@@ -205,12 +206,12 @@ public class XRefreshView extends LinearLayout {
 
     private void addFooterView(OnGlobalLayoutListener listener) {
         mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
-        LogUtils.d("onGlobalLayout mHeaderViewHeight=" + mHeaderViewHeight);
         mContentView.setHolder(mHolder);
         mContentView.setParent(this);
         notifyLayoutManagerChanged();
         if (needAddFooterView()) {
-            Log.i("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
+            Log.d("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
+            Utils.removeViewFromParent(mFooterView);
             addView(mFooterView);
         }
         // 移除视图树监听器
@@ -238,12 +239,22 @@ public class XRefreshView extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+//        int width2 = getDefaultSize(0, widthMeasureSpec);
+//        int height2 = getDefaultSize(0, heightMeasureSpec);
         int childCount = getChildCount();
         int finalHeight = 0;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
+            LayoutParams margins = (LayoutParams) child.getLayoutParams();
+            int topMargin = margins.topMargin;
+            int bottomMargin = margins.bottomMargin;
+            int leftMargin = margins.leftMargin;
+            int rightMargin = margins.rightMargin;
             if (child.getVisibility() != View.GONE) {
-                measureChild(child, widthMeasureSpec, heightMeasureSpec);
+                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, width-leftMargin-rightMargin);
+                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, height-topMargin-bottomMargin);
+                measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec);
                 finalHeight += child.getMeasuredHeight();
             }
         }
@@ -273,14 +284,14 @@ public class XRefreshView extends LinearLayout {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
                     // 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
-                    child.layout(l, top - mHeaderViewHeight, child.getMeasuredWidth(), top + adHeight - bottomMargin - topMargin);
+                    child.layout(l, top - mHeaderViewHeight, r, top + adHeight);
                     top += adHeight;
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
-                    child.layout(l, top, child.getMeasuredWidth(), childHeight + top - bottomMargin - topMargin);
+                    child.layout(l, top,r, childHeight + top );
                     top += childHeight;
                 } else {
-                    child.layout(l, top, child.getMeasuredWidth(), child.getMeasuredHeight() + top - bottomMargin - topMargin);
+                    child.layout(l, top, r, child.getMeasuredHeight() + top );
                     top += child.getMeasuredHeight();
                 }
             }
@@ -875,6 +886,7 @@ public class XRefreshView extends LinearLayout {
                     "headerView must be implementes IHeaderCallBack!");
         }
     }
+
 
     /**
      * 设置自定义footerView

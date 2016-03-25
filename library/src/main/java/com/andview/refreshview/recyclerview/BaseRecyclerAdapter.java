@@ -29,10 +29,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPES.FOOTER) {
+            Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
             hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.CHANGED_FOOTER) {
+            Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
             hideFooter(viewHolder.itemView);
             return viewHolder;
@@ -86,6 +88,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
+        Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
         } else {
