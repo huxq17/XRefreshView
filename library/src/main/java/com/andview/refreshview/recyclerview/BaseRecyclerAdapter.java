@@ -176,8 +176,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         return VIEW_TYPES.NORMAL;
     }
 
-    ;
-
     public int getStart() {
         return customHeaderView == null ? 0 : 1;
     }
