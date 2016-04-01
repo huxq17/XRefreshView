@@ -111,14 +111,19 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
+
         this.id = id;
         if (recyclerView == null) return null;
+        Context context = recyclerView.getContext();
+        String resourceTypeName = context.getResources().getResourceTypeName(id);
+        if (!resourceTypeName.contains("layout")) {
+            throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
+        }
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
-        Context context = recyclerView.getContext();
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
         customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
         notifyDataSetChanged();
