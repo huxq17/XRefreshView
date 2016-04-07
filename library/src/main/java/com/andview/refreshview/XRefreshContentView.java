@@ -455,11 +455,21 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 mIsLoadingMore = true;
             }
         } else if (mContainer != null && !hasLoadCompleted()
-                && scrollState == OnScrollListener.SCROLL_STATE_IDLE
-                && mTotalItemCount - 1 <= view.getLastVisiblePosition() + mPreLoadCount) {
-            if (!mIsLoadingMore) {
-                mIsLoadingMore = mContainer.invokeLoadMore();
+                && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+            if (mPreLoadCount == 0) {
+                if (isBottom()) {
+                    if (!mIsLoadingMore) {
+                        mIsLoadingMore = mContainer.invokeLoadMore();
+                    }
+                }
+            } else {
+                if (mTotalItemCount - 1 <= view.getLastVisiblePosition() + mPreLoadCount) {
+                    if (!mIsLoadingMore) {
+                        mIsLoadingMore = mContainer.invokeLoadMore();
+                    }
+                }
             }
+
         }
         if (mAbsListViewScrollListener != null) {
             mAbsListViewScrollListener.onScrollStateChanged(view, scrollState);
