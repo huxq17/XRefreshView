@@ -674,9 +674,13 @@ public class XRefreshView extends LinearLayout {
             LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY="
                     + mHolder.mOffsetY);
         } else {
-            LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY);
+            int currentY = mScroller.getCurrY();
+            LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY+";currentY="+currentY);
             if (mHolder.mOffsetY == 0) {
                 mStopingRefresh = false;
+            }else{
+                //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
+                startScroll(-currentY, SCROLL_DURATION);
             }
         }
     }
@@ -796,7 +800,7 @@ public class XRefreshView extends LinearLayout {
     public void startScroll(int offsetY, int duration) {
         if (offsetY != 0) {
             mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-            invalidate();
+            ViewCompat.postInvalidateOnAnimation(this);
         }
     }
 
