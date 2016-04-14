@@ -252,8 +252,8 @@ public class XRefreshView extends LinearLayout {
             int leftMargin = margins.leftMargin;
             int rightMargin = margins.rightMargin;
             if (child.getVisibility() != View.GONE) {
-                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, width-leftMargin-rightMargin);
-                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, height-topMargin-bottomMargin);
+                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, width - leftMargin - rightMargin);
+                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, height - topMargin - bottomMargin);
                 measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec);
                 finalHeight += child.getMeasuredHeight();
             }
@@ -288,10 +288,10 @@ public class XRefreshView extends LinearLayout {
                     top += adHeight;
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
-                    child.layout(l, top,r, childHeight + top );
+                    child.layout(l, top, r, childHeight + top);
                     top += childHeight;
                 } else {
-                    child.layout(l, top, r, child.getMeasuredHeight() + top );
+                    child.layout(l, top, r, child.getMeasuredHeight() + top);
                     top += child.getMeasuredHeight();
                 }
             }
@@ -675,12 +675,14 @@ public class XRefreshView extends LinearLayout {
                     + mHolder.mOffsetY);
         } else {
             int currentY = mScroller.getCurrY();
-            LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY+";currentY="+currentY);
+            LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY + ";currentY=" + currentY);
             if (mHolder.mOffsetY == 0) {
                 mStopingRefresh = false;
-            }else{
+            } else {
                 //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
-                startScroll(-currentY, SCROLL_DURATION);
+                if (mStopingRefresh) {
+                    startScroll(-currentY, SCROLL_DURATION);
+                }
             }
         }
     }
