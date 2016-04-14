@@ -21,18 +21,18 @@ public interface IFooterCallBack {
     public void onStateRefreshing();
 
     /**
-     * 刷新结束
+     * 刷新结束 在此方法中不要调用show()方法
      */
     public void onStateFinish();
 
     /**
-     * 已无更多数据
+     * 已无更多数据 在此方法中不要调用show()方法
      */
     public void onStateComplete();
 
 
     /**
-     * 设置显示或者隐藏footerview
+     * 设置显示或者隐藏footerview 不要在onStateFinish和onStateComplete中调用此方法
      * @param show
      */
     public void show(boolean show);

@@ -409,8 +409,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     public boolean invokeLoadMore() {
-        if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh
-                && !mHasLoadComplete) {
+        if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             if (offset != 0) {
                 startScroll(offset, SCROLL_DURATION);
@@ -677,7 +676,7 @@ public class XRefreshView extends LinearLayout {
                 mStopingRefresh = false;
             } else {
                 //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
-                if (mStopingRefresh) {
+                if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
                     startScroll(-currentY, SCROLL_DURATION);
                 }
             }
@@ -692,7 +691,6 @@ public class XRefreshView extends LinearLayout {
     public void stopRefresh() {
         LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
         if (mPullRefreshing == true) {
-            mPullRefreshing = false;
             mStopingRefresh = true;
             mHeaderCallBack.onStateFinish();
             mState = XRefreshViewState.STATE_COMPLETE;
@@ -700,6 +698,7 @@ public class XRefreshView extends LinearLayout {
 
                 @Override
                 public void run() {
+                    mPullRefreshing = false;
                     if (mStopingRefresh) {
                         resetHeaderHeight();
                     }
@@ -746,14 +745,14 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             if (mPullLoading == true) {
                 mStopingRefresh = true;
-                mPullLoading = false;
-                mFooterCallBack.onStateFinish();
                 mState = XRefreshViewState.STATE_COMPLETE;
+                mFooterCallBack.onStateFinish();
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
                     mHandler.postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
+                            mPullLoading = false;
                             endLoadMore();
                         }
                     }, mPinnedTime);
@@ -787,6 +786,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     public void endLoadMore() {
+//        mFooterCallBack.show(false);
         startScroll(-mHolder.mOffsetY, 0);
         mFooterCallBack.onStateRefreshing();
         if (mHasLoadComplete) {
