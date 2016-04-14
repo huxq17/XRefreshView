@@ -196,8 +196,7 @@ public class XRefreshView extends LinearLayout {
         mHeaderView.measure(0, 0);
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
         mContentView.setContainer(autoLoadMore ? this : null);
-        mContentView.setContentViewLayoutParams(isHeightMatchParent,
-                isWidthMatchParent);
+        mContentView.setContentViewLayoutParams(isHeightMatchParent, isWidthMatchParent);
         mHeaderCallBack = (IHeaderCallBack) mHeaderView;
         mFooterCallBack = (IFooterCallBack) mFooterView;
         checkPullRefreshEnable();
@@ -573,7 +572,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void updateFooterHeight(int deltaY) {
-        if (mState != XRefreshViewState.STATE_READY && !autoLoadMore) {
+        if (mState != XRefreshViewState.STATE_READY && mEnablePullLoad && !autoLoadMore) {
             mFooterCallBack.onStateReady();
             mState = XRefreshViewState.STATE_READY;
         }
@@ -597,7 +596,9 @@ public class XRefreshView extends LinearLayout {
      */
     public void setAutoLoadMore(boolean autoLoadMore) {
         this.autoLoadMore = autoLoadMore;
-        setPullLoadEnable(true);
+        if (autoLoadMore) {
+            setPullLoadEnable(true);
+        }
     }
 
     public void startRefresh() {
