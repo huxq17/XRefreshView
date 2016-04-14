@@ -312,7 +312,6 @@ public class XRefreshView extends LinearLayout {
                 mHasSendDownEvent = false;
                 mLastY = (int) ev.getRawY();
                 mLastX = (int) ev.getRawX();
-
                 mInitialMotionY = mLastY;
 
                 // if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading)
@@ -671,11 +670,9 @@ public class XRefreshView extends LinearLayout {
             lastScrollY = currentY;
             moveView(offsetY);
 
-            LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY="
-                    + mHolder.mOffsetY);
+            LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
         } else {
             int currentY = mScroller.getCurrY();
-            LogUtils.d("scroll end mOffsetY=" + mHolder.mOffsetY + ";currentY=" + currentY);
             if (mHolder.mOffsetY == 0) {
                 mStopingRefresh = false;
             } else {
@@ -703,7 +700,9 @@ public class XRefreshView extends LinearLayout {
 
                 @Override
                 public void run() {
-                    resetHeaderHeight();
+                    if (mStopingRefresh) {
+                        resetHeaderHeight();
+                    }
                     lastRefreshTime = Calendar.getInstance().getTimeInMillis();
                 }
             }, mPinnedTime);
