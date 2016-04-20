@@ -37,6 +37,11 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
     }
 
     @Override
+    public int getAdapterItemViewType(int position) {
+        return 0;
+    }
+
+    @Override
     public int getAdapterItemCount() {
         return list.size();
     }
@@ -46,8 +51,13 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
         return new SimpleAdapterViewHolder(view, false);
     }
 
+    public void setData(List<Person> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     @Override
-    public SimpleAdapterViewHolder onCreateViewHolder(ViewGroup parent) {
+    public SimpleAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType, boolean isItem) {
         View v = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.item_recylerview, parent, false);
         SimpleAdapterViewHolder vh = new SimpleAdapterViewHolder(v, true);

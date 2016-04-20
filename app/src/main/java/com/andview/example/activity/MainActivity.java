@@ -39,9 +39,11 @@ public class MainActivity extends Activity {
             case R.id.bt_headAd:
                 intent = new Intent(this, HeadAdActivity.class);
                 break;
+            case R.id.bt_not_full_screen:
+                intent = new Intent(this, NotFullScreenActivity.class);
+                break;
             case R.id.bt_rain:
 //                intent = new Intent(this, RainDropActivity.class);
-//                startActivity(intent);
                 break;
             default:
                 break;

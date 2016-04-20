@@ -19,7 +19,7 @@ import com.andview.refreshview.XRefreshViewFooter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinearRecyclerViewActivity extends Activity {
+public class NotFullScreenActivity extends Activity {
     RecyclerView recyclerView;
     SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
@@ -29,8 +29,6 @@ public class LinearRecyclerViewActivity extends Activity {
     LinearLayoutManager layoutManager;
     private boolean isBottom = false;
     private int mLoadCount = 0;
-
-
     private boolean isList = true;//false 为grid布局
 
     @Override
@@ -42,7 +40,6 @@ public class LinearRecyclerViewActivity extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_test_rv);
         recyclerView.setHasFixedSize(true);
 
-        initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
 //        xRefreshView.setSlienceLoadMore();
@@ -54,7 +51,7 @@ public class LinearRecyclerViewActivity extends Activity {
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
-        xRefreshView.setAutoLoadMore(false);
+        xRefreshView.setAutoLoadMore(true);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);
@@ -91,6 +88,7 @@ public class LinearRecyclerViewActivity extends Activity {
                 }, 1000);
             }
         });
+        requestData();
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
 //		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
@@ -108,8 +106,18 @@ public class LinearRecyclerViewActivity extends Activity {
 //		});
     }
 
+    public void requestData() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initData();
+                adapter.setData(personList);
+            }
+        }, 1000);
+    }
+
     private void initData() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 3; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }

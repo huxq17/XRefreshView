@@ -29,18 +29,21 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPES.FOOTER) {
+            Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
             hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.CHANGED_FOOTER) {
+            Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
             hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
+            Utils.removeViewFromParent(customHeaderView);
             VH viewHolder = getViewHolder(customHeaderView);
             return viewHolder;
         }
-        return onCreateViewHolder(parent);
+        return onCreateViewHolder(parent, viewType, true);
     }
 
     private void hideFooter(View view) {
@@ -52,7 +55,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     public abstract VH getViewHolder(View view);
 
-    public abstract VH onCreateViewHolder(ViewGroup parent);
+    /**
+     * @param parent
+     * @param viewType
+     * @param isItem   如果是true，才需要做处理 ,但是这个值总是true
+     */
+    public abstract VH onCreateViewHolder(ViewGroup parent, int viewType, boolean isItem);
 
     /**
      * 替代onBindViewHolder方法，实现这个方法就行了
@@ -81,6 +89,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
+        Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
         } else {
@@ -96,21 +105,27 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
+        Utils.removeViewFromParent(customLoadMoreView);
         customHeaderView = headerView;
         notifyDataSetChanged();
     }
 
     public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
+
         this.id = id;
         if (recyclerView == null) return null;
+        Context context = recyclerView.getContext();
+        String resourceTypeName = context.getResources().getResourceTypeName(id);
+        if (!resourceTypeName.contains("layout")) {
+            throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
+        }
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
-        Context context = recyclerView.getContext();
-        FrameLayout rootview = new FrameLayout(recyclerView.getContext());
-        customHeaderView = LayoutInflater.from(context).inflate(id, rootview);
+        FrameLayout headerview = new FrameLayout(recyclerView.getContext());
+        customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
         notifyDataSetChanged();
         return customHeaderView;
     }
@@ -141,7 +156,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     public boolean isLoadMoreChanged = false;
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         if (isHeader(position)) {
             return VIEW_TYPES.HEADER;
         } else if (isFooter(position)) {
@@ -151,8 +166,19 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
                 return VIEW_TYPES.FOOTER;
             }
         } else {
-            return VIEW_TYPES.NORMAL;
+            position = getStart() > 0 ? position - 1 : position;
+            return getAdapterItemViewType(position);
         }
+    }
+
+    /**
+     * 实现此方法来设置viewType
+     *
+     * @param position
+     * @return viewType
+     */
+    public int getAdapterItemViewType(int position) {
+        return VIEW_TYPES.NORMAL;
     }
 
     public int getStart() {
@@ -231,10 +257,10 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     protected class VIEW_TYPES {
-        public static final int NORMAL = 0;
-        public static final int FOOTER = 2;
-        public static final int CHANGED_FOOTER = 3;
-        public static final int HEADER = 4;
+        public static final int FOOTER = -1;
+        public static final int CHANGED_FOOTER = -2;
+        public static final int HEADER = -3;
+        public static final int NORMAL = -4;
     }
 
     protected enum AdapterAnimationType {
