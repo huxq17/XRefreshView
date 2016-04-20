@@ -199,6 +199,7 @@ public class XRefreshView extends LinearLayout {
         mContentView.setContentViewLayoutParams(isHeightMatchParent, isWidthMatchParent);
         mHeaderCallBack = (IHeaderCallBack) mHeaderView;
         mFooterCallBack = (IFooterCallBack) mFooterView;
+        setRefreshTime();
         checkPullRefreshEnable();
         checkPullLoadEnable();
     }
@@ -586,7 +587,6 @@ public class XRefreshView extends LinearLayout {
      */
     public void setAutoRefresh(boolean autoRefresh) {
         this.autoRefresh = autoRefresh;
-        setRefreshTime();
     }
 
     /**
@@ -753,7 +753,6 @@ public class XRefreshView extends LinearLayout {
 
                         @Override
                         public void run() {
-                            mPullLoading = false;
                             endLoadMore();
                         }
                     }, mPinnedTime);
@@ -787,6 +786,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     public void endLoadMore() {
+        mPullLoading = false;
 //        mFooterCallBack.show(false);
         startScroll(-mHolder.mOffsetY, 0);
         mFooterCallBack.onStateRefreshing();
