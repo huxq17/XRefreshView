@@ -68,7 +68,7 @@ public class GridViewActivity extends Activity {
 					@SuppressLint("NewApi")
 					@Override
 					public void run() {
-						if (str_name.size() <= 70) {
+						if (str_name.size() <= 90) {
 							if (Build.VERSION.SDK_INT >= 11) {
 								str_name.addAll(addlist);
 								adapter.addAll(addlist);

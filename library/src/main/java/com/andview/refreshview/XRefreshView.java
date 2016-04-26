@@ -747,21 +747,48 @@ public class XRefreshView extends LinearLayout {
             if (mPullLoading == true) {
                 mStopingRefresh = true;
                 mState = XRefreshViewState.STATE_COMPLETE;
-                mFooterCallBack.onStateFinish();
+                mFooterCallBack.onStateFinish(true);
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
                     mHandler.postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
-                            endLoadMore();
+                            endLoadMore(true);
                         }
                     }, mPinnedTime);
                 } else {
-                    endLoadMore();
+                    endLoadMore(true);
                 }
             }
         }
-        mContentView.stopLoading();
+        mContentView.stopLoading(true);
+    }
+
+    /**
+     * stop load more, reset footer view.
+     *
+     * @param hideFooter hide footerview if true
+     */
+    public void stopLoadMore(final boolean hideFooter) {
+        if (needAddFooterView()) {
+            if (mPullLoading == true) {
+                mStopingRefresh = true;
+                mState = XRefreshViewState.STATE_COMPLETE;
+                mFooterCallBack.onStateFinish(hideFooter);
+                if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
+                    mHandler.postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            endLoadMore(hideFooter);
+                        }
+                    }, mPinnedTime);
+                } else {
+                    endLoadMore(hideFooter);
+                }
+            }
+        }
+        mContentView.stopLoading(hideFooter);
     }
 
     /**
@@ -785,12 +812,11 @@ public class XRefreshView extends LinearLayout {
         return mHasLoadComplete;
     }
 
-    public void endLoadMore() {
+    public void endLoadMore(boolean hideFooter) {
         mPullLoading = false;
-//        mFooterCallBack.show(false);
         startScroll(-mHolder.mOffsetY, 0);
-        mFooterCallBack.onStateRefreshing();
-        if (mHasLoadComplete) {
+//        mFooterCallBack.onStateRefreshing();
+        if (mHasLoadComplete && hideFooter) {
             mFooterCallBack.show(false);
         }
     }

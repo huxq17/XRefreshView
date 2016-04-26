@@ -65,8 +65,13 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
     }
 
     @Override
-    public void onStateFinish() {
-        mHintView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_normal);
+    public void onStateFinish(boolean hideFooter) {
+        if (hideFooter) {
+            mHintView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_normal);
+        } else {
+            //处理数据加载失败时ui显示的逻辑，也可以不处理，看自己的需求
+            mHintView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_fail);
+        }
         mHintView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
         mClickView.setVisibility(View.GONE);

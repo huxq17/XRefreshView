@@ -251,12 +251,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    public void stopLoading() {
+    public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
         mTotalItemCount = 0;
         if (mFooterCallBack != null) {
-            mFooterCallBack.onStateFinish();
-            mFooterCallBack.show(false);
+            mFooterCallBack.onStateFinish(hideFooter);
+            if (hideFooter) {
+                mFooterCallBack.show(false);
+            }
         }
         mState = XRefreshViewState.STATE_FINISHED;
     }

@@ -75,10 +75,10 @@ public class LinearRecyclerViewActivity extends Activity {
             public void onLoadMore(boolean isSlience) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        for (int i = 0; i < 6; i++) {
-                            adapter.insert(new Person("More ", mLoadCount + "21"),
-                                    adapter.getAdapterItemCount());
-                        }
+//                        for (int i = 0; i < 6; i++) {
+//                            adapter.insert(new Person("More ", mLoadCount + "21"),
+//                                    adapter.getAdapterItemCount());
+//                        }
                         mLoadCount++;
 
                         if (mLoadCount >= 5) {
@@ -86,6 +86,9 @@ public class LinearRecyclerViewActivity extends Activity {
                         } else {
                             // 刷新完成必须调用此方法停止加载
                             xRefreshView.stopLoadMore();
+                            //当数据加载失败时，可以调用以下方法，传入false，不传默认为true
+                            // 同时在Footerview的onStateFinish(boolean hideFooter)，可以在hideFooter为false时，显示数据加载失败的ui
+//                            xRefreshView.stopLoadMore(false);
                         }
                     }
                 }, 1000);

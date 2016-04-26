@@ -22,8 +22,9 @@ public interface IFooterCallBack {
 
     /**
      * 刷新结束 在此方法中不要调用show()方法
+     * @param hidefooter footerview是否被隐藏
      */
-    public void onStateFinish();
+    public void onStateFinish(boolean hidefooter);
 
     /**
      * 已无更多数据 在此方法中不要调用show()方法
