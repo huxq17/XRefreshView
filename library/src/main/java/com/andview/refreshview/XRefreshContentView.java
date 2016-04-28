@@ -173,7 +173,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         layoutManager = recyclerView.getLayoutManager();
                     }
                     getRecyclerViewInfo(layoutManager, adapter);
-                    if (isTop()) {
+                    if (isTop() && mFooterCallBack != null) {
                         mFooterCallBack.onStateReady();
                         mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                         return;
@@ -188,6 +188,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             }
                         }
                     } else {
+                        if (!isOnRecyclerViewBottom()) {
+                            mHideFooter = true;
+                        }
                         ensureFooterShowWhenScrolling();
                         if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
                             mFooterCallBack.show(false);
@@ -197,7 +200,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                             return;
                         }
                         if (mContainer != null) {
-                            if (!mIsLoadingMore && isOnRecyclerViewBottom()) {
+                            if (!mIsLoadingMore && isOnRecyclerViewBottom() && mHideFooter) {
                                 if (!hasLoadCompleted()) {
                                     if (mRefreshViewListener != null) {
                                         refreshAdapter(adapter, layoutManager);
@@ -214,7 +217,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                 setState(XRefreshViewState.STATE_NORMAL);
                             }
                         } else if (null == mContainer) {
-                            if (!mIsLoadingMore && isOnRecyclerViewBottom()) {
+                            if (!mIsLoadingMore && isOnRecyclerViewBottom() && mHideFooter) {
                                 refreshAdapter(adapter, layoutManager);
                                 if (!hasLoadCompleted()) {
                                     if (mState != XRefreshViewState.STATE_READY) {
@@ -251,6 +254,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    private boolean mHideFooter = true;
+
     public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
         mTotalItemCount = 0;
@@ -260,6 +265,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 mFooterCallBack.show(false);
             }
         }
+        mHideFooter = hideFooter;
         mState = XRefreshViewState.STATE_FINISHED;
     }
 

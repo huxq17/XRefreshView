@@ -89,16 +89,16 @@ public class BannerRecyclerViewActivity extends Activity {
             public void onLoadMore(boolean isSlience) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        for (int i = 0; i < 6; i++) {
-                            adapter.insert(new Person("More ", "21"),
-                                    adapter.getAdapterItemCount());
-                        }
-                        mLoadCount++;
+//                        for (int i = 0; i < 6; i++) {
+//                            adapter.insert(new Person("More ", "21"),
+//                                    adapter.getAdapterItemCount());
+//                        }
+//                        mLoadCount++;
                         if (mLoadCount >= 3) {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载
-                            xRefreshView.stopLoadMore();
+                            xRefreshView.stopLoadMore(false);
                         }
                     }
                 }, 1000);
