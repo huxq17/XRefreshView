@@ -63,7 +63,7 @@ public class BannerRecyclerViewActivity extends Activity {
         CustomGifHeader header = new CustomGifHeader(this);
         xRefreshView.setCustomHeaderView(header);
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(true);
+        xRefreshView.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
 //        adapter.setHeaderView(headerView, recyclerView);
@@ -107,7 +107,7 @@ public class BannerRecyclerViewActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 3; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }

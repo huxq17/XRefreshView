@@ -147,7 +147,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             }
             final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
             recyclerView.removeOnScrollListener(mOnScrollListener);
-
             mOnScrollListener = new RecyclerView.OnScrollListener() {
 
                 @Override
@@ -174,8 +173,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                     getRecyclerViewInfo(layoutManager, adapter);
                     if (isTop() && mFooterCallBack != null) {
-                        mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                        mFooterCallBack.show(true);
                         return;
                     }
                     LogUtils.d("test pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
@@ -247,7 +245,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 adapter.notifyDataSetChanged();
                 mFooterCallBack = (IFooterCallBack) footerView;
                 // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
-                if (null == mContainer) {
+                if (mFooterCallBack != null) {
+                    mFooterCallBack.onStateReady();
                     mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                 }
             }
