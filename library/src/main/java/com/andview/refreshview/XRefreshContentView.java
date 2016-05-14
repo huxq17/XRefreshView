@@ -247,13 +247,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 if (null == footerView) {
                     return;
                 }
-                adapter.notifyDataSetChanged();
                 mFooterCallBack = (IFooterCallBack) footerView;
                 // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
                     mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                 }
+//                adapter.notifyDataSetChanged();
             }
         }
     }
@@ -297,7 +297,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void ensureFooterShowWhenScrolling() {
         if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()
                 && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
-            LogUtils.i("showing ensure");
             mFooterCallBack.show(true);
         }
     }
