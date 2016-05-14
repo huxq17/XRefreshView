@@ -24,7 +24,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
-    private int id;
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -112,7 +111,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
 
-        this.id = id;
         if (recyclerView == null) return null;
         Context context = recyclerView.getContext();
         String resourceTypeName = context.getResources().getResourceTypeName(id);

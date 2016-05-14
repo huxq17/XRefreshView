@@ -172,9 +172,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         layoutManager = recyclerView.getLayoutManager();
                     }
                     getRecyclerViewInfo(layoutManager, adapter);
-                    if (isTop() && mFooterCallBack != null && mParent!=null&&mParent.getPullLoadEnable() && !hasLoadCompleted()) {
-                        if (!mFooterCallBack.isShowing()) {
+                    if (isFullScreen()) {
+                        if (Utils.isRecyclerViewFullscreen(recyclerView)) {
                             mFooterCallBack.show(true);
+                        } else {
+                            mFooterCallBack.onStateReady();
+                            mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                         }
                         return;
                     }
@@ -255,6 +258,18 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    /**
+     * 数据是否满一屏
+     *
+     * @return
+     */
+    private boolean isFullScreen() {
+        if (isTop() && mFooterCallBack != null && mParent != null && mParent.getPullLoadEnable() && !hasLoadCompleted()) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean mHideFooter = true;
 
     public void stopLoading(boolean hideFooter) {
@@ -282,12 +297,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void ensureFooterShowWhenScrolling() {
         if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()
                 && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
+            LogUtils.i("showing ensure");
             mFooterCallBack.show(true);
         }
     }
 
     private void refreshAdapter(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager manager) {
-        if (adapter != null && !mRefreshAdapter) {
+        if (adapter != null && !mRefreshAdapter&&!hasLoadCompleted()) {
             if (!(manager instanceof GridLayoutManager)) {
                 View footerView = adapter.getCustomLoadMoreView();
                 if (footerView != null) {

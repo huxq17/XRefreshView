@@ -9,6 +9,7 @@
     card_view:cardBackgroundColor="@android:color/white"
     card_view:cardCornerRadius="8dp"
     android:layout_margin="5dp"
+    android:paddingBottom="5dp"
     card_view:cardElevation="4dp"
     >
 

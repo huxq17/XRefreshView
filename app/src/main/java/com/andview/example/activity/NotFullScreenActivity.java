@@ -15,6 +15,7 @@ import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
+import com.andview.refreshview.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class NotFullScreenActivity extends Activity {
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
-        xRefreshView.setAutoLoadMore(true);
+        xRefreshView.setAutoLoadMore(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);
@@ -70,9 +71,10 @@ public class NotFullScreenActivity extends Activity {
 
             @Override
             public void onLoadMore(boolean isSlience) {
+                LogUtils.i("onLoadMore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        for (int i = 0; i < 6; i++) {
+                        for (int i = 0; i < 1; i++) {
                             adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
@@ -117,7 +119,7 @@ public class NotFullScreenActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }
