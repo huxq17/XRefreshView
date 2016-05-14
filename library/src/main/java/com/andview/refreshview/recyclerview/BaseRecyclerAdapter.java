@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
-import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
 import java.util.Collections;
@@ -209,7 +208,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         if (customLoadMoreView != null&&!removeFooter) {
             count++;
         }
-        LogUtils.i("adapter getItemCount="+count);
         return count;
     }
 
