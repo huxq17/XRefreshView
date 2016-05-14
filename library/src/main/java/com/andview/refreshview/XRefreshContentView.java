@@ -172,8 +172,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         layoutManager = recyclerView.getLayoutManager();
                     }
                     getRecyclerViewInfo(layoutManager, adapter);
-                    if (isTop() && mFooterCallBack != null && enablePullLoad && !mFooterCallBack.isShowing()) {
-                        mFooterCallBack.show(true);
+                    if (isTop() && mFooterCallBack != null && mParent!=null&&mParent.getPullLoadEnable() && !hasLoadCompleted()) {
+                        if (!mFooterCallBack.isShowing()) {
+                            mFooterCallBack.show(true);
+                        }
                         return;
                     }
                     LogUtils.d("test pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
@@ -394,15 +396,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    private boolean enablePullLoad;
-
     /**
      * 设置显示和隐藏Recyclerview中的footerview
      *
      * @param enablePullLoad
      */
     public void setEnablePullLoad(boolean enablePullLoad) {
-        this.enablePullLoad = enablePullLoad;
         if (enablePullLoad) {
             mFooterCallBack.show(true);
         } else {
