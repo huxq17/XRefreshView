@@ -45,24 +45,39 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         return onCreateViewHolder(parent, viewType, true);
     }
 
-    private void hideFooter(View view) {
-        if (getAdapterItemCount() == 0 && view instanceof IFooterCallBack) {
-            ((IFooterCallBack) view).show(false);
+    private void showFooter(View footerview, boolean show) {
+        if (footerview != null && footerview instanceof IFooterCallBack) {
+            IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+            footerCallBack.show(show);
+        }
+    }
+
+    private void hideFooter(View footerview) {
+        if (getAdapterItemCount() == 0 && footerview != null && footerview instanceof IFooterCallBack) {
+            ((IFooterCallBack) footerview).show(false);
         }
     }
 
     private boolean removeFooter = false;
 
     public void addFooterView() {
-        removeFooter = false;
-//        notifyItemInserted(getItemCount()+1);
-        notifyDataSetChanged();
+        if (removeFooter) {
+//            notifyItemInserted(getItemCount());
+            removeFooter = false;
+            showFooter(customLoadMoreView, true);
+        }
+    }
+
+    public boolean isFooterShowing() {
+        return !removeFooter;
     }
 
     public void removeFooterView() {
-        removeFooter = true;
-        notifyDataSetChanged();
-//        notifyItemRemoved(getItemCount() - 1);
+        if (!removeFooter) {
+//            notifyItemRemoved(getItemCount() - 1);
+            showFooter(customLoadMoreView, false);
+            removeFooter = true;
+        }
     }
 
     public abstract VH getViewHolder(View view);
@@ -205,7 +220,8 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     public int getItemCount() {
         int count = getAdapterItemCount();
         count += getStart();
-        if (customLoadMoreView != null&&!removeFooter) {
+        if (customLoadMoreView != null) {
+//        if (customLoadMoreView != null && !removeFooter) {
             count++;
         }
         return count;
