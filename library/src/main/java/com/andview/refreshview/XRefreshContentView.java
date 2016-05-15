@@ -197,7 +197,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         ensureFooterShowWhenScrolling(adapter);
                         if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
                             adapter.removeFooterView();
-//                            mFooterCallBack.show(false);
                             hasIntercepted = true;
                         }
                         if (hasIntercepted) {
@@ -279,7 +278,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         if (mFooterCallBack != null) {
             mFooterCallBack.onStateFinish(hideFooter);
             if (hideFooter) {
-//                mFooterCallBack.show(false);
                 addFooterView(false);
             }
         }
@@ -382,7 +380,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void loadCompleted(final BaseRecyclerAdapter adapter) {
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
-//            mFooterCallBack.show(true);
             adapter.addFooterView();
             setState(XRefreshViewState.STATE_COMPLETE);
             mPinnedTime = mPinnedTime < 1000 ? 1000 : mPinnedTime;
@@ -390,7 +387,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
                 @Override
                 public void run() {
-//                    mFooterCallBack.show(false);
                     adapter.removeFooterView();
                 }
             }, mPinnedTime);
@@ -451,7 +447,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
      */
     public void setEnablePullLoad(boolean enablePullLoad) {
         addFooterView(enablePullLoad);
-//        mFooterCallBack.show(enablePullLoad);
     }
 
     public void setPinnedTime(int pinnedTime) {
