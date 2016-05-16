@@ -196,7 +196,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         }
                         ensureFooterShowWhenScrolling(adapter);
                         if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
-                            adapter.removeFooterView();
+                            addFooterView(false);
                             hasIntercepted = true;
                         }
                         if (hasIntercepted) {
@@ -214,7 +214,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                     mFooterCallBack.onStateRefreshing();
                                     setState(XRefreshViewState.STATE_LOADING);
                                 } else {
-                                    loadCompleted(adapter);
+                                    loadCompleted();
                                 }
                             } else {
                                 setState(XRefreshViewState.STATE_NORMAL);
@@ -228,7 +228,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                                         setState(XRefreshViewState.STATE_READY);
                                     }
                                 } else {
-                                    loadCompleted(adapter);
+                                    loadCompleted();
                                 }
                             } else {
                                 setState(XRefreshViewState.STATE_NORMAL);
@@ -377,17 +377,17 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         mPreLoadCount = count;
     }
 
-    public void loadCompleted(final BaseRecyclerAdapter adapter) {
+    public void loadCompleted() {
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
-            adapter.addFooterView();
+            addFooterView(true);
             setState(XRefreshViewState.STATE_COMPLETE);
             mPinnedTime = mPinnedTime < 1000 ? 1000 : mPinnedTime;
             mHandler.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
-                    adapter.removeFooterView();
+                    addFooterView(false);
                 }
             }, mPinnedTime);
         }
@@ -422,10 +422,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             return;
         }
         final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView.getAdapter() != null) {
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
             BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
             if (add) {
-                adapter.addFooterView();
+//                adapter.addFooterView();
             } else {
                 if (isFullScreen()) {
                     if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
@@ -434,7 +435,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                     }
                 } else {
-                    adapter.removeFooterView();
+//                    adapter.removeFooterView();
+                    if (layoutManager != null) {
+                        recyclerView.smoothScrollBy(0, -adapter.getCustomLoadMoreView().getHeight());
+//                        layoutManager.scrollVerticallyBy(0, recyclerView.getrec, recyclerView.getScrollState());
+//                        layoutManager.scrollToPosition(0);
+                    }
                 }
             }
         }
@@ -457,8 +463,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         mAbsListViewScrollListener = listener;
     }
 
-    public void setOnRecyclerViewScrollListener(
-            RecyclerView.OnScrollListener listener) {
+    public void setOnRecyclerViewScrollListener(RecyclerView.OnScrollListener listener) {
         mRecyclerViewScrollListener = listener;
     }
 
