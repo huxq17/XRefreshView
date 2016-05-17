@@ -313,7 +313,7 @@ public class XRefreshView extends LinearLayout {
                 mLastY = (int) ev.getRawY();
                 mLastX = (int) ev.getRawX();
                 mInitialMotionY = mLastY;
-
+                mContentView.showFooter();
                 // if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading)
                 // {
                 // mScroller.forceFinished(true);

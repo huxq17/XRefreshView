@@ -104,6 +104,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    public void showFooter() {
+        if (isRecyclerView() && mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()) {
+            addFooterView(true);
+        }
+    }
+
     private boolean mSlienceLoadMore = false;
 
     public void setSlienceLoadMore(boolean slienceLoadMore) {
@@ -281,6 +287,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 addFooterView(false);
             }
         }
+        hasIntercepted = false;
         mHideFooter = hideFooter;
         mState = XRefreshViewState.STATE_FINISHED;
     }
