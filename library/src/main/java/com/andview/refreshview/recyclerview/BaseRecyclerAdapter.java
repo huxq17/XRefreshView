@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
-import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
@@ -26,6 +25,16 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
+    private int mLastCount = 0;
+
+    public boolean hasDataAdded() {
+        int count = getItemCount();
+        if (count > mLastCount) {
+            mLastCount = count;
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -104,6 +113,9 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
+        if(mLastCount==0){
+            mLastCount = getItemCount();
+        }
         int start = getStart();
         if (isHeader(position) || isFooter(position)) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();

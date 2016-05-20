@@ -300,6 +300,7 @@ public class XRefreshView extends LinearLayout {
 
     private boolean isIntercepted = false;
     private int mHeadMoveDistence;
+    public boolean mStopping = false;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -313,17 +314,15 @@ public class XRefreshView extends LinearLayout {
                 mLastY = (int) ev.getRawY();
                 mLastX = (int) ev.getRawX();
                 mInitialMotionY = mLastY;
-
-                // if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading)
-                // {
-                // mScroller.forceFinished(true);
-                // }
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastMoveEvent = ev;
-                if (mStopingRefresh || !isEnabled() || mIsIntercept
-                        || mContentView.isLoading()) {
+                if (mStopingRefresh || !isEnabled() || mIsIntercept || mContentView.isLoading()) {
                     return super.dispatchTouchEvent(ev);
+                }
+                //当Recyclerview正在隐藏footerview时，拦截手势操作
+                if (mStopping) {
+                    return true;
                 }
                 if ((mPullLoading || mPullRefreshing) && mIsPinnedContentWhenRefreshing) {
                     sendCancelEvent();
