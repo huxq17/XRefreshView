@@ -15,6 +15,7 @@ import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
+import com.andview.refreshview.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,7 @@ public class NotFullScreenActivity extends Activity {
 
             @Override
             public void onLoadMore(boolean isSlience) {
+                LogUtils.i("test onLoadMore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
@@ -117,7 +119,7 @@ public class NotFullScreenActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }

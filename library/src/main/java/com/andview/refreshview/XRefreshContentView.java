@@ -187,7 +187,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                     return;
                 }
-                LogUtils.d("test pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
+                LogUtils.d("test pre onLoadMore mIsLoadingMore=" + mIsLoadingMore+";mFooterCallBack.isshow="+mFooterCallBack.isShowing());
                 if (mSlienceLoadMore) {
                     doSlienceLoadMore(adapter, layoutManager);
                 } else {
@@ -340,8 +340,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     public void ensureFooterShowWhenScrolling(BaseRecyclerAdapter adapter) {
         if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()
-                && mFooterCallBack != null && !adapter.isFooterShowing()) {
-            showFooter(true);
+                && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
+            mFooterCallBack.show(true);
         }
     }
 
@@ -488,7 +488,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
             BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
             if (show) {
-
             } else {
                 if (isFullScreen()) {
                     if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
@@ -505,6 +504,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     private void setStopping(boolean stopping) {
+        LogUtils.i("test Stopping ="+stopping);
         mStopping = stopping;
         if (mParent != null) {
             mParent.mStopping = stopping;
