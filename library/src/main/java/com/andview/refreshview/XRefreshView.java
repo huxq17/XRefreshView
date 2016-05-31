@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -152,6 +151,7 @@ public class XRefreshView extends LinearLayout {
      */
     public void notifyLayoutManagerChanged() {
         mContentView.setScrollListener();
+        mContentView.notifyDatasetChanged();
     }
 
     private void initWithContext(Context context, AttributeSet attrs) {
@@ -208,9 +208,9 @@ public class XRefreshView extends LinearLayout {
         mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
         mContentView.setHolder(mHolder);
         mContentView.setParent(this);
-        notifyLayoutManagerChanged();
+        mContentView.setScrollListener();
         if (needAddFooterView()) {
-            Log.d("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
+            LogUtils.d("test add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             Utils.removeViewFromParent(mFooterView);
             addView(mFooterView);
         }

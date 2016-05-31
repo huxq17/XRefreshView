@@ -56,6 +56,9 @@ public class Utils {
             if (lastchild instanceof IFooterCallBack) {
                 lastchild = viewGroup.getChildAt(count - 2);
             }
+            if(lastchild==null){
+                return false;
+            }
             RecyclerView.LayoutParams lastLp = (RecyclerView.LayoutParams) lastchild.getLayoutParams();
             int lastBottomMargin = lastLp.bottomMargin;
             WindowManager wm = (WindowManager) viewGroup.getContext()

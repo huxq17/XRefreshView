@@ -102,7 +102,7 @@ public class GridRecyclerViewActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 3; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }

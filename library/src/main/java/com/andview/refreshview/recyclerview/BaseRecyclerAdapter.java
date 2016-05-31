@@ -28,7 +28,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     private int mLastCount = 0;
 
     public boolean hasDataAdded() {
-        int count = getItemCount();
+        int count = getAdapterItemCount();
         if (count > mLastCount) {
             mLastCount = count;
             return true;
@@ -38,15 +38,11 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+        LogUtils.i("test onCreateViewHolder viewType=" + viewType);
+        showFooter(customLoadMoreView, false);
         if (viewType == VIEW_TYPES.FOOTER) {
             Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
-            showFooter(viewHolder.itemView, false);
-            return viewHolder;
-        } else if (viewType == VIEW_TYPES.CHANGED_FOOTER) {
-            Utils.removeViewFromParent(customLoadMoreView);
-            VH viewHolder = getViewHolder(customLoadMoreView);
-            showFooter(viewHolder.itemView, false);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
             Utils.removeViewFromParent(customHeaderView);
@@ -65,8 +61,14 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
                 }
             }
         } else {
-            if (getAdapterItemCount() == 0 && footerview != null && footerview instanceof IFooterCallBack) {
-                ((IFooterCallBack) footerview).show(show);
+            if (footerview != null && footerview instanceof IFooterCallBack) {
+                LogUtils.i("test getAdapterItemCount()=" + getAdapterItemCount());
+                IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+                if(getAdapterItemCount()==0&&footerCallBack.isShowing()){
+                    footerCallBack.show(false);
+                }else if(getAdapterItemCount()!=0&&!footerCallBack.isShowing()){
+                    footerCallBack.show(true);
+                }
             }
         }
     }
@@ -74,7 +76,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     private boolean removeFooter = false;
 
     public void addFooterView() {
-        LogUtils.i("addFooterView");
+        LogUtils.i("test addFooterView");
         if (removeFooter) {
             notifyItemInserted(getItemCount());
             removeFooter = false;
@@ -87,7 +89,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     public void removeFooterView() {
-        LogUtils.i("removeFooterView");
+        LogUtils.i("test removeFooterView");
         if (!removeFooter) {
             notifyItemRemoved(getItemCount() - 1);
             removeFooter = true;
@@ -113,7 +115,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
-        if(mLastCount==0){
+        if (mLastCount == 0) {
             mLastCount = getItemCount();
         }
         int start = getStart();
@@ -133,13 +135,15 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
+        LogUtils.i("test setCustomLoadMoreView");
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
+            showFooter(customLoadMoreView, false);
+            notifyDataSetChanged();
         } else {
             throw new RuntimeException("footerView must be implementes IFooterCallBack!");
         }
-        notifyDataSetChanged();
     }
 
     public void setHeaderView(View headerView, RecyclerView recyclerView) {
@@ -162,11 +166,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         if (!resourceTypeName.contains("layout")) {
             throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
         }
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
-        }
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
         customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
         notifyDataSetChanged();
@@ -182,32 +181,16 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         return getStart() > 0 && position == 0;
     }
 
-    /**
-     * Changing the loadmore view
-     *
-     * @param customview the inflated view
-     */
-    public void swipeCustomLoadMoreView(View customview) {
-        customLoadMoreView = customview;
-        isLoadMoreChanged = true;
-    }
-
     public View getCustomLoadMoreView() {
         return customLoadMoreView;
     }
-
-    public boolean isLoadMoreChanged = false;
 
     @Override
     public final int getItemViewType(int position) {
         if (isHeader(position)) {
             return VIEW_TYPES.HEADER;
         } else if (isFooter(position)) {
-            if (isLoadMoreChanged) {
-                return VIEW_TYPES.CHANGED_FOOTER;
-            } else {
-                return VIEW_TYPES.FOOTER;
-            }
+            return VIEW_TYPES.FOOTER;
         } else {
             position = getStart() > 0 ? position - 1 : position;
             return getAdapterItemViewType(position);
@@ -301,27 +284,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected class VIEW_TYPES {
         public static final int FOOTER = -1;
-        public static final int CHANGED_FOOTER = -2;
         public static final int HEADER = -3;
         public static final int NORMAL = -4;
-    }
-
-    protected enum AdapterAnimationType {
-        AlphaIn, SlideInBottom, ScaleIn, SlideInLeft, SlideInRight,
-    }
-
-    protected OnStartDragListener mDragStartListener = null;
-
-    /**
-     * Listener for manual initiation of a drag.
-     */
-    public interface OnStartDragListener {
-
-        /**
-         * Called when a view is requesting a start of a drag.
-         *
-         * @param viewHolder The holder of the view to drag.
-         */
-        void onStartDrag(RecyclerView.ViewHolder viewHolder);
     }
 }
