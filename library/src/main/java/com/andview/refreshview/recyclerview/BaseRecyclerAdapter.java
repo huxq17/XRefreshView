@@ -119,6 +119,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
+            showFooter(customLoadMoreView,false);
         } else {
             throw new RuntimeException("footerView must be implementes IFooterCallBack!");
         }
@@ -144,11 +145,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         String resourceTypeName = context.getResources().getResourceTypeName(id);
         if (!resourceTypeName.contains("layout")) {
             throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
-        }
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
         }
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
         customHeaderView = LayoutInflater.from(context).inflate(id, headerview);

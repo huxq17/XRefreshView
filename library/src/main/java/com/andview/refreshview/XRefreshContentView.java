@@ -185,7 +185,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 if (layoutManager == null) {
                     layoutManager = recyclerView.getLayoutManager();
                 }
-                getRecyclerViewInfo(layoutManager, adapter);
+                getRecyclerViewInfo(layoutManager);
                 if (isFullScreen()) {
                     if (Utils.isRecyclerViewFullscreen(recyclerView)) {
                         addFooterView(true);
@@ -219,7 +219,24 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             }
         };
         recyclerView.addOnScrollListener(mOnScrollListener);
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
+        }
         initFooterCallBack(adapter);
+    }
+
+    public void notifyDatasetChanged() {
+        final RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView.getAdapter() == null) {
+            return;
+        }
+        if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
+            throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
+        }
+        final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+        adapter.notifyDataSetChanged();
     }
 
     private void initFooterCallBack(BaseRecyclerAdapter adapter) {
@@ -235,7 +252,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     mFooterCallBack.onStateReady();
                     mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                 }
-                adapter.notifyDataSetChanged();
             }
         }
     }
@@ -344,16 +360,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager, BaseRecyclerAdapter adapter) {
+    public void getRecyclerViewInfo(RecyclerView.LayoutManager layoutManager) {
         int[] lastPositions = null;
         if (layoutManagerType == null) {
             if (layoutManager instanceof GridLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.GRID;
-                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-                GridLayoutManager.SpanSizeLookup lookup = gridLayoutManager.getSpanSizeLookup();
-                if (lookup == null || !(lookup instanceof XSpanSizeLookup)) {
-                    gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
-                }
             } else if (layoutManager instanceof LinearLayoutManager) {
                 layoutManagerType = LAYOUT_MANAGER_TYPE.LINEAR;
             } else if (layoutManager instanceof StaggeredGridLayoutManager) {
