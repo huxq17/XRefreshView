@@ -316,7 +316,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
                     adapter.removeFooterView();
-                    mFooterCallBack.onStateReady();
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
