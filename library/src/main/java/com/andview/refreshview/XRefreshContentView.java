@@ -185,18 +185,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                     return;
                 }
-                if (mStopLoadMore) {
-                    mStopLoadMore = false;
-                    return;
-                }
                 LogUtils.d("test pre onScrolled mIsLoadingMore=" + mIsLoadingMore);
                 if (mSlienceLoadMore) {
                     doSlienceLoadMore(adapter, layoutManager);
                 } else {
-                    //如果正在停止，则不改变footerview的状态
-                    if (mStopping) {
-                        return;
-                    }
                     if (!isOnRecyclerViewBottom()) {
                         mHideFooter = true;
                     }
@@ -312,8 +304,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     private boolean mHideFooter = true;
-    private boolean mStopping = false;
-    private boolean mStopLoadMore = false;
 
     public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
@@ -325,10 +315,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     final RecyclerView recyclerView = (RecyclerView) child;
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
-//                    if (!adapter.hasDataAdded()) {
-//                        scrollToHiddenFooter(recyclerView, adapter);
-//                    } else {
-                    mStopLoadMore = true;
                     adapter.removeFooterView();
                     mFooterCallBack.onStateReady();
                     recyclerView.postDelayed(new Runnable() {
@@ -344,30 +330,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                         }
                     }, 0);
                 }
-//                }
             }
         }
         mHideFooter = hideFooter;
         mState = XRefreshViewState.STATE_FINISHED;
-    }
-
-    private void scrollToHiddenFooter(RecyclerView recyclerView, BaseRecyclerAdapter adapter) {
-        int dx = 0;
-        int dy = -adapter.getCustomLoadMoreView().getHeight();
-        int height = recyclerView.getHeight();
-        int duration = Utils.computeScrollDuration(dx, dy, height);
-        setStopping(true);
-        showFooter(false);
-        recyclerView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setStopping(false);
-            }
-        }, duration);
-    }
-
-    public boolean isStopping() {
-        return mStopping;
     }
 
     private boolean mRefreshAdapter = false;
@@ -512,40 +478,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    private void showFooter(boolean show) {
-        if (!(child instanceof RecyclerView)) {
-            if (mFooterCallBack != null) {
-                mFooterCallBack.show(show);
-            }
-            return;
-        }
-        final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
-            BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
-            if (show) {
-//                mFooterCallBack.show(true);
-            } else {
-                if (onRecyclerViewTop()) {
-                    if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
-//                        adapter.addFooterView();
-                        mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
-                    }
-                } else {
-                    recyclerView.smoothScrollBy(0, -adapter.getCustomLoadMoreView().getHeight());
-                }
-            }
-        }
-
-    }
-
-    private void setStopping(boolean stopping) {
-        mStopping = stopping;
-        if (mParent != null) {
-            mParent.mStopping = stopping;
-        }
-    }
-
     /**
      * 设置显示和隐藏Recyclerview中的footerview
      *
@@ -626,7 +558,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                 }
             }
-
         }
         if (mAbsListViewScrollListener != null) {
             mAbsListViewScrollListener.onScrollStateChanged(view, scrollState);

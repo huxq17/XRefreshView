@@ -24,16 +24,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
-    private int mLastCount = 0;
-
-    public boolean hasDataAdded() {
-        int count = getAdapterItemCount();
-        if (count > mLastCount) {
-            mLastCount = count;
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -112,10 +102,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
-        if (mLastCount == 0) {
-            mLastCount = getItemCount();
-        }
-        LogUtils.i("test onBindViewHolder position=" + position);
         int start = getStart();
         if (isHeader(position) || isFooter(position)) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
