@@ -71,13 +71,13 @@ public class NotFullScreenActivity extends Activity {
 
             @Override
             public void onLoadMore(boolean isSlience) {
-                LogUtils.i("test onLoadMore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
                             adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
+                        LogUtils.i("test onLoadMore adapter.count="+adapter.getItemCount());
                         mLoadCount++;
 
                         if (mLoadCount >= 5) {
@@ -119,7 +119,7 @@ public class NotFullScreenActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }
