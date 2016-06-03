@@ -195,6 +195,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                     return;
                 }
+                if(mStopLoadMore){
+                    mStopLoadMore = false;
+                    return;
+                }
                 LogUtils.d("test pre onLoadMore mIsLoadingMore=" + mIsLoadingMore);
                 if (mSlienceLoadMore) {
                     doSlienceLoadMore(adapter, layoutManager);
@@ -314,6 +318,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     private boolean mHideFooter = true;
+    private boolean mStopLoadMore = false;
 
     public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
@@ -324,6 +329,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 addFooterView(false);
             }
         }
+        mStopLoadMore = true;
         hasIntercepted = false;
         mHideFooter = hideFooter;
         mState = XRefreshViewState.STATE_FINISHED;

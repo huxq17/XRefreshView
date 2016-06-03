@@ -7,7 +7,11 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:2.2.0'
+   //稳定版
+   compile 'com.huxq17.xrefreshview:xrefreshview:2.3.0'
+   //尝鲜版，Recyclerview上拉加载更多的效果更好，测试没有问题，但是没有投入项目中使用，如果使用3.0过程中有任何问题可以提issue，或者联系我
+   //3.0的源码代码在dev分支
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.0.0'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -30,6 +34,10 @@ dependencies {
 ![自定义头部](http://img.my.csdn.net/uploads/201508/25/1440465306_9400.gif) 
 
 还有listview,scrollview，webview等其他的view就不一一截图了。
+
+### 关于我
+QQ：1491359569
+邮箱：1491359569@163.com
 
 
 ### License

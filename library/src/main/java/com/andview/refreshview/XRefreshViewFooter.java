@@ -79,6 +79,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
         mHintView.setText(R.string.xrefreshview_footer_hint_complete);
         mHintView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        mClickView.setVisibility(GONE);
     }
 
     @Override

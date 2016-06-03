@@ -49,12 +49,18 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         if (footerview != null && footerview instanceof IFooterCallBack) {
             IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
             footerCallBack.show(show);
+            if (show) {
+                removeFooter = false;
+            } else {
+                removeFooter = true;
+            }
         }
     }
 
     private void hideFooter(View footerview) {
         if (getAdapterItemCount() == 0 && footerview != null && footerview instanceof IFooterCallBack) {
             ((IFooterCallBack) footerview).show(false);
+            removeFooter = true;
         }
     }
 
@@ -119,7 +125,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
-            showFooter(customLoadMoreView,false);
+            hideFooter(customLoadMoreView);
         } else {
             throw new RuntimeException("footerView must be implementes IFooterCallBack!");
         }
@@ -213,7 +219,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @return The total number of items in this adapter.
      */
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         int count = getAdapterItemCount();
         count += getStart();
         if (customLoadMoreView != null) {
