@@ -192,7 +192,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     if (!isOnRecyclerViewBottom()) {
                         mHideFooter = true;
                     }
-                    ensureFooterShowWhenScrolling(adapter);
+                    ensureFooterShowWhenScrolling();
                     if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
                         addFooterView(false);
                         hasIntercepted = true;
@@ -263,11 +263,18 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    private boolean isFooterEnable() {
+        if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()) {
+            return true;
+        }
+        return false;
+    }
+
     private void doNormalLoadMore(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager layoutManager) {
         if (!mIsLoadingMore && isOnRecyclerViewBottom() && mHideFooter) {
             refreshAdapter(adapter, layoutManager);
             if (!hasLoadCompleted()) {
-                if (mState != XRefreshViewState.STATE_READY) {
+                if (mState != XRefreshViewState.STATE_READY && !addingFooter) {
                     mFooterCallBack.onStateReady();
                     setState(XRefreshViewState.STATE_READY);
                 }
@@ -304,6 +311,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     private boolean mHideFooter = true;
+    private boolean addingFooter = false;
 
     public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
@@ -316,13 +324,17 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
                     adapter.removeFooterView();
+                    addingFooter = true;
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             int index = recyclerView.indexOfChild(adapter.getCustomLoadMoreView());
                             //只有在footerview已经从Recyclerview中移除了以后才执行重新加入footerview的操作，不然Recyclerview的item布局会错乱
                             if (index == -1) {
-                                adapter.addFooterView();
+                                addingFooter = false;
+                                if (isFooterEnable()) {
+                                    adapter.addFooterView();
+                                }
                             } else {
                                 recyclerView.post(this);
                             }
@@ -344,9 +356,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         return false;
     }
 
-    public void ensureFooterShowWhenScrolling(BaseRecyclerAdapter adapter) {
-        if (mState != XRefreshViewState.STATE_COMPLETE && mParent != null && mParent.getPullLoadEnable()
-                && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
+    public void ensureFooterShowWhenScrolling() {
+        if (isFooterEnable() && mFooterCallBack != null && !mFooterCallBack.isShowing()) {
             mFooterCallBack.show(true);
         }
     }
@@ -485,6 +496,19 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     public void setEnablePullLoad(boolean enablePullLoad) {
         addFooterView(enablePullLoad);
         hasIntercepted = false;
+        mIsLoadingMore = false;
+        mTotalItemCount = 0;
+        if (enablePullLoad) {
+            if (onRecyclerViewTop()) {
+                if (child instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) child;
+                    if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
+                        mFooterCallBack.onStateReady();
+                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                    }
+                }
+            }
+        }
     }
 
     public void setPinnedTime(int pinnedTime) {
