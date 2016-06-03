@@ -32,7 +32,7 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
 ### 关于我
-QQ：1491359569 邮箱：1491359569@163.com
+QQ：1491359569 邮箱：huxq17@163.com
 
 ### License
 
