@@ -7,9 +7,9 @@
 
 ```groovy
 dependencies {
-   //稳定版
+   //稳定版（预计不再维护这个版本）
    compile 'com.huxq17.xrefreshview:xrefreshview:2.3.0'
-   //尝鲜版，Recyclerview上拉加载更多的效果更好，测试没有问题，但是没有投入项目中使用，如果使用过程中有任何问题可以提issue，或者联系我（提问题时麻烦带上版本号）
+   //3.0版本，Recyclerview上拉加载更多的效果更好，测试没有问题，但是没有投入项目中使用，如果使用过程中有任何问题可以提issue，或者联系我（提问题时麻烦带上版本号）
    //3.0的源码代码在dev分支
    compile 'com.huxq17.xrefreshview:xrefreshview:3.0.0'
    //依赖下面的库
