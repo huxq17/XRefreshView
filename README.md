@@ -37,7 +37,7 @@ dependencies {
 
 ### 关于我
 QQ：1491359569
-邮箱：1491359569@163.com
+邮箱：huxq17@163.com
 
 
 ### License
