@@ -196,7 +196,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @return The total number of items in this adapter.
      */
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         int count = getAdapterItemCount();
         count += getStart();
         if (customLoadMoreView != null && !removeFooter) {
