@@ -32,11 +32,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             VH viewHolder = getViewHolder(customLoadMoreView);
             hideFooter(viewHolder.itemView);
             return viewHolder;
-        } else if (viewType == VIEW_TYPES.CHANGED_FOOTER) {
-            Utils.removeViewFromParent(customLoadMoreView);
-            VH viewHolder = getViewHolder(customLoadMoreView);
-            hideFooter(viewHolder.itemView);
-            return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
             Utils.removeViewFromParent(customHeaderView);
             VH viewHolder = getViewHolder(customHeaderView);
@@ -86,6 +81,9 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         }
     }
 
+    public void setRemoveFooter(boolean removeFooter){
+        this.removeFooter = removeFooter;
+    }
     public abstract VH getViewHolder(View view);
 
     /**
@@ -167,32 +165,17 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
         return getStart() > 0 && position == 0;
     }
 
-    /**
-     * Changing the loadmore view
-     *
-     * @param customview the inflated view
-     */
-    public void swipeCustomLoadMoreView(View customview) {
-        customLoadMoreView = customview;
-        isLoadMoreChanged = true;
-    }
-
     public View getCustomLoadMoreView() {
         return customLoadMoreView;
     }
 
-    public boolean isLoadMoreChanged = false;
 
     @Override
     public final int getItemViewType(int position) {
         if (isHeader(position)) {
             return VIEW_TYPES.HEADER;
         } else if (isFooter(position)) {
-            if (isLoadMoreChanged) {
-                return VIEW_TYPES.CHANGED_FOOTER;
-            } else {
-                return VIEW_TYPES.FOOTER;
-            }
+            return VIEW_TYPES.FOOTER;
         } else {
             position = getStart() > 0 ? position - 1 : position;
             return getAdapterItemViewType(position);
@@ -287,27 +270,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     protected class VIEW_TYPES {
         public static final int FOOTER = -1;
-        public static final int CHANGED_FOOTER = -2;
         public static final int HEADER = -3;
         public static final int NORMAL = -4;
-    }
-
-    protected enum AdapterAnimationType {
-        AlphaIn, SlideInBottom, ScaleIn, SlideInLeft, SlideInRight,
-    }
-
-    protected OnStartDragListener mDragStartListener = null;
-
-    /**
-     * Listener for manual initiation of a drag.
-     */
-    public interface OnStartDragListener {
-
-        /**
-         * Called when a view is requesting a start of a drag.
-         *
-         * @param viewHolder The holder of the view to drag.
-         */
-        void onStartDrag(RecyclerView.ViewHolder viewHolder);
     }
 }

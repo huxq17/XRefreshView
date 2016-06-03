@@ -186,7 +186,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     layoutManager = recyclerView.getLayoutManager();
                 }
                 getRecyclerViewInfo(layoutManager);
-                if (isFullScreen()) {
+                if (onRecyclerViewTop()) {
                     if (Utils.isRecyclerViewFullscreen(recyclerView)) {
                         addFooterView(true);
                     } else {
@@ -195,7 +195,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     }
                     return;
                 }
-                if(mStopLoadMore){
+                if (mStopLoadMore) {
                     mStopLoadMore = false;
                     return;
                 }
@@ -310,7 +310,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
      *
      * @return
      */
-    private boolean isFullScreen() {
+    private boolean onRecyclerViewTop() {
         if (isTop() && mFooterCallBack != null && mParent != null && mParent.getPullLoadEnable() && !hasLoadCompleted()) {
             return true;
         }
@@ -472,9 +472,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
             if (add) {
                 adapter.addFooterView();
             } else {
-                if (isFullScreen()) {
+                if (onRecyclerViewTop()) {
                     if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
-                        adapter.addFooterView();
+//                        adapter.addFooterView();
                         mFooterCallBack.onStateReady();
                         mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
                     }
@@ -491,7 +491,16 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
      * @param enablePullLoad
      */
     public void setEnablePullLoad(boolean enablePullLoad) {
-        addFooterView(enablePullLoad);
+        final RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView != null && recyclerView.getAdapter() != null) {
+            BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+            adapter.setRemoveFooter(enablePullLoad);
+            if (enablePullLoad) {
+                adapter.addFooterView();
+            } else {
+                adapter.removeFooterView();
+            }
+        }
     }
 
     public void setPinnedTime(int pinnedTime) {
