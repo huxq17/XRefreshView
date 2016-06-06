@@ -891,6 +891,13 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
+     * 设置是否在数据加载完成以后隐藏footerview
+     * @param hide true则隐藏footerview，false则反之，默认隐藏
+     */
+    public void setHideFooterWhenComplete(boolean hide){
+        mContentView.setHideFooterWhenComplete(hide);
+    }
+    /**
      * 设置在刷新的时候是否可以移动contentView
      *
      * @param isPinned true 固定不移动 反之，可以移动

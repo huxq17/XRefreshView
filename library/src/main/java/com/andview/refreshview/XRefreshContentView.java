@@ -433,19 +433,27 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         mPreLoadCount = count;
     }
 
+    private boolean isHideFooterWhenComplete = true;
+
+    protected void setHideFooterWhenComplete(boolean isHideFooterWhenComplete) {
+        this.isHideFooterWhenComplete = isHideFooterWhenComplete;
+    }
+
     public void loadCompleted() {
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
 //            addFooterView(true);
             setState(XRefreshViewState.STATE_COMPLETE);
             mPinnedTime = mPinnedTime < 1000 ? 1000 : mPinnedTime;
-            mHandler.postDelayed(new Runnable() {
+            if (isHideFooterWhenComplete) {
+                mHandler.postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    addFooterView(false);
-                }
-            }, mPinnedTime);
+                    @Override
+                    public void run() {
+                        addFooterView(false);
+                    }
+                }, mPinnedTime);
+            }
         }
     }
 

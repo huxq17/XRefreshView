@@ -90,8 +90,10 @@ public class NotFullScreenActivity extends Activity {
                 }, 1000);
             }
         });
+        //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
+//        xRefreshView.setHideFooterWhenComplete(false);
         requestData();
-//		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
+//		// 实现Recyclerview的滚动监听
 //		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
