@@ -56,6 +56,9 @@ public class Utils {
             if (lastchild instanceof IFooterCallBack) {
                 lastchild = viewGroup.getChildAt(count - 2);
             }
+            if(lastchild==null){
+                return false;
+            }
             RecyclerView.LayoutParams lastLp = (RecyclerView.LayoutParams) lastchild.getLayoutParams();
             int lastBottomMargin = lastLp.bottomMargin;
             WindowManager wm = (WindowManager) viewGroup.getContext()
@@ -71,4 +74,33 @@ public class Utils {
         return false;
     }
 
+    public static int computeScrollDuration(int dx, int dy, int height) {
+        int vx=0;
+        int vy=0;
+        final int absDx = Math.abs(dx);
+        final int absDy = Math.abs(dy);
+        final boolean horizontal = absDx > absDy;
+        final int velocity = (int) Math.sqrt(vx * vx + vy * vy);
+        final int delta = (int) Math.sqrt(dx * dx + dy * dy);
+        final int containerSize = height;
+        final int halfContainerSize = containerSize / 2;
+        final float distanceRatio = Math.min(1.f, 1.f * delta / containerSize);
+        final float distance = halfContainerSize + halfContainerSize *
+                distanceInfluenceForSnapDuration(distanceRatio);
+
+        final int duration;
+        if (velocity > 0) {
+            duration = 4 * Math.round(1000 * Math.abs(distance / velocity));
+        } else {
+            float absDelta = (float) (horizontal ? absDx : absDy);
+            duration = (int) (((absDelta / containerSize) + 1) * 300);
+        }
+        return Math.min(duration, 2000);
+    }
+
+    private static float distanceInfluenceForSnapDuration(float f) {
+        f -= 0.5f; // center the values about 0.
+        f *= 0.3f * Math.PI / 2.0f;
+        return (float) Math.sin(f);
+    }
 }

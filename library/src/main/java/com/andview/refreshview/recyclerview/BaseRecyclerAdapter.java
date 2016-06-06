@@ -2,7 +2,6 @@ package com.andview.refreshview.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.callback.IFooterCallBack;
+import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
 import java.util.Collections;
@@ -27,10 +27,10 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+        showFooter(customLoadMoreView, false);
         if (viewType == VIEW_TYPES.FOOTER) {
             Utils.removeViewFromParent(customLoadMoreView);
             VH viewHolder = getViewHolder(customLoadMoreView);
-            hideFooter(viewHolder.itemView);
             return viewHolder;
         } else if (viewType == VIEW_TYPES.HEADER) {
             Utils.removeViewFromParent(customHeaderView);
@@ -41,29 +41,31 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     private void showFooter(View footerview, boolean show) {
-        if (footerview != null && footerview instanceof IFooterCallBack) {
-            IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
-            footerCallBack.show(show);
-            if (show) {
-                removeFooter = false;
-            } else {
-                removeFooter = true;
+        if (show) {
+            if (footerview != null && footerview instanceof IFooterCallBack) {
+                IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+                if (!footerCallBack.isShowing()) {
+                    footerCallBack.show(show);
+                }
             }
-        }
-    }
-
-    private void hideFooter(View footerview) {
-        if (getAdapterItemCount() == 0 && footerview != null && footerview instanceof IFooterCallBack) {
-            ((IFooterCallBack) footerview).show(false);
-            removeFooter = true;
+        } else {
+            if (footerview != null && footerview instanceof IFooterCallBack) {
+                IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+                if (getAdapterItemCount() == 0 && footerCallBack.isShowing()) {
+                    footerCallBack.show(false);
+                } else if (getAdapterItemCount() != 0 && !footerCallBack.isShowing()) {
+                    footerCallBack.show(true);
+                }
+            }
         }
     }
 
     private boolean removeFooter = false;
 
     public void addFooterView() {
+        LogUtils.d("test addFooterView");
         if (removeFooter) {
-//            notifyItemInserted(getItemCount());
+            notifyItemInserted(getItemCount());
             removeFooter = false;
             showFooter(customLoadMoreView, true);
         }
@@ -74,16 +76,13 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     }
 
     public void removeFooterView() {
+        LogUtils.d("test removeFooterView");
         if (!removeFooter) {
-//            notifyItemRemoved(getItemCount() - 1);
-            showFooter(customLoadMoreView, false);
+            notifyItemRemoved(getItemCount() - 1);
             removeFooter = true;
         }
     }
 
-    public void setRemoveFooter(boolean removeFooter){
-        this.removeFooter = removeFooter;
-    }
     public abstract VH getViewHolder(View view);
 
     /**
@@ -120,23 +119,19 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
+        LogUtils.i("test setCustomLoadMoreView");
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
-            hideFooter(customLoadMoreView);
+            showFooter(customLoadMoreView, false);
+            notifyDataSetChanged();
         } else {
             throw new RuntimeException("footerView must be implementes IFooterCallBack!");
         }
-        notifyDataSetChanged();
     }
 
     public void setHeaderView(View headerView, RecyclerView recyclerView) {
         if (recyclerView == null) return;
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(this, gridLayoutManager.getSpanCount()));
-        }
         Utils.removeViewFromParent(customLoadMoreView);
         customHeaderView = headerView;
         notifyDataSetChanged();
@@ -168,7 +163,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     public View getCustomLoadMoreView() {
         return customLoadMoreView;
     }
-
 
     @Override
     public final int getItemViewType(int position) {
@@ -205,8 +199,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
     public final int getItemCount() {
         int count = getAdapterItemCount();
         count += getStart();
-        if (customLoadMoreView != null) {
-//        if (customLoadMoreView != null && !removeFooter) {
+        if (customLoadMoreView != null && !removeFooter) {
             count++;
         }
         return count;

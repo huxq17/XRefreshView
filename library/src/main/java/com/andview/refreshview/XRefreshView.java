@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -211,7 +210,7 @@ public class XRefreshView extends LinearLayout {
         mContentView.setParent(this);
         mContentView.setScrollListener();
         if (needAddFooterView()) {
-            Log.d("CustomView", "add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
+            LogUtils.d("test add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             Utils.removeViewFromParent(mFooterView);
             addView(mFooterView);
         }
@@ -314,16 +313,10 @@ public class XRefreshView extends LinearLayout {
                 mLastY = (int) ev.getRawY();
                 mLastX = (int) ev.getRawX();
                 mInitialMotionY = mLastY;
-                mContentView.showFooter();
-                // if (!mScroller.isFinished() && !mPullRefreshing && !mPullLoading)
-                // {
-                // mScroller.forceFinished(true);
-                // }
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastMoveEvent = ev;
-                if (mStopingRefresh || !isEnabled() || mIsIntercept
-                        || mContentView.isLoading()) {
+                if (mStopingRefresh || !isEnabled() || mIsIntercept || mContentView.isLoading()) {
                     return super.dispatchTouchEvent(ev);
                 }
                 if ((mPullLoading || mPullRefreshing) && mIsPinnedContentWhenRefreshing) {
@@ -897,6 +890,13 @@ public class XRefreshView extends LinearLayout {
         mContentView.setPinnedTime(pinnedTime);
     }
 
+    /**
+     * 设置是否在数据加载完成以后隐藏footerview
+     * @param hide true则隐藏footerview，false则反之，默认隐藏
+     */
+    public void setHideFooterWhenComplete(boolean hide){
+        mContentView.setHideFooterWhenComplete(hide);
+    }
     /**
      * 设置在刷新的时候是否可以移动contentView
      *
