@@ -324,22 +324,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
                     adapter.removeFooterView();
-                    addingFooter = true;
-                    recyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            int index = recyclerView.indexOfChild(adapter.getCustomLoadMoreView());
-                            //只有在footerview已经从Recyclerview中移除了以后才执行重新加入footerview的操作，不然Recyclerview的item布局会错乱
-                            if (index == -1) {
-                                addingFooter = false;
-                                if (isFooterEnable()) {
-                                    adapter.addFooterView();
-                                }
-                            } else {
-                                recyclerView.post(this);
-                            }
-                        }
-                    }, 0);
+                    addFooterView(false);
+                    addFooterView(true);
                 }
             }
         }
@@ -487,9 +473,24 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
         final RecyclerView recyclerView = (RecyclerView) child;
         if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
-            BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+            final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
             if (add) {
-                adapter.addFooterView();
+                addingFooter = true;
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //只有在footerview已经从Recyclerview中移除了以后才执行重新加入footerview的操作，不然Recyclerview的item布局会错乱
+                        int index = recyclerView.indexOfChild(adapter.getCustomLoadMoreView());
+                        if (index == -1) {
+                            addingFooter = false;
+                            if (isFooterEnable()) {
+                                adapter.addFooterView();
+                            }
+                        } else {
+                            recyclerView.post(this);
+                        }
+                    }
+                });
             } else {
                 adapter.removeFooterView();
             }
