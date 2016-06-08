@@ -146,7 +146,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
         }
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
-        customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
+        customHeaderView = LayoutInflater.from(context).inflate(id, headerview,false);
         notifyDataSetChanged();
         return customHeaderView;
     }
