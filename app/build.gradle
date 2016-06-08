@@ -24,7 +24,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-//    compile project(':library')
+    compile project(':library')
 //    compile 'com.huxq17.xrefreshview:xrefreshview:3.0.0'
     //依赖下面的库
     compile 'com.android.support:recyclerview-v7:23.0.1'
