@@ -251,8 +251,10 @@ public class XRefreshView extends LinearLayout {
             int bottomMargin = margins.bottomMargin;
             int leftMargin = margins.leftMargin;
             int rightMargin = margins.rightMargin;
+            int paddingleft = getPaddingLeft();
+            int paddingRight = getPaddingRight();
             if (child.getVisibility() != View.GONE) {
-                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, width - leftMargin - rightMargin);
+                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, paddingleft + paddingRight, width - leftMargin - rightMargin);
                 final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, height - topMargin - bottomMargin);
                 measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec);
                 finalHeight += child.getMeasuredHeight();
@@ -277,9 +279,9 @@ public class XRefreshView extends LinearLayout {
             int bottomMargin = margins.bottomMargin;
             int leftMargin = margins.leftMargin;
             int rightMargin = margins.rightMargin;
-            l = leftMargin;
+            l = leftMargin + getPaddingLeft();
             top += topMargin;
-            r -= rightMargin;
+            r -= rightMargin + getPaddingRight();
             if (child.getVisibility() != View.GONE) {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
@@ -288,10 +290,15 @@ public class XRefreshView extends LinearLayout {
                     top += adHeight;
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
-                    child.layout(l, top, r, childHeight + top);
+                    int bottom = childHeight + top;
+                    if (!needAddFooterView()) {
+                        bottom -= getPaddingBottom();
+                    }
+                    child.layout(l, top, r, bottom);
                     top += childHeight;
                 } else {
-                    child.layout(l, top, r, child.getMeasuredHeight() + top);
+                    int bottom = child.getMeasuredHeight() + top;
+                    child.layout(l, top, r, bottom);
                     top += child.getMeasuredHeight();
                 }
             }
