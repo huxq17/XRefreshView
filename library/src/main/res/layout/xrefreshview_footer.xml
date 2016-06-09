@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/xrefreshview_footer_content"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="70dp"
     android:layout_gravity="center_horizontal"
     android:background="@android:color/white"
     android:padding="10dp">

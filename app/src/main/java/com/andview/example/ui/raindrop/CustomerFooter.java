@@ -1,6 +1,7 @@
 package com.andview.example.ui.raindrop;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,8 @@ import android.widget.TextView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
+import com.andview.refreshview.utils.Utils;
 
-/**
- * 非Recyclerview用这个footerview
- */
 public class CustomerFooter extends LinearLayout implements IFooterCallBack {
     private Context mContext;
 
@@ -33,8 +32,18 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
         initView(context);
     }
 
+    private RecyclerView recyclerView;
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
     @Override
     public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+        if (recyclerView != null) {
+            //当数据不满一屏时不显示点击加载更多
+            show(Utils.isRecyclerViewFullscreen(recyclerView));
+        }
         mClickView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_click);
         mClickView.setOnClickListener(new OnClickListener() {
 
