@@ -246,17 +246,8 @@ public class XRefreshView extends LinearLayout {
         int finalHeight = 0;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            LayoutParams margins = (LayoutParams) child.getLayoutParams();
-            int topMargin = margins.topMargin;
-            int bottomMargin = margins.bottomMargin;
-            int leftMargin = margins.leftMargin;
-            int rightMargin = margins.rightMargin;
-            int paddingleft = getPaddingLeft();
-            int paddingRight = getPaddingRight();
             if (child.getVisibility() != View.GONE) {
-                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, paddingleft + paddingRight, width - leftMargin - rightMargin);
-                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, height - topMargin - bottomMargin);
-                measureChild(child, childWidthMeasureSpec, childHeightMeasureSpec);
+                measureChild(child, widthMeasureSpec, heightMeasureSpec);
                 finalHeight += child.getMeasuredHeight();
             }
         }
@@ -291,9 +282,6 @@ public class XRefreshView extends LinearLayout {
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
                     int bottom = childHeight + top;
-                    if (!needAddFooterView()) {
-                        bottom -= getPaddingBottom();
-                    }
                     child.layout(l, top, r, bottom);
                     top += childHeight;
                 } else {
