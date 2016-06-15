@@ -32,8 +32,8 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
 ### 关于我
-QQ：1491359569
-QQ群：537610843 (加群备注：XRefreshView)
+QQ：1491359569  
+QQ群：537610843 (加群备注：XRefreshView)  
 邮箱：huxq17@163.com
 
 ### License
