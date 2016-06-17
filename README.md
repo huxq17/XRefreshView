@@ -17,17 +17,17 @@ dependencies {
 ##最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46982115 "description")
 ##效果图
 ###带Banner的Recyclerview
-![带Banner的Recyclerview](http://img.my.csdn.net/uploads/201602/15/1455502311_5774.gif)
+![带Banner的Recyclerview](gif/xrefresh_banner.gif)
 ###LinearLayout样式的Recyclerview
-![LinearLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9614.gif) 
+![LinearLayout样式的Recyclerview](gif/xrefresh_linearlayout.gif)
 ###GridLayout样式的Recyclerview
-![GridLayout样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495517_6621.gif) 
+![GridLayout样式的Recyclerview](gif/xrefresh_gridlayout.gif)
 ###Staggered样式的Recyclerview
-![Staggered样式的Recyclerview](http://img.my.csdn.net/uploads/201602/03/1454495499_9854.gif)
+![Staggered样式的Recyclerview](gif/xrefresh_staggeredlayout.gif)
 ###GridView
-![自带的头部](http://img.my.csdn.net/uploads/201508/25/1440465457_8215.gif)
+![自带的头部](gif/xrefresh_gridview.gif)
 ###自定义View
-![自定义头部](http://img.my.csdn.net/uploads/201508/25/1440465306_9400.gif) 
+![自定义头部](gif/xrefresh_customview.gif)
 
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
