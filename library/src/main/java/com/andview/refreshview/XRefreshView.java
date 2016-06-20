@@ -73,6 +73,8 @@ public class XRefreshView extends LinearLayout {
     private Scroller mScroller;
     private boolean mMoveForHorizontal = false;
     private boolean isForHorizontalMove = false;
+    private boolean mCanMoveHeader = true;
+
     private boolean mIsIntercept = false;
     private IHeaderCallBack mHeaderCallBack;
     private IFooterCallBack mFooterCallBack;
@@ -544,7 +546,9 @@ public class XRefreshView extends LinearLayout {
             if (mHolder.isOverHeader(deltaY)) {
                 deltaY = -mHolder.mOffsetY;
             }
-            moveView(deltaY);
+            if (mCanMoveHeader) {
+                moveView(deltaY);
+            }
             if (mEnablePullRefresh && !mPullRefreshing) {
                 if (mHolder.mOffsetY > mHeaderViewHeight) {
                     if (mState != XRefreshViewState.STATE_READY) {
@@ -559,6 +563,15 @@ public class XRefreshView extends LinearLayout {
                 }
             }
         }
+    }
+
+    /**
+     * 设置在下拉刷新被禁用的情况下，是否允许界面被下拉
+     *
+     * @param moveHeadWhenDisablePullRefresh 默认是true
+     */
+    public void setMoveHeadWhenDisablePullRefresh(boolean moveHeadWhenDisablePullRefresh) {
+        mCanMoveHeader = moveHeadWhenDisablePullRefresh;
     }
 
     private void updateFooterHeight(int deltaY) {
@@ -887,11 +900,13 @@ public class XRefreshView extends LinearLayout {
 
     /**
      * 设置是否在数据加载完成以后隐藏footerview
+     *
      * @param hide true则隐藏footerview，false则反之，默认隐藏
      */
-    public void setHideFooterWhenComplete(boolean hide){
+    public void setHideFooterWhenComplete(boolean hide) {
         mContentView.setHideFooterWhenComplete(hide);
     }
+
     /**
      * 设置在刷新的时候是否可以移动contentView
      *
