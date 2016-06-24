@@ -73,7 +73,8 @@ public class XRefreshView extends LinearLayout {
     private Scroller mScroller;
     private boolean mMoveForHorizontal = false;
     private boolean isForHorizontalMove = false;
-    private boolean mCanMoveHeader = true;
+    private boolean mCanMoveHeaderWhenDisablePullRefresh = true;
+    private boolean mCanMoveFooterWhenDisablePullLoadMore = true;
 
     private boolean mIsIntercept = false;
     private IHeaderCallBack mHeaderCallBack;
@@ -546,7 +547,7 @@ public class XRefreshView extends LinearLayout {
             if (mHolder.isOverHeader(deltaY)) {
                 deltaY = -mHolder.mOffsetY;
             }
-            if (mCanMoveHeader) {
+            if (mEnablePullRefresh || mCanMoveHeaderWhenDisablePullRefresh) {
                 moveView(deltaY);
             }
             if (mEnablePullRefresh && !mPullRefreshing) {
@@ -571,7 +572,16 @@ public class XRefreshView extends LinearLayout {
      * @param moveHeadWhenDisablePullRefresh 默认是true
      */
     public void setMoveHeadWhenDisablePullRefresh(boolean moveHeadWhenDisablePullRefresh) {
-        mCanMoveHeader = moveHeadWhenDisablePullRefresh;
+        mCanMoveHeaderWhenDisablePullRefresh = moveHeadWhenDisablePullRefresh;
+    }
+
+    /**
+     * 设置在上拉加载被禁用的情况下，是否允许界面被上拉
+     *
+     * @param moveFootWhenDisablePullLoadMore 默认为true
+     */
+    public void setMoveFootWhenDisablePullLoadMore(boolean moveFootWhenDisablePullLoadMore) {
+        mCanMoveFooterWhenDisablePullLoadMore = moveFootWhenDisablePullLoadMore;
     }
 
     private void updateFooterHeight(int deltaY) {
@@ -579,7 +589,9 @@ public class XRefreshView extends LinearLayout {
             mFooterCallBack.onStateReady();
             mState = XRefreshViewState.STATE_READY;
         }
-        moveView(deltaY);
+        if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
+            moveView(deltaY);
+        }
     }
 
     /**
