@@ -68,9 +68,9 @@ public class BannerRecyclerViewActivity extends Activity {
         xRefreshView.setMoveForHorizontal(true);
 //        adapter.setHeaderView(headerView, recyclerView);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-        xRefreshView.setPullRefreshEnable(false);
+//        xRefreshView.setPullRefreshEnable(false);
         //设置在下拉刷新被禁用的情况下，是否允许界面被下拉,默认是true
-        xRefreshView.setMoveHeadWhenDisablePullRefresh(false);
+//        xRefreshView.setMoveHeadWhenDisablePullRefresh(false);
 
 //		xRefreshView.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
