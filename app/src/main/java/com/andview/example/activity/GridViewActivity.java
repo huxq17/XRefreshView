@@ -33,7 +33,7 @@ public class GridViewActivity extends Activity {
 		}
 		gv = (GridView) findViewById(R.id.gv);
 		outView = (XRefreshView) findViewById(R.id.custom_view);
-//		outView.setPullLoadEnable(true);
+		outView.setPullLoadEnable(true);
 		//设置在上拉加载被禁用的情况下，是否允许界面被上拉
 //		outView.setMoveFootWhenDisablePullLoadMore(false);
 		adapter = new ArrayAdapter<String>(this,
