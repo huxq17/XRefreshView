@@ -119,7 +119,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
-        LogUtils.i("test setCustomLoadMoreView");
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
