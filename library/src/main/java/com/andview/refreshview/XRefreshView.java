@@ -240,7 +240,6 @@ public class XRefreshView extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 //        int width2 = getDefaultSize(0, widthMeasureSpec);
@@ -250,8 +249,17 @@ public class XRefreshView extends LinearLayout {
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             if (child.getVisibility() != View.GONE) {
-                measureChild(child, widthMeasureSpec, heightMeasureSpec);
-                finalHeight += child.getMeasuredHeight();
+                final int paddingLeft = getPaddingLeft();
+                final int paddingRight = getPaddingRight();
+                final int paddingTop = getPaddingTop();
+                final int paddingBottom = getPaddingBottom();
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+                int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
+                        paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
+                int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
+                        paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
+                child.measure(childWidthSpec, childHeightSpec);
+                finalHeight += child.getMeasuredHeight()+lp.topMargin+lp.bottomMargin;
             }
         }
         setMeasuredDimension(width, finalHeight);
@@ -259,9 +267,9 @@ public class XRefreshView extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t2, int r, int b) {
-        super.onLayout(changed, l, t2, r, b);
+//        super.onLayout(changed, l, t2, r, b);
 //        if(mHolder.mOffsetY!=0)return;
-        LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
+        LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY + ";childCount=" + getChildCount());
         mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
         int childCount = getChildCount();
         int top = getPaddingTop() + mHolder.mOffsetY;
@@ -275,21 +283,21 @@ public class XRefreshView extends LinearLayout {
             int rightMargin = margins.rightMargin;
             l = leftMargin + getPaddingLeft();
             top += topMargin;
-            r -= rightMargin + getPaddingRight();
+            r = child.getMeasuredWidth();
             if (child.getVisibility() != View.GONE) {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
                     // 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
-                    child.layout(l, top - mHeaderViewHeight, r, top + adHeight);
+                    child.layout(l, top - mHeaderViewHeight, l + r, top + adHeight);
                     top += adHeight;
                 } else if (i == 1) {
                     int childHeight = child.getMeasuredHeight() - adHeight;
                     int bottom = childHeight + top;
-                    child.layout(l, top, r, bottom);
-                    top += childHeight;
+                    child.layout(l, top, l + r, bottom);
+                    top += childHeight+bottomMargin;
                 } else {
                     int bottom = child.getMeasuredHeight() + top;
-                    child.layout(l, top, r, bottom);
+                    child.layout(l, top, l + r, bottom);
                     top += child.getMeasuredHeight();
                 }
             }
