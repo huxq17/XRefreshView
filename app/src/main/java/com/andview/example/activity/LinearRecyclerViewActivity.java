@@ -81,7 +81,7 @@ public class LinearRecyclerViewActivity extends Activity {
 //                        }
                         mLoadCount++;
 
-                        if (mLoadCount >= 5) {
+                        if (mLoadCount >= 3) {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载

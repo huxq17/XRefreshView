@@ -62,7 +62,7 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
         mHintView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
         mClickView.setVisibility(View.VISIBLE);
-        show(true);
+        mClickView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_click);
     }
 
     @Override
@@ -71,6 +71,14 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
         mProgressBar.setVisibility(View.VISIBLE);
         mClickView.setVisibility(View.GONE);
         show(true);
+    }
+
+    @Override
+    public void onReleaseToLoadMore() {
+        mHintView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
+        mClickView.setVisibility(View.VISIBLE);
+        mClickView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_release);
     }
 
     @Override
