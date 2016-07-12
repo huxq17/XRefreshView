@@ -93,6 +93,11 @@ public class XRefreshView extends LinearLayout {
      * 在刷新的时候是否可以移动contentView
      */
     private boolean mIsPinnedContentWhenRefreshing = false;
+    private boolean enableReleaseToLoadMore = true;
+    /**
+     * 在Recyclerview滑倒最底部的时候，是否允许Recyclerview继续往上滑动
+     */
+    private boolean enableRecyclerViewPullUp = true;
 
     public XRefreshView(Context context) {
         this(context, null);
@@ -432,8 +437,8 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void sendCancelEvent() {
-        LogUtils.d("sendCancelEvent");
         if (!mHasSendCancelEvent) {
+            LogUtils.d("sendCancelEvent");
             setRefreshTime();
             mHasSendCancelEvent = true;
             mHasSendDownEvent = false;
@@ -594,20 +599,28 @@ public class XRefreshView extends LinearLayout {
     }
 
     private boolean mReleaseToLoadMore = false;
+    private boolean mEnablePullUpWhenLoadCompleted = true;
 
     private void updateFooterHeight(int deltaY) {
-        if (needAddFooterView()) {
-            if (mState != XRefreshViewState.STATE_READY && mEnablePullLoad && !autoLoadMore) {
-                mFooterCallBack.onStateReady();
-                mState = XRefreshViewState.STATE_READY;
+        if (mEnablePullLoad) {
+            if (needAddFooterView()) {
+                if (mState != XRefreshViewState.STATE_LOADING) {
+                    mFooterCallBack.onStateRefreshing();
+                    mState = XRefreshViewState.STATE_LOADING;
+                }
+            } else if (enableReleaseToLoadMore && mContentView != null && !mContentView.hasLoadCompleted() && !autoLoadMore) {
+                mReleaseToLoadMore = mHolder.mOffsetY != 0;
+                mContentView.releaseToLoadMore(mReleaseToLoadMore);
             }
-        } else if (mContentView != null && !mContentView.hasLoadCompleted() && !autoLoadMore) {
-            mReleaseToLoadMore = mHolder.mOffsetY != 0;
-            mContentView.releaseToLoadMore(mReleaseToLoadMore);
         }
-        if (!autoLoadMore || mContentView.hasLoadCompleted()) {
-            if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
-                moveView(deltaY);
+        if (needAddFooterView() || enableRecyclerViewPullUp) {
+            if (mEnablePullUpWhenLoadCompleted || !mContentView.hasLoadCompleted()) {
+                if (mContentView.hasLoadCompleted() && needAddFooterView() && mFooterCallBack != null && mFooterCallBack.isShowing()) {
+                    mFooterCallBack.show(false);
+                }
+                if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
+                    moveView(deltaY);
+                }
             }
         }
     }
@@ -706,7 +719,7 @@ public class XRefreshView extends LinearLayout {
             moveView(offsetY);
 
             LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
-            if (mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null) {
+            if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null) {
                 mReleaseToLoadMore = false;
                 mContentView.startLoadMore(false, null, null);
             }
@@ -841,7 +854,7 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
-                mFooterCallBack.show(true);
+//                mFooterCallBack.show(true);
             }
         }
         mContentView.setLoadComplete(hasComplete);
@@ -900,6 +913,29 @@ public class XRefreshView extends LinearLayout {
     public void setXRefreshViewListener(XRefreshViewListener l) {
         mRefreshViewListener = l;
         mContentView.setXRefreshViewListener(l);
+    }
+
+    /**
+     * 是否开启Recyclerview的松开加载更多功能，默认开启
+     */
+    public void enableReleaseToLoadMore(boolean enable) {
+        this.enableReleaseToLoadMore = enable;
+    }
+
+    /**
+     * 设置在数据加载完成以后,是否可以向上继续拉被刷新的view,默认为true
+     *
+     * @param enable
+     */
+    public void enablePullUpWhenLoadCompleted(boolean enable) {
+        mEnablePullUpWhenLoadCompleted = enable;
+    }
+
+    /**
+     * 设置在Recyclerview滑倒最底部的时候，是否允许Recyclerview继续往上滑动，默认是true
+     */
+    public void enableRecyclerViewPullUp(boolean enable) {
+        enableRecyclerViewPullUp = enable;
     }
 
     public void setFooterCallBack(IFooterCallBack footerCallBack) {

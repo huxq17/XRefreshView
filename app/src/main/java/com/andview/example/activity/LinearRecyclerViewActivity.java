@@ -56,6 +56,9 @@ public class LinearRecyclerViewActivity extends Activity {
         xRefreshView.setMoveForHorizontal(true);
         xRefreshView.setAutoLoadMore(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+        xRefreshView.enableReleaseToLoadMore(true);
+        xRefreshView.enableRecyclerViewPullUp(true);
+//        xRefreshView.enablePullUpWhenLoadCompleted(false);
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);
 
@@ -80,7 +83,6 @@ public class LinearRecyclerViewActivity extends Activity {
 //                                    adapter.getAdapterItemCount());
 //                        }
                         mLoadCount++;
-
                         if (mLoadCount >= 3) {
                             xRefreshView.setLoadComplete(true);
                         } else {
