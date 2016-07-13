@@ -72,7 +72,6 @@ public class GridViewActivity extends Activity {
 					public void run() {
 						if (str_name.size() <= 90) {
 							if (Build.VERSION.SDK_INT >= 11) {
-								str_name.addAll(addlist);
 								adapter.addAll(addlist);
 							}
 							outView.stopLoadMore();

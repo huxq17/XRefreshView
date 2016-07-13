@@ -618,7 +618,9 @@ public class XRefreshView extends LinearLayout {
                 if (mContentView.hasLoadCompleted() && needAddFooterView() && mFooterCallBack != null && mFooterCallBack.isShowing()) {
                     mFooterCallBack.show(false);
                 }
-                if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
+                if (!needAddFooterView() && mContentView.getState()!=XRefreshViewState.STATE_COMPLETE && autoLoadMore) {
+                    //当时是recyclerview，自动加载更多，并且没有加载完全的时候，不让Recyclerview上拉
+                } else if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
                     moveView(deltaY);
                 }
             }
@@ -864,7 +866,7 @@ public class XRefreshView extends LinearLayout {
         return mHasLoadComplete;
     }
 
-    public void endLoadMore(boolean hideFooter) {
+    private void endLoadMore(boolean hideFooter) {
         mPullLoading = false;
         startScroll(-mHolder.mOffsetY, 0);
 //        mFooterCallBack.onStateRefreshing();
@@ -932,7 +934,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 设置在Recyclerview滑倒最底部的时候，是否允许Recyclerview继续往上滑动，默认是true
+     * 设置在被刷新的view滑倒最底部的时候，是否允许被刷新的view继续往上滑动，默认是true
      */
     public void enableRecyclerViewPullUp(boolean enable) {
         enableRecyclerViewPullUp = enable;

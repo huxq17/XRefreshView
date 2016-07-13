@@ -343,7 +343,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     public void stopLoading(boolean hideFooter) {
         mIsLoadingMore = false;
-        mTotalItemCount = 0;
+//        mTotalItemCount = 0;
         if (mFooterCallBack != null) {
             mFooterCallBack.onStateFinish(hideFooter);
             if (hideFooter) {
@@ -476,6 +476,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    public XRefreshViewState getState() {
+        return mState;
+    }
+
     public boolean hasLoadCompleted() {
         return mHasLoadComplete;
     }
@@ -533,7 +537,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         addFooterView(enablePullLoad);
         hasIntercepted = false;
         mIsLoadingMore = false;
-        mTotalItemCount = 0;
+//        mTotalItemCount = 0;
         if (enablePullLoad) {
             if (onRecyclerViewTop()) {
                 if (child instanceof RecyclerView) {
