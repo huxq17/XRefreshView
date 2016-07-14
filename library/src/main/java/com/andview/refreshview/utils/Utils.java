@@ -56,7 +56,7 @@ public class Utils {
             if (lastchild instanceof IFooterCallBack) {
                 lastchild = viewGroup.getChildAt(count - 2);
             }
-            if(lastchild==null){
+            if (lastchild == null) {
                 return false;
             }
             RecyclerView.LayoutParams lastLp = (RecyclerView.LayoutParams) lastchild.getLayoutParams();
@@ -75,8 +75,8 @@ public class Utils {
     }
 
     public static int computeScrollDuration(int dx, int dy, int height) {
-        int vx=0;
-        int vy=0;
+        int vx = 0;
+        int vy = 0;
         final int absDx = Math.abs(dx);
         final int absDy = Math.abs(dy);
         final boolean horizontal = absDx > absDy;
@@ -96,6 +96,13 @@ public class Utils {
             duration = (int) (((absDelta / containerSize) + 1) * 300);
         }
         return Math.min(duration, 2000);
+    }
+
+    public static int computeScrollVerticalDuration(int dy, int height) {
+        final int duration;
+        float absDelta = (float) Math.abs(dy);
+        duration = (int) (((absDelta / height) + 1) * 200);
+        return Math.min(duration, 500);
     }
 
     private static float distanceInfluenceForSnapDuration(float f) {

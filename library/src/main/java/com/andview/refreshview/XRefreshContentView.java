@@ -352,6 +352,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
                     addFooterView(false);
+                    resetLayout();
                     addFooterView(true);
                 }
             }
@@ -463,10 +464,17 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
                     @Override
                     public void run() {
+                        resetLayout();
                         addFooterView(false);
                     }
                 }, mPinnedTime);
             }
+        }
+    }
+
+    private void resetLayout() {
+        if (mParent != null) {
+            mParent.resetLayout();
         }
     }
 
