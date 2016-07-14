@@ -1,14 +1,14 @@
 package com.andview.refreshview.callback;
 
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.XRefreshView;
 
 public interface IFooterCallBack {
     /**
      * 当不是到达底部自动加载更多的时候，需要自己写点击事件
      *
-     * @param xRefreshViewListener
+     * @param xRefreshView
      */
-    void callWhenNotAutoLoadMore(XRefreshViewListener xRefreshViewListener);
+    void callWhenNotAutoLoadMore(XRefreshView xRefreshView);
 
     /**
      * 正常状态，例如需要点击footerview才能加载更多，主要是到达底部不自动加载更多时会被调用

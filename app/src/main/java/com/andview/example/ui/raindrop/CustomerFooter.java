@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
+import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.utils.Utils;
 
@@ -39,7 +39,7 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
     }
 
     @Override
-    public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+    public void callWhenNotAutoLoadMore(final XRefreshView xRefreshView) {
         if (recyclerView != null) {
             //当数据不满一屏时不显示点击加载更多
             show(Utils.isRecyclerViewFullscreen(recyclerView));
@@ -49,10 +49,7 @@ public class CustomerFooter extends LinearLayout implements IFooterCallBack {
 
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onLoadMore(false);
-                    onStateRefreshing();
-                }
+                xRefreshView.notifyLoadMore();
             }
         });
     }

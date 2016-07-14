@@ -181,7 +181,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 //                        addFooterView(true);
                     } else {
                         mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                        mFooterCallBack.callWhenNotAutoLoadMore(mParent);
                     }
                     return;
                 }
@@ -228,7 +228,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
-                    mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                    mFooterCallBack.callWhenNotAutoLoadMore(mParent);
                 }
             }
         }
@@ -292,9 +292,25 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    public void notifyRecyclerViewLoadMore() {
+        if (!mIsLoadingMore) {
+            if (!hasLoadCompleted()) {
+                if (mRefreshViewListener != null) {
+                    mRefreshViewListener.onLoadMore(false);
+                }
+                mIsLoadingMore = true;
+                previousTotal = mTotalItemCount;
+                mFooterCallBack.onStateRefreshing();
+                setState(XRefreshViewState.STATE_LOADING);
+            } else {
+                loadCompleted();
+            }
+        }
+    }
+
     public void releaseToLoadMore(boolean loadmore) {
-        if (mFooterCallBack == null || mContainer != null) {
-            //如果自动加载则不做操作
+        if (mFooterCallBack == null || mContainer != null || mIsLoadingMore) {
+            //如果自动加载或者正在加载中则不做操作
             return;
         }
         if (loadmore) {
@@ -454,6 +470,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public void loadCompleted() {
+        mParent.enablePullUp(true);
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
 //            addFooterView(true);
@@ -552,7 +569,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     RecyclerView recyclerView = (RecyclerView) child;
                     if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
                         mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                        mFooterCallBack.callWhenNotAutoLoadMore(mParent);
                     }
                 }
             }

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 
 public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
@@ -31,16 +30,13 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
     }
 
     @Override
-    public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+    public void callWhenNotAutoLoadMore(final XRefreshView xRefreshView) {
         mClickView.setText(R.string.xrefreshview_footer_hint_click);
         mClickView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onLoadMore(false);
-                    onStateRefreshing();
-                }
+                xRefreshView.notifyLoadMore();
             }
         });
     }
@@ -93,7 +89,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 
     @Override
     public void show(final boolean show) {
-        if(show==showing){
+        if (show == showing) {
             return;
         }
         showing = show;

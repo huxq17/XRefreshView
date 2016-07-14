@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
@@ -42,9 +41,9 @@ public class Utils {
         if (view == null) {
             return;
         }
-        ViewParent parent = view.getParent();
+        ViewGroup parent = (ViewGroup) view.getParent();
         if (parent != null) {
-            ((ViewGroup) parent).removeView(view);
+            parent.removeView(view);
         }
     }
 

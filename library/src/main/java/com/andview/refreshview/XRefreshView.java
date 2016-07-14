@@ -96,6 +96,10 @@ public class XRefreshView extends LinearLayout {
      * 在Recyclerview滑倒最底部的时候，是否允许Recyclerview继续往上滑动
      */
     private boolean enableRecyclerViewPullUp = true;
+    /**
+     * 当Recyclerview加载完成的时候，不允许界面被上拉
+     */
+    private boolean enablePullUp = true;
 
     public XRefreshView(Context context) {
         this(context, null);
@@ -325,7 +329,7 @@ public class XRefreshView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastMoveEvent = ev;
-                if (mStopingRefresh || !isEnabled() || mIsIntercept || mContentView.isLoading()) {
+                if (/*!enablePullUp ||*/ mStopingRefresh || !isEnabled() || mIsIntercept) {
                     return super.dispatchTouchEvent(ev);
                 }
                 if ((mPullLoading || mPullRefreshing) && mIsPinnedContentWhenRefreshing) {
@@ -397,7 +401,7 @@ public class XRefreshView extends LinearLayout {
                             invokeLoadMore();
                         } else {
                             int offset = 0 - mHolder.mOffsetY;
-                            startScroll(offset, Utils.computeScrollVerticalDuration(offset,getHeight()));
+                            startScroll(offset, Utils.computeScrollVerticalDuration(offset, getHeight()));
                         }
                     }
                 }
@@ -416,15 +420,20 @@ public class XRefreshView extends LinearLayout {
         if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             if (offset != 0) {
-                startScroll(offset, Utils.computeScrollVerticalDuration(offset,getHeight()));
+                startScroll(offset, Utils.computeScrollVerticalDuration(offset, getHeight()));
             }
-            if (!mPullLoading) {
-                mFooterCallBack.onStateRefreshing();
-                startLoadMore();
-            }
+            startLoadMore();
             return true;
         }
         return false;
+    }
+
+    public void notifyLoadMore() {
+        if (needAddFooterView()) {
+            startLoadMore();
+        } else {
+            mContentView.notifyRecyclerViewLoadMore();
+        }
     }
 
     /**
@@ -537,9 +546,12 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void startLoadMore() {
-        mPullLoading = true;
-        if (mRefreshViewListener != null) {
-            mRefreshViewListener.onLoadMore(false);
+        if (!mPullLoading) {
+            mFooterCallBack.onStateRefreshing();
+            mPullLoading = true;
+            if (mRefreshViewListener != null) {
+                mRefreshViewListener.onLoadMore(false);
+            }
         }
     }
 
@@ -606,7 +618,7 @@ public class XRefreshView extends LinearLayout {
                     mFooterCallBack.onStateRefreshing();
                     mState = XRefreshViewState.STATE_LOADING;
                 }
-            } else if (enableReleaseToLoadMore && mContentView != null && !mContentView.hasLoadCompleted() && !autoLoadMore) {
+            } else if (enableReleaseToLoadMore && mContentView != null && !mContentView.hasLoadCompleted() && !autoLoadMore && !mContentView.isLoading()) {
                 mReleaseToLoadMore = mHolder.mOffsetY != 0;
                 mContentView.releaseToLoadMore(mReleaseToLoadMore);
             }
@@ -682,10 +694,10 @@ public class XRefreshView extends LinearLayout {
         int offsetY = 0;
         if (mPullRefreshing) {
             offsetY = mHeaderViewHeight - mHolder.mOffsetY;
-            startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY,getHeight()));
+            startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY, getHeight()));
         } else {
             offsetY = 0 - mHolder.mOffsetY;
-            startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY,getHeight()));
+            startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY, getHeight()));
         }
         LogUtils.d("resetHeaderHeight offsetY=" + offsetY);
     }
@@ -719,18 +731,19 @@ public class XRefreshView extends LinearLayout {
             moveView(offsetY);
 
             LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
-            if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null) {
+            if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
                 mReleaseToLoadMore = false;
                 mContentView.startLoadMore(false, null, null);
             }
         } else {
             int currentY = mScroller.getCurrY();
             if (mHolder.mOffsetY == 0) {
+                enablePullUp(true);
                 mStopingRefresh = false;
             } else {
                 //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
                 if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
-                    startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY,getHeight()));
+                    startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY, getHeight()));
                 }
             }
         }
@@ -844,8 +857,14 @@ public class XRefreshView extends LinearLayout {
     }
 
     protected void resetLayout() {
-        if (mHolder.mOffsetY != 0)
+        enablePullUp(false);
+        if (mHolder.mOffsetY != 0) {
             startScroll(-mHolder.mOffsetY, Utils.computeScrollVerticalDuration(mHolder.mOffsetY, getHeight()));
+        }
+    }
+
+    protected void enablePullUp(boolean enablePullUp) {
+        this.enablePullUp = enablePullUp;
     }
 
     /**

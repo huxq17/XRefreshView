@@ -45,7 +45,7 @@ public class GridRecyclerViewActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
 
