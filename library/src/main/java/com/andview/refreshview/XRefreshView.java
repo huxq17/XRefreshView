@@ -276,7 +276,7 @@ public class XRefreshView extends LinearLayout {
     protected void onLayout(boolean changed, int l, int t2, int r, int b) {
 //        super.onLayout(changed, l, t2, r, b);
 //        if(mHolder.mOffsetY!=0)return;
-        LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY + ";childCount=" + getChildCount());
+        LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
         mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
         int childCount = getChildCount();
         int top = getPaddingTop() + mHolder.mOffsetY;
@@ -363,18 +363,20 @@ public class XRefreshView extends LinearLayout {
                 if (deltaY > 0 && mHolder.mOffsetY <= mHeadMoveDistence || deltaY < 0) {
                     deltaY = (int) (deltaY / OFFSET_RADIO);
                 } else {
-                    deltaY = 0;
+                    return super.dispatchTouchEvent(ev);
                 }
-                if (!mPullLoading && mContentView.isTop() && (deltaY > 0 || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
+                if (!mPullLoading && !mReleaseToLoadMore && mContentView.isTop() && (deltaY > 0 || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
                     sendCancelEvent();
                     updateHeaderHeight(currentY, deltaY);
                 } else if (!mPullRefreshing && mContentView.isBottom()
                         && (deltaY < 0 || deltaY > 0 && mHolder.hasFooterPullUp())) {
                     sendCancelEvent();
                     updateFooterHeight(deltaY);
-                } else if (mContentView.isTop() && !mHolder.hasHeaderPullDown()
-                        || mContentView.isBottom() && !mHolder.hasFooterPullUp()) {
-                    mReleaseToLoadMore = false;
+                } else if (deltaY != 0 && (mContentView.isTop() && !mHolder.hasHeaderPullDown()
+                        || mContentView.isBottom() && !mHolder.hasFooterPullUp())) {
+                    if (mReleaseToLoadMore) {
+                        releaseToLoadMore(false);
+                    }
                     if (Math.abs(deltaY) > 0)
                         sendDownEvent();
                 }
@@ -611,6 +613,15 @@ public class XRefreshView extends LinearLayout {
     private boolean mReleaseToLoadMore = false;
     private boolean mEnablePullUpWhenLoadCompleted = true;
 
+    private boolean canReleaseToLoadMore() {
+        return enableReleaseToLoadMore && mEnablePullLoad && mContentView != null && !mContentView.hasLoadCompleted() && !mContentView.isLoading();
+    }
+
+    private void releaseToLoadMore(boolean loadMore) {
+        mReleaseToLoadMore = loadMore;
+        mContentView.releaseToLoadMore(mReleaseToLoadMore);
+    }
+
     private void updateFooterHeight(int deltaY) {
         if (mEnablePullLoad) {
             if (needAddFooterView()) {
@@ -618,9 +629,8 @@ public class XRefreshView extends LinearLayout {
                     mFooterCallBack.onStateRefreshing();
                     mState = XRefreshViewState.STATE_LOADING;
                 }
-            } else if (enableReleaseToLoadMore && mContentView != null && !mContentView.hasLoadCompleted() && !autoLoadMore && !mContentView.isLoading()) {
-                mReleaseToLoadMore = mHolder.mOffsetY != 0;
-                mContentView.releaseToLoadMore(mReleaseToLoadMore);
+            } else if (canReleaseToLoadMore()) {
+                releaseToLoadMore(mHolder.mOffsetY != 0);
             }
         }
         if (needAddFooterView() || enableRecyclerViewPullUp) {
@@ -628,9 +638,10 @@ public class XRefreshView extends LinearLayout {
                 if (mContentView.hasLoadCompleted() && needAddFooterView() && mFooterCallBack != null && mFooterCallBack.isShowing()) {
                     mFooterCallBack.show(false);
                 }
-                if (!needAddFooterView() && mContentView.getState() != XRefreshViewState.STATE_COMPLETE && autoLoadMore) {
+               /* if (!needAddFooterView() && mContentView.getState() != XRefreshViewState.STATE_COMPLETE && autoLoadMore) {
                     //当时是recyclerview，自动加载更多，并且没有加载完全的时候，不让Recyclerview上拉
-                } else if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
+                } else */
+                if (mEnablePullLoad || mCanMoveFooterWhenDisablePullLoadMore) {
                     moveView(deltaY);
                 }
             }

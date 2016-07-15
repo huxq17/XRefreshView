@@ -229,6 +229,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
                     mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                    if (mParent != null && !mParent.getPullLoadEnable()) {
+                        mFooterCallBack.show(false);
+                    }
                 }
             }
         }
@@ -309,8 +312,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public void releaseToLoadMore(boolean loadmore) {
-        if (mFooterCallBack == null || mContainer != null || mIsLoadingMore) {
-            //如果自动加载或者正在加载中则不做操作
+        if (mFooterCallBack == null || mIsLoadingMore) {
             return;
         }
         if (loadmore) {
@@ -570,6 +572,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
                         mFooterCallBack.onStateReady();
                         mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                        if (mParent != null && mParent.getPullLoadEnable()) {
+                            mFooterCallBack.show(true);
+                        }
                     }
                 }
             }
