@@ -1,27 +1,42 @@
 package com.andview.example.recylerview;
 
 public class Person {
-	private String name, age;
+    private String name, age;
+    private int type;
 
-	public Person(String name, String age) {
-		this.name = name;
-		this.age = age;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setType(int type) {
+        this.type = type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Person(String name, String age) {
+        this.name = name;
+        this.age = age;
+    }
 
-	public String getAge() {
-		return age;
-	}
+    public Person(String name, String age, int type) {
+        this.name = name;
+        this.age = age;
+        this.type = type;
+    }
 
-	public void setAge(String age) {
-		this.age = age;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
 
 }

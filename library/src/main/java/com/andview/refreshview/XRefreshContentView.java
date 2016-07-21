@@ -104,10 +104,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    private boolean mSlienceLoadMore = false;
+    private boolean mSilenceLoadMore = false;
 
     public void setSlienceLoadMore(boolean slienceLoadMore) {
-        mSlienceLoadMore = slienceLoadMore;
+        mSilenceLoadMore = slienceLoadMore;
     }
 
     private boolean hasIntercepted = false;
@@ -131,7 +131,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
                 @Override
                 public void srollToBottom() {
-                    if (mSlienceLoadMore) {
+                    if (mSilenceLoadMore) {
                         if (mRefreshViewListener != null) {
                             mRefreshViewListener.onLoadMore(true);
                         }
@@ -171,28 +171,30 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 if (mRecyclerViewScrollListener != null) {
                     mRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
                 }
-                if (mFooterCallBack == null && !mSlienceLoadMore) {
+                if (mFooterCallBack == null && !mSilenceLoadMore) {
                     return;
                 }
                 RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
                 getRecyclerViewInfo(layoutManager);
+                LogUtils.d("test pre onScrolled mIsLoadingMore=" + mIsLoadingMore);
                 if (onRecyclerViewTop()) {
                     if (Utils.isRecyclerViewFullscreen(recyclerView)) {
 //                        addFooterView(true);
                     } else {
                         mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                        mFooterCallBack.callWhenNotAutoLoadMore(mParent);
                     }
                     return;
                 }
-                LogUtils.d("test pre onScrolled mIsLoadingMore=" + mIsLoadingMore);
-                if (mSlienceLoadMore) {
-                    doSlienceLoadMore(adapter, layoutManager);
+                if (dy == 0) {
+                    return;
+                }
+                if (mSilenceLoadMore) {
+                    doSilenceLoadMore(adapter, layoutManager);
                 } else {
                     if (!isOnRecyclerViewBottom()) {
                         mHideFooter = true;
                     }
-                    ensureFooterShowWhenScrolling();
                     if (mParent != null && !mParent.getPullLoadEnable() && !hasIntercepted) {
                         addFooterView(false);
                         hasIntercepted = true;
@@ -200,6 +202,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                     if (hasIntercepted) {
                         return;
                     }
+                    ensureFooterShowWhenScrolling();
                     if (mContainer != null) {
                         doAutoLoadMore(adapter, layoutManager);
                     } else if (null == mContainer) {
@@ -218,7 +221,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     private void initFooterCallBack(BaseRecyclerAdapter adapter) {
-        if (!mSlienceLoadMore) {
+        if (!mSilenceLoadMore) {
             if (adapter != null) {
                 View footerView = adapter.getCustomLoadMoreView();
                 if (null == footerView) {
@@ -228,13 +231,16 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
-                    mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
+                    mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                    if (mParent != null && !mParent.getPullLoadEnable()) {
+                        mFooterCallBack.show(false);
+                    }
                 }
             }
         }
     }
 
-    private void doSlienceLoadMore(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager layoutManager) {
+    private void doSilenceLoadMore(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager layoutManager) {
         if (!mIsLoadingMore && isOnRecyclerViewBottom() && !hasLoadCompleted()) {
             if (mRefreshViewListener != null) {
                 mIsLoadingMore = true;
@@ -246,18 +252,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     private void doAutoLoadMore(BaseRecyclerAdapter adapter, RecyclerView.LayoutManager layoutManager) {
         if (!mIsLoadingMore && isOnRecyclerViewBottom() && mHideFooter) {
-            if (!hasLoadCompleted()) {
-                if (mRefreshViewListener != null) {
-                    refreshAdapter(adapter, layoutManager);
-                    mRefreshViewListener.onLoadMore(false);
-                }
-                mIsLoadingMore = true;
-                previousTotal = mTotalItemCount;
-                mFooterCallBack.onStateRefreshing();
-                setState(XRefreshViewState.STATE_LOADING);
-            } else {
-                loadCompleted();
-            }
+            startLoadMore(false, adapter, layoutManager);
         } else {
             setState(XRefreshViewState.STATE_NORMAL);
         }
@@ -274,10 +269,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         if (!mIsLoadingMore && isOnRecyclerViewBottom() && mHideFooter) {
             refreshAdapter(adapter, layoutManager);
             if (!hasLoadCompleted()) {
-                if (mState != XRefreshViewState.STATE_READY && !addingFooter) {
-                    mFooterCallBack.onStateReady();
-                    setState(XRefreshViewState.STATE_READY);
-                }
+                doReadyState();
             } else {
                 loadCompleted();
             }
@@ -286,9 +278,66 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
+    public void startLoadMore(boolean silence, BaseRecyclerAdapter adapter, RecyclerView.LayoutManager layoutManager) {
+        if (mParent != null && !mParent.getPullLoadEnable() || mIsLoadingMore || mFooterCallBack == null) {
+            return;
+        }
+        if (!hasLoadCompleted()) {
+            if (mRefreshViewListener != null) {
+                if (adapter != null && layoutManager != null) {
+                    refreshAdapter(adapter, layoutManager);
+                }
+                mRefreshViewListener.onLoadMore(silence);
+            }
+            mIsLoadingMore = true;
+            previousTotal = mTotalItemCount;
+            mFooterCallBack.onStateRefreshing();
+            setState(XRefreshViewState.STATE_LOADING);
+        } else {
+            loadCompleted();
+        }
+    }
+
+    public void notifyRecyclerViewLoadMore() {
+        if (!mIsLoadingMore) {
+            if (!hasLoadCompleted()) {
+                if (mRefreshViewListener != null) {
+                    mRefreshViewListener.onLoadMore(false);
+                }
+                mIsLoadingMore = true;
+                previousTotal = mTotalItemCount;
+                mFooterCallBack.onStateRefreshing();
+                setState(XRefreshViewState.STATE_LOADING);
+            } else {
+                loadCompleted();
+            }
+        }
+    }
+
+    public void releaseToLoadMore(boolean loadmore) {
+        if (mFooterCallBack == null || mIsLoadingMore) {
+            return;
+        }
+        if (loadmore) {
+            if (mState != XRefreshViewState.STATE_RELEASE_TO_LOADMORE && !addingFooter) {
+                mFooterCallBack.onReleaseToLoadMore();
+                setState(XRefreshViewState.STATE_RELEASE_TO_LOADMORE);
+            }
+        } else {
+            doReadyState();
+        }
+    }
+
+    private void doReadyState() {
+        if (mState != XRefreshViewState.STATE_READY && !addingFooter) {
+            mFooterCallBack.onStateReady();
+            setState(XRefreshViewState.STATE_READY);
+        }
+    }
+
     public void notifyDatasetChanged() {
         final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView.getAdapter() == null) {
+        if (recyclerView == null || recyclerView.getAdapter() == null) {
             return;
         }
         if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
@@ -313,33 +362,37 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     private boolean mHideFooter = true;
     private boolean addingFooter = false;
 
-    public void stopLoading(boolean hideFooter) {
+    public void setLoadComplete(boolean hasComplete) {
+        if (!hasComplete && isHideFooterWhenComplete) {
+            addFooterView(true);
+        }
+        mHasLoadComplete = hasComplete;
+        setState(XRefreshViewState.STATE_NORMAL);
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (hasComplete) {
+            if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
+                loadCompleted();
+            }
+        } else {
+            dealRecyclerViewNotFullScreen();
+        }
         mIsLoadingMore = false;
-        mTotalItemCount = 0;
+    }
+
+    public void stopLoading(final boolean hideFooter) {
+        LogUtils.e("test stopLoading");
+        mIsLoadingMore = false;
+//        mTotalItemCount = 0;
         if (mFooterCallBack != null) {
             mFooterCallBack.onStateFinish(hideFooter);
             if (hideFooter) {
-                if (child instanceof RecyclerView) {
+                if (isRecyclerView()) {
                     final RecyclerView recyclerView = (RecyclerView) child;
                     final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
                     if (adapter == null) return;
-                    adapter.removeFooterView();
-                    addingFooter = true;
-                    recyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            int index = recyclerView.indexOfChild(adapter.getCustomLoadMoreView());
-                            //只有在footerview已经从Recyclerview中移除了以后才执行重新加入footerview的操作，不然Recyclerview的item布局会错乱
-                            if (index == -1) {
-                                addingFooter = false;
-                                if (isFooterEnable()) {
-                                    adapter.addFooterView();
-                                }
-                            } else {
-                                recyclerView.post(this);
-                            }
-                        }
-                    }, 0);
+                    addFooterView(false);
+                    resetLayout();
+                    addFooterView(true);
                 }
             }
         }
@@ -440,6 +493,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public void loadCompleted() {
+        mParent.enablePullUp(true);
         if (mState != XRefreshViewState.STATE_COMPLETE) {
             mFooterCallBack.onStateComplete();
 //            addFooterView(true);
@@ -450,10 +504,17 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
                     @Override
                     public void run() {
+                        resetLayout();
                         addFooterView(false);
                     }
                 }, mPinnedTime);
             }
+        }
+    }
+
+    private void resetLayout() {
+        if (mParent != null) {
+            mParent.resetLayout();
         }
     }
 
@@ -463,19 +524,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
     }
 
-    public boolean hasLoadCompleted() {
-        return mHasLoadComplete;
+    public XRefreshViewState getState() {
+        return mState;
     }
 
-    public void setLoadComplete(boolean hasComplete) {
-        if (!hasComplete) {
-            addFooterView(true);
-        }
-        mHasLoadComplete = hasComplete;
-        setState(XRefreshViewState.STATE_NORMAL);
-        if (!hasComplete) {
-            mIsLoadingMore = false;
-        }
+    public boolean hasLoadCompleted() {
+        return mHasLoadComplete;
     }
 
     private void addFooterView(boolean add) {
@@ -487,9 +541,24 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         }
         final RecyclerView recyclerView = (RecyclerView) child;
         if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
-            BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+            final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
             if (add) {
-                adapter.addFooterView();
+                addingFooter = true;
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //只有在footerview已经从Recyclerview中移除了以后才执行重新加入footerview的操作，不然Recyclerview的item布局会错乱
+                        int index = recyclerView.indexOfChild(adapter.getCustomLoadMoreView());
+                        if (index == -1) {
+                            addingFooter = false;
+                            if (isFooterEnable()) {
+                                adapter.addFooterView();
+                            }
+                        } else {
+                            recyclerView.post(this);
+                        }
+                    }
+                });
             } else {
                 adapter.removeFooterView();
             }
@@ -505,16 +574,19 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
         addFooterView(enablePullLoad);
         hasIntercepted = false;
         mIsLoadingMore = false;
-        mTotalItemCount = 0;
+//        mTotalItemCount = 0;
         if (enablePullLoad) {
-            if (onRecyclerViewTop()) {
-                if (child instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) child;
-                    if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
-                        mFooterCallBack.onStateReady();
-                        mFooterCallBack.callWhenNotAutoLoadMore(mRefreshViewListener);
-                    }
-                }
+            dealRecyclerViewNotFullScreen();
+        }
+    }
+
+    private void dealRecyclerViewNotFullScreen() {
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (onRecyclerViewTop() && !Utils.isRecyclerViewFullscreen(recyclerView) && child instanceof RecyclerView && mFooterCallBack != null) {
+            mFooterCallBack.onStateReady();
+            mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+            if (!mFooterCallBack.isShowing()) {
+                mFooterCallBack.show(true);
             }
         }
     }
@@ -569,7 +641,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (mSlienceLoadMore) {
+        if (mSilenceLoadMore) {
             if (mRefreshViewListener != null && !hasLoadCompleted() && !mIsLoadingMore && mTotalItemCount - 1 <= view.getLastVisiblePosition() + mPreLoadCount) {
                 mRefreshViewListener.onLoadMore(true);
                 mIsLoadingMore = true;
@@ -617,7 +689,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public boolean isLoading() {
-        if (mSlienceLoadMore) {
+        if (mSilenceLoadMore) {
             return false;
         }
         return mIsLoadingMore;
@@ -679,7 +751,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
     }
 
     public boolean isRecyclerView() {
-        if (mSlienceLoadMore) {
+        if (mSilenceLoadMore) {
             return false;
         } else if (null != child && child instanceof RecyclerView) {
             return true;

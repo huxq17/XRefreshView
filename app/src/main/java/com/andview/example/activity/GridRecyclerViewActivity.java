@@ -45,10 +45,18 @@ public class GridRecyclerViewActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
+
+        //当需要使用数据不满一屏时不显示点击加载更多的效果时，解注释下面的三行代码
+        //并注释掉第四行代码
+//        CustomerFooter customerFooter = new CustomerFooter(this);
+//        customerFooter.setRecyclerView(recyclerView);
+//        adapter.setCustomLoadMoreView(customerFooter);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+
+//        adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 //		xRefreshView.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
 //		xRefreshView.setPreLoadCount(2);

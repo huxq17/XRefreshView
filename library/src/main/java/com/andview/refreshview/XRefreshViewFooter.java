@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.andview.refreshview.XRefreshView.XRefreshViewListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 
 public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack {
@@ -31,16 +30,13 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
     }
 
     @Override
-    public void callWhenNotAutoLoadMore(final XRefreshViewListener listener) {
+    public void callWhenNotAutoLoadMore(final XRefreshView xRefreshView) {
         mClickView.setText(R.string.xrefreshview_footer_hint_click);
         mClickView.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onLoadMore(false);
-                    onStateRefreshing();
-                }
+                xRefreshView.notifyLoadMore();
             }
         });
     }
@@ -49,6 +45,7 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
     public void onStateReady() {
         mHintView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
+        mClickView.setText(R.string.xrefreshview_footer_hint_click);
         mClickView.setVisibility(View.VISIBLE);
 //        show(true);
     }
@@ -59,6 +56,14 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
         mProgressBar.setVisibility(View.VISIBLE);
         mClickView.setVisibility(View.GONE);
         show(true);
+    }
+
+    @Override
+    public void onReleaseToLoadMore() {
+        mHintView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
+        mClickView.setText(R.string.xrefreshview_footer_hint_release);
+        mClickView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -84,16 +89,14 @@ public class XRefreshViewFooter extends LinearLayout implements IFooterCallBack 
 
     @Override
     public void show(final boolean show) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                showing = show;
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
-                        .getLayoutParams();
-                lp.height = show ? LayoutParams.WRAP_CONTENT : 0;
-                mContentView.setLayoutParams(lp);
-            }
-        });
+        if (show == showing) {
+            return;
+        }
+        showing = show;
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContentView
+                .getLayoutParams();
+        lp.height = show ? LayoutParams.WRAP_CONTENT : 0;
+        mContentView.setLayoutParams(lp);
 //        setVisibility(show?VISIBLE:GONE);
 
     }

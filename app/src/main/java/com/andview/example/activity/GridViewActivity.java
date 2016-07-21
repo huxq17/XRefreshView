@@ -34,11 +34,13 @@ public class GridViewActivity extends Activity {
 		gv = (GridView) findViewById(R.id.gv);
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
+		//设置在上拉加载被禁用的情况下，是否允许界面被上拉
+//		outView.setMoveFootWhenDisablePullLoadMore(false);
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, str_name);
 		gv.setAdapter(adapter);
 		outView.setPinnedTime(1000);
-		outView.setAutoLoadMore(true);
+//		outView.setAutoLoadMore(true);
 //		outView.setCustomHeaderView(new CustomHeader(this));
 //		outView.setCustomHeaderView(new XRefreshViewHeader(this));
 		outView.setMoveForHorizontal(true);
@@ -70,7 +72,6 @@ public class GridViewActivity extends Activity {
 					public void run() {
 						if (str_name.size() <= 90) {
 							if (Build.VERSION.SDK_INT >= 11) {
-								str_name.addAll(addlist);
 								adapter.addAll(addlist);
 							}
 							outView.stopLoadMore();

@@ -12,6 +12,7 @@
     <string name="xrefreshview_footer_hint_fail">加载失败，请重试</string>
     <string name="xrefreshview_footer_hint_complete">已无更多数据</string>
     <string name="xrefreshview_footer_hint_click">点击加载更多</string>
+    <string name="xrefreshview_footer_hint_release">松开加载更多</string>
     <string name="xrefreshview_footer_hint_ready">松开载入更多</string>
     <string name="xrefreshview_never_refresh">从未刷新</string>
     <string name="xrefreshview_refresh_justnow">刚刚刷新</string>

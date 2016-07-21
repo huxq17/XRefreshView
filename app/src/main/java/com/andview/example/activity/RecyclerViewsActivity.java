@@ -33,6 +33,9 @@ public class RecyclerViewsActivity extends Activity {
             case R.id.bt_slience:
                 intent = new Intent(this, SlienceRecyclerViewActivity.class);
                 break;
+            case R.id.bt_multi_item:
+                intent = new Intent(this, MultiItemRecyclerViewActivity.class);
+                break;
             default:
                 break;
         }

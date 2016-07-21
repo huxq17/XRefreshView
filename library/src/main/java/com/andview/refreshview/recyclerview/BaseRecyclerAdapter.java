@@ -19,8 +19,7 @@ import java.util.List;
 /**
  * An abstract adapter which can be extended for Recyclerview
  */
-public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<VH> {
+public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  extends RecyclerView.Adapter<VH> {
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
@@ -119,7 +118,6 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
-        LogUtils.i("test setCustomLoadMoreView");
         Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
@@ -146,7 +144,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>
             throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
         }
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
-        customHeaderView = LayoutInflater.from(context).inflate(id, headerview);
+        customHeaderView = LayoutInflater.from(context).inflate(id, headerview,false);
         notifyDataSetChanged();
         return customHeaderView;
     }
