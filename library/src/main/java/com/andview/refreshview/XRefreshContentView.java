@@ -374,17 +374,28 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime,
                 loadCompleted();
             }
         } else {
-            dealRecyclerViewNotFullScreen();
+            if (recyclerView != null && mFooterCallBack != null) {
+                if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
+                    mFooterCallBack.onStateReady();
+                    mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                    if (!mFooterCallBack.isShowing()) {
+                        mFooterCallBack.show(true);
+                    }
+                } else {
+                    doReadyState();
+                }
+            }
         }
         mIsLoadingMore = false;
     }
 
     public void stopLoading(final boolean hideFooter) {
-        LogUtils.e("test stopLoading");
         mIsLoadingMore = false;
 //        mTotalItemCount = 0;
         if (mFooterCallBack != null) {
-            mFooterCallBack.onStateFinish(hideFooter);
+            if (!mHasLoadComplete) {
+                mFooterCallBack.onStateFinish(hideFooter);
+            }
             if (hideFooter) {
                 if (isRecyclerView()) {
                     final RecyclerView recyclerView = (RecyclerView) child;
