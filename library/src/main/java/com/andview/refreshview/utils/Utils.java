@@ -2,6 +2,8 @@ package com.andview.refreshview.utils;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -68,9 +70,39 @@ public class Utils {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
             int bottomMargin = layoutParams.bottomMargin;
             int padding = viewGroup.getPaddingBottom();
-            return (position[1] + lastchild.getHeight() + lastBottomMargin + bottomMargin + padding) >= height;
+
+            boolean atTop = findFirstCompletelyVisibleItemPosition(viewGroup) > 0;
+            return (position[1] + lastchild.getHeight() + lastBottomMargin + bottomMargin + padding) >= height || atTop;
         }
         return false;
+    }
+
+    public static int findFirstCompletelyVisibleItemPosition(RecyclerView recyclerView) {
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        int firstPosition;
+        if (layoutManager instanceof LinearLayoutManager) {
+            firstPosition = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
+        } else if (layoutManager instanceof GridLayoutManager) {
+            firstPosition = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
+            int[] lastPositions = new int[staggeredGridLayoutManager.getSpanCount()];
+            staggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(lastPositions);
+            firstPosition = findMin(lastPositions);
+        } else {
+            throw new RuntimeException(
+                    "Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
+        }
+        return firstPosition;
+    }
+
+    private static int findMin(int[] lastPositions) {
+        int min = Integer.MAX_VALUE;
+        for (int value : lastPositions) {
+            if (value != RecyclerView.NO_POSITION && value < min)
+                min = value;
+        }
+        return min;
     }
 
     public static int computeScrollDuration(int dx, int dy, int height) {

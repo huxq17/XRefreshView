@@ -66,6 +66,7 @@ public class MultiItemRecyclerViewActivity extends Activity {
                             adapter.insert(new Person("More ", mLoadCount + "21", getType()),
                                     adapter.getAdapterItemCount());
                         }
+                        xRefreshView.setLoadComplete(false);
                     }
                 }, 500);
             }
@@ -90,7 +91,7 @@ public class MultiItemRecyclerViewActivity extends Activity {
             }
         });
         //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
-        xRefreshView.setHideFooterWhenComplete(false);
+//        xRefreshView.setHideFooterWhenComplete(false);
         requestData();
     }
 
