@@ -372,6 +372,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         if (!hasComplete && isHideFooterWhenComplete) {
             addFooterView(true);
         }
+        resetLayout();
         if (isRecyclerView()) {
             doRecyclerViewloadComplete(hasComplete);
         }
