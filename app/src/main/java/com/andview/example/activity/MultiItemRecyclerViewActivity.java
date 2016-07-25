@@ -34,7 +34,6 @@ public class MultiItemRecyclerViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recylerview2);
         xRefreshView = (XRefreshView) findViewById(R.id.xrefreshview);
-        xRefreshView.setPullLoadEnable(true);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_test_rv);
         recyclerView.setHasFixedSize(true);
 
@@ -49,7 +48,7 @@ public class MultiItemRecyclerViewActivity extends Activity {
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
-        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView.setAutoLoadMore(true);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);

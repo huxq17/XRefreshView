@@ -73,6 +73,7 @@ public class BannerRecyclerViewActivity extends Activity {
 //        xRefreshView.setMoveHeadWhenDisablePullRefresh(false);
 //        xRefreshView.enablePullUpWhenLoadCompleted(false);
 //		xRefreshView.setPullLoadEnable(false);
+//        xRefreshView.enableRecyclerViewPullUp(false);
         //设置静默加载时提前加载的item个数
 //		xRefreshView.setPreLoadCount(2);
 

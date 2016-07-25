@@ -2,6 +2,7 @@ package com.andview.refreshview.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -19,10 +20,11 @@ import java.util.List;
 /**
  * An abstract adapter which can be extended for Recyclerview
  */
-public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  extends RecyclerView.Adapter<VH> {
+public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     protected View customLoadMoreView = null;
     protected View customHeaderView = null;
+    private boolean isFooterEnable = true;
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,16 +42,13 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  e
     }
 
     private void showFooter(View footerview, boolean show) {
-        if (show) {
-            if (footerview != null && footerview instanceof IFooterCallBack) {
-                IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+        if (isFooterEnable && footerview != null && footerview instanceof IFooterCallBack) {
+            IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+            if (show) {
                 if (!footerCallBack.isShowing()) {
                     footerCallBack.show(show);
                 }
-            }
-        } else {
-            if (footerview != null && footerview instanceof IFooterCallBack) {
-                IFooterCallBack footerCallBack = (IFooterCallBack) footerview;
+            } else {
                 if (getAdapterItemCount() == 0 && footerCallBack.isShowing()) {
                     footerCallBack.show(false);
                 } else if (getAdapterItemCount() != 0 && !footerCallBack.isShowing()) {
@@ -102,13 +101,29 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  e
     @Override
     public final void onBindViewHolder(VH holder, int position) {
         int start = getStart();
-        if (isHeader(position) || isFooter(position)) {
-            ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                Utils.setFullSpan((StaggeredGridLayoutManager.LayoutParams) layoutParams);
-            }
-        } else {
+        if (!isHeader(position) && !isFooter(position)) {
             onBindViewHolder(holder, position - start, true);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(VH holder) {
+        super.onViewAttachedToWindow(holder);
+        int position = holder.getLayoutPosition();
+        ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+            StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
+            p.setFullSpan(isFooter(position));
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+            gridManager.setSpanSizeLookup(new XSpanSizeLookup(this, ((GridLayoutManager) manager).getSpanCount()));
         }
     }
 
@@ -144,7 +159,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  e
             throw new RuntimeException(context.getResources().getResourceName(id) + " is a illegal layoutid , please check your layout id first !");
         }
         FrameLayout headerview = new FrameLayout(recyclerView.getContext());
-        customHeaderView = LayoutInflater.from(context).inflate(id, headerview,false);
+        customHeaderView = LayoutInflater.from(context).inflate(id, headerview, false);
         notifyDataSetChanged();
         return customHeaderView;
     }
@@ -220,6 +235,10 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder>  e
      */
     public void swapPositions(List<?> list, int from, int to) {
         Collections.swap(list, from, to);
+    }
+
+    public void insideEnableFooter(boolean enable) {
+        isFooterEnable = enable;
     }
 
     /**
