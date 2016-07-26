@@ -19,6 +19,7 @@ import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
+import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
@@ -214,6 +215,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             }
         };
         recyclerView.addOnScrollListener(mOnScrollListener);
+
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
+        }
         initFooterCallBack(adapter);
     }
 
@@ -328,15 +335,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     }
 
     public void notifyDatasetChanged() {
-        final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView == null || recyclerView.getAdapter() == null) {
-            return;
+        final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
         }
-        if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
-            throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
-        }
-        final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
-        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -384,10 +386,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     }
                 }, 200);
             } else {
-//                BaseRecyclerAdapter adapter = getRecyclerViewAdapter(recyclerView);
-//                if (adapter != null) {
-//                    onRecyclerViewScrolled(recyclerView, adapter, 0, 0, true);
-//                }
+                int preTotalCount = mTotalItemCount;
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                getRecyclerViewInfo(layoutManager);
+
+                BaseRecyclerAdapter adapter = getRecyclerViewAdapter(recyclerView);
+                if (adapter != null) {
+                    onRecyclerViewScrolled(recyclerView, adapter, 0, 0, true);
+                }
             }
         } else {
             if (recyclerView != null && mFooterCallBack != null) {
@@ -409,6 +415,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
             if (adapter instanceof BaseRecyclerAdapter) {
                 return (BaseRecyclerAdapter) adapter;
+            } else {
+                throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
             }
         }
         return null;
@@ -574,8 +582,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             return;
         }
         final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView.getAdapter() != null && mFooterCallBack != null) {
-            final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+        final BaseRecyclerAdapter adapter = getRecyclerViewAdapter(recyclerView);
+        if (adapter != null && mFooterCallBack != null) {
             if (add) {
                 addingFooter = true;
                 recyclerView.post(new Runnable() {

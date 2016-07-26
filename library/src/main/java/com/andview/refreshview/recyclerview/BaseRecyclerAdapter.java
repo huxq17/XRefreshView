@@ -2,7 +2,6 @@ package com.andview.refreshview.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -120,11 +119,11 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-        if (manager instanceof GridLayoutManager) {
-            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
-            gridManager.setSpanSizeLookup(new XSpanSizeLookup(this, ((GridLayoutManager) manager).getSpanCount()));
-        }
+//        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+//        if (manager instanceof GridLayoutManager) {
+//            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+//            gridManager.setSpanSizeLookup(new XSpanSizeLookup(this, ((GridLayoutManager) manager).getSpanCount()));
+//        }
     }
 
     /**
