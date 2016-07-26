@@ -29,7 +29,7 @@ public class ScrollViewActivity extends Activity {
         outView.setPinnedTime(1000);
         outView.setAutoLoadMore(true);
 //		outView.setAutoLoadMore(true);
-//		outView.setSlienceLoadMore();
+//		outView.setSilenceLoadMore();
         outView.setCustomFooterView(new CustomerFooter(this));
 
         outView.setXRefreshViewListener(new SimpleXRefreshListener() {

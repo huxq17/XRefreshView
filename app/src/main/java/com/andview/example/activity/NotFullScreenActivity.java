@@ -43,7 +43,7 @@ public class NotFullScreenActivity extends Activity {
 
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//        xRefreshView.setSlienceLoadMore();
+//        xRefreshView.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview

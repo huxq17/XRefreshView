@@ -38,27 +38,26 @@ public class LinearRecyclerViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recylerview2);
         xRefreshView = (XRefreshView) findViewById(R.id.xrefreshview);
-        xRefreshView.setPullLoadEnable(true);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_test_rv);
         recyclerView.setHasFixedSize(true);
 
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//        xRefreshView.setSlienceLoadMore();
+//        xRefreshView.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
         //设置刷新完成以后，headerview固定的时间
         xRefreshView.setPinnedTime(1000);
-        xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
+        xRefreshView.setPullLoadEnable(true);
         xRefreshView.setAutoLoadMore(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         xRefreshView.enableReleaseToLoadMore(true);
         xRefreshView.enableRecyclerViewPullUp(true);
-//        xRefreshView.enablePullUpWhenLoadCompleted(false);
+        xRefreshView.enablePullUpWhenLoadCompleted(true);
         //设置静默加载时提前加载的item个数
 //        xRefreshView.setPreLoadCount(4);
 

@@ -25,8 +25,7 @@ public class SimpleAdapter extends BaseRecyclerAdapter<SimpleAdapter.SimpleAdapt
     }
 
     @Override
-    public void onBindViewHolder(final SimpleAdapterViewHolder holder,
-                                 int position, boolean isItem) {
+    public void onBindViewHolder(SimpleAdapterViewHolder holder, int position, boolean isItem) {
         Person person = list.get(position);
         holder.nameTv.setText(person.getName());
         holder.ageTv.setText(person.getAge());

@@ -50,7 +50,7 @@ public class BannerRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//		xRefreshView.setSlienceLoadMore();
+//		xRefreshView.setSilenceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         headerView = adapter.setHeaderView(R.layout.bannerview, recyclerView);
@@ -71,8 +71,9 @@ public class BannerRecyclerViewActivity extends Activity {
 //        xRefreshView.setPullRefreshEnable(false);
         //设置在下拉刷新被禁用的情况下，是否允许界面被下拉,默认是true
 //        xRefreshView.setMoveHeadWhenDisablePullRefresh(false);
-
+//        xRefreshView.enablePullUpWhenLoadCompleted(false);
 //		xRefreshView.setPullLoadEnable(false);
+//        xRefreshView.enableRecyclerViewPullUp(false);
         //设置静默加载时提前加载的item个数
 //		xRefreshView.setPreLoadCount(2);
 

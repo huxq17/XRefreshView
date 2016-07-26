@@ -40,7 +40,7 @@ public class StaggeredRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList,this);
         // 设置静默加载模式
-//		xRefreshView.setSlienceLoadMore();
+//		xRefreshView.setSilenceLoadMore();
         layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
@@ -70,7 +70,7 @@ public class StaggeredRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 6; i++) {
-                            adapter.insert(new Person("More ", "21"),
+                            adapter.insert(new Person("More ", ""+ adapter.getAdapterItemCount()),
                                     adapter.getAdapterItemCount());
                         }
                         mLoadCount++;
@@ -102,7 +102,7 @@ public class StaggeredRecyclerViewActivity extends Activity {
     }
 
     private void initData() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 15; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }
