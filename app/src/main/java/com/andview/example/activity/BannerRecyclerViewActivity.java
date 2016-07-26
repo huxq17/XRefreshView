@@ -50,7 +50,7 @@ public class BannerRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//		xRefreshView.setSlienceLoadMore();
+//		xRefreshView.setSilenceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         headerView = adapter.setHeaderView(R.layout.bannerview, recyclerView);

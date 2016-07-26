@@ -103,8 +103,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
 
     private boolean mSilenceLoadMore = false;
 
-    public void setSlienceLoadMore(boolean slienceLoadMore) {
-        mSilenceLoadMore = slienceLoadMore;
+    public void setSlienceLoadMore(boolean silenceLoadMore) {
+        mSilenceLoadMore = silenceLoadMore;
     }
 
     private boolean hasIntercepted = false;

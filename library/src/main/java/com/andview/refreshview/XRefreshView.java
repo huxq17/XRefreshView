@@ -151,7 +151,7 @@ public class XRefreshView extends LinearLayout {
     /**
      * 设置静默加载更多，旨在提供被刷新的view滚动到底部的监听，自动静默加载更多
      */
-    public void setSlienceLoadMore() {
+    public void setSilenceLoadMore() {
         mContentView.setSlienceLoadMore(true);
         setPullLoadEnable(false);
     }

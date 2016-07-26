@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * 设置Recyclerview的静默加载和预加载，让滑动更顺滑。静默加载模式中footerview是不可见的
  */
-public class SlienceRecyclerViewActivity extends Activity {
+public class SilenceRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
     SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
@@ -47,7 +47,7 @@ public class SlienceRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-        xRefreshView.setSlienceLoadMore();
+        xRefreshView.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview

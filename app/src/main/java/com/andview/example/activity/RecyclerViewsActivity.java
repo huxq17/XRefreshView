@@ -31,7 +31,7 @@ public class RecyclerViewsActivity extends Activity {
                 intent = new Intent(this, BannerRecyclerViewActivity.class);
                 break;
             case R.id.bt_slience:
-                intent = new Intent(this, SlienceRecyclerViewActivity.class);
+                intent = new Intent(this, SilenceRecyclerViewActivity.class);
                 break;
             case R.id.bt_multi_item:
                 intent = new Intent(this, MultiItemRecyclerViewActivity.class);
