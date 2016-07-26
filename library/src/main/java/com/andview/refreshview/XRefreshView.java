@@ -879,7 +879,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 此方法当没有更多数据时调用，不要与stopLoadMore()同时调用，内部已经调用了stopLoadMore()。
+     * 此方法当没有更多数据时调用，不要与stopLoadMore()同时调用
      *
      * @param hasComplete
      */

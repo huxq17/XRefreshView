@@ -28,7 +28,6 @@ public class ScrollViewActivity extends Activity {
         outView.setPullLoadEnable(true);
         outView.setPinnedTime(1000);
         outView.setAutoLoadMore(true);
-//		outView.setAutoLoadMore(true);
 //		outView.setSilenceLoadMore();
         outView.setCustomFooterView(new CustomerFooter(this));
 
@@ -46,7 +45,7 @@ public class ScrollViewActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

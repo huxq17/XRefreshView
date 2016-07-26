@@ -82,12 +82,12 @@ public class LinearRecyclerViewActivity extends Activity {
 //                                    adapter.getAdapterItemCount());
 //                        }
                         mLoadCount++;
-                        if (mLoadCount >= 3) {
+                        if (mLoadCount >= 3) {//模拟没有更多数据的情况
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载
                             xRefreshView.stopLoadMore();
-                            //当数据加载失败时，可以调用以下方法，传入false，不传默认为true
+                            //当数据加载失败 不需要隐藏footerview时，可以调用以下方法，传入false，不传默认为true
                             // 同时在Footerview的onStateFinish(boolean hideFooter)，可以在hideFooter为false时，显示数据加载失败的ui
 //                            xRefreshView.stopLoadMore(false);
                         }
