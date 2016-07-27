@@ -32,6 +32,7 @@
         <activity android:name=".activity.SilenceRecyclerViewActivity" />
         <activity android:name=".activity.NotFullScreenActivity" />
         <activity android:name=".activity.MultiItemRecyclerViewActivity" />
+        <activity android:name=".activity.ShowFooterRecyclerViewActivity" />
     </application>
 
 </manifest>

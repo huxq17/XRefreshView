@@ -3,6 +3,7 @@ package com.andview.example.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -52,6 +53,10 @@ public class CustomViewActivity extends Activity {
 
 			@Override
 			public boolean isBottom() {
+				if(stickyLv.getLastVisiblePosition() == mTotalItemCount - 1){
+					View item = stickyLv.getChildAt(stickyLv.getLastVisiblePosition());
+
+				}
 				return stickyLv.getLastVisiblePosition() == mTotalItemCount - 1;
 			}
 		});
@@ -78,7 +83,7 @@ public class CustomViewActivity extends Activity {
 					public void run() {
 						refreshView.stopRefresh();
 					}
-				}, 10000);
+				}, 5000);
 			}
 
 			@Override
@@ -95,7 +100,7 @@ public class CustomViewActivity extends Activity {
 		});
 	}
 
-	int section = 1;
+	int section = 0;
 	String YM = null;
 	String content = null;
 

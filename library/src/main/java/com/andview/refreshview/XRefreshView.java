@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -81,7 +80,6 @@ public class XRefreshView extends LinearLayout {
      * 当刷新完成以后，headerview和footerview被固定的时间，在这个时间以后headerview才会回弹
      */
     private int mPinnedTime;
-    private static Handler mHandler = new Handler();
     private XRefreshViewState mState = null;
     /**
      * 当已无更多数据时候，需把这个变量设为true
@@ -771,7 +769,7 @@ public class XRefreshView extends LinearLayout {
             mStopingRefresh = true;
             mHeaderCallBack.onStateFinish();
             mState = XRefreshViewState.STATE_COMPLETE;
-            mHandler.postDelayed(new Runnable() {
+            postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
@@ -825,7 +823,7 @@ public class XRefreshView extends LinearLayout {
                 mState = XRefreshViewState.STATE_COMPLETE;
                 mFooterCallBack.onStateFinish(true);
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    mHandler.postDelayed(new Runnable() {
+                    postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
@@ -852,7 +850,7 @@ public class XRefreshView extends LinearLayout {
                 mState = XRefreshViewState.STATE_COMPLETE;
                 mFooterCallBack.onStateFinish(hideFooter);
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    mHandler.postDelayed(new Runnable() {
+                    postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
@@ -869,7 +867,7 @@ public class XRefreshView extends LinearLayout {
 
     protected void resetLayout() {
         enablePullUp(false);
-        if (mHolder.mOffsetY != 0) {
+        if (mHolder.mOffsetY != 0 && !mStopingRefresh) {
             startScroll(-mHolder.mOffsetY, Utils.computeScrollVerticalDuration(mHolder.mOffsetY, getHeight()));
         }
     }
@@ -998,7 +996,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 设置是否在数据加载完成以后隐藏footerview
+     * 设置Recyclerview是否在数据加载完成以后隐藏footerview
      *
      * @param hide true则隐藏footerview，false则反之，默认隐藏
      */

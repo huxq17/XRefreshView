@@ -557,7 +557,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     @Override
                     public void run() {
                         resetLayout();
-                        addFooterView(false);
+                        if (mHasLoadComplete) {
+                            addFooterView(false);
+                        }
                     }
                 }, mPinnedTime);
             }
