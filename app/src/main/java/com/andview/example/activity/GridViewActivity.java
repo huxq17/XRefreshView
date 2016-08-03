@@ -57,7 +57,13 @@ public class GridViewActivity extends Activity {
                         //模拟数据加载失败的情况
                         Random random = new Random();
                         boolean success = random.nextBoolean();
-                        outView.stopRefresh(success);
+                        if(success){
+                            outView.stopRefresh();
+                        }else{
+                            outView.stopRefresh(false);
+                        }
+                        //或者
+//                        outView.stopRefresh(success);
                     }
                 }, 2000);
             }

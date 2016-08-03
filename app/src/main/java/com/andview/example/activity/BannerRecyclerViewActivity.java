@@ -88,7 +88,13 @@ public class BannerRecyclerViewActivity extends Activity {
                         //模拟数据加载失败的情况
                         Random random = new Random();
                         boolean success = random.nextBoolean();
-                        xRefreshView.stopRefresh(success);
+                        if(success){
+                            xRefreshView.stopRefresh();
+                        }else{
+                            xRefreshView.stopRefresh(false);
+                        }
+                        //或者
+//                        xRefreshView.stopRefresh(success);
                     }
                 }, 2000);
             }
