@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -410,7 +409,6 @@ public class XRefreshView extends LinearLayout {
                 mInitialMotionY = 0;
                 isIntercepted = false;
                 mMoveForHorizontal = false;
-                mIsIntercept = false;
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -718,8 +716,6 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             mFooterView.offsetTopAndBottom(deltaY);
         }
-        ViewCompat.postInvalidateOnAnimation(this);
-
         if (mRefreshViewListener != null
                 && (mContentView.isTop() || mPullRefreshing)) {
             double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
@@ -729,45 +725,23 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
-    @Override
-    public void computeScroll() {
-        super.computeScroll();
-        if (mScroller.computeScrollOffset()) {
-            int lastScrollY = mHolder.mOffsetY;
-            int currentY = mScroller.getCurrY();
-            int offsetY = currentY - lastScrollY;
-            lastScrollY = currentY;
-            moveView(offsetY);
-
-            LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
-            if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
-                mReleaseToLoadMore = false;
-                mContentView.startLoadMore(false, null, null);
-            }
-        } else {
-            int currentY = mScroller.getCurrY();
-            if (mHolder.mOffsetY == 0) {
-                enablePullUp(true);
-                mStopingRefresh = false;
-            } else {
-                //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
-                if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
-                    startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY, getHeight()));
-                }
-            }
-        }
-    }
-
     private boolean mStopingRefresh = false;
 
     /**
      * stop refresh, reset header view.
      */
     public void stopRefresh() {
+        stopRefresh(true);
+    }
+
+    /**
+     * stop refresh, reset header view.
+     */
+    public void stopRefresh(boolean success) {
         LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
         if (mPullRefreshing == true) {
             mStopingRefresh = true;
-            mHeaderCallBack.onStateFinish();
+            mHeaderCallBack.onStateFinish(success);
             mState = XRefreshViewState.STATE_COMPLETE;
             postDelayed(new Runnable() {
 
@@ -817,25 +791,7 @@ public class XRefreshView extends LinearLayout {
      * stop load more, reset footer view.
      */
     public void stopLoadMore() {
-        if (needAddFooterView()) {
-            if (mPullLoading == true) {
-                mStopingRefresh = true;
-                mState = XRefreshViewState.STATE_COMPLETE;
-                mFooterCallBack.onStateFinish(true);
-                if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            endLoadMore(true);
-                        }
-                    }, mPinnedTime);
-                } else {
-                    endLoadMore(true);
-                }
-            }
-        }
-        mContentView.stopLoading(true);
+        stopLoadMore(true);
     }
 
     /**
@@ -862,6 +818,7 @@ public class XRefreshView extends LinearLayout {
                 }
             }
         }
+
         mContentView.stopLoading(hideFooter);
     }
 
@@ -913,9 +870,40 @@ public class XRefreshView extends LinearLayout {
     public void startScroll(int offsetY, int duration) {
         if (offsetY != 0) {
             mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-            ViewCompat.postInvalidateOnAnimation(this);
+            post(mRunnable);
         }
     }
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mScroller.computeScrollOffset()) {
+                int lastScrollY = mHolder.mOffsetY;
+                int currentY = mScroller.getCurrY();
+                int offsetY = currentY - lastScrollY;
+                lastScrollY = currentY;
+                moveView(offsetY);
+
+                LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
+                if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
+                    mReleaseToLoadMore = false;
+                    mContentView.startLoadMore(false, null, null);
+                }
+                post(this);
+            } else {
+                int currentY = mScroller.getCurrY();
+                if (mHolder.mOffsetY == 0) {
+                    enablePullUp(true);
+                    mStopingRefresh = false;
+                } else {
+                    //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
+                    if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
+                        startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY, getHeight()));
+                    }
+                }
+            }
+        }
+    };
 
     /**
      * 设置Abslistview的滚动监听事件

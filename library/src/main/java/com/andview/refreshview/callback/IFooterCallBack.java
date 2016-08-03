@@ -28,7 +28,7 @@ public interface IFooterCallBack {
     /**
      * 刷新结束 在此方法中不要调用show()方法
      *
-     * @param hidefooter footerview是否被隐藏
+     * @param hidefooter footerview是否被隐藏,hideFooter参数由XRefreshView.stopLoadMore(boolean)传入
      */
     void onStateFinish(boolean hidefooter);
 

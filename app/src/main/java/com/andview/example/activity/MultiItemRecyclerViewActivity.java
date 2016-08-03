@@ -65,7 +65,6 @@ public class MultiItemRecyclerViewActivity extends Activity {
                             adapter.insert(new Person("More ", mLoadCount + "21", getType()),
                                     adapter.getAdapterItemCount());
                         }
-                        xRefreshView.setLoadComplete(true);
                     }
                 }, 500);
             }

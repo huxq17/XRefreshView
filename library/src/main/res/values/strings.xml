@@ -7,6 +7,7 @@
     <string name="xrefreshview_header_hint_refreshing">正在刷新...</string>
     <string name="xrefreshview_header_hint_loading">正在加载...</string>
     <string name="xrefreshview_header_hint_loaded">加载完成</string>
+    <string name="xrefreshview_header_hint_loaded_fail">加载失败</string>
     <string name="xrefreshview_header_last_time">上次更新时间：</string>
     <string name="xrefreshview_footer_hint_normal">加载完成</string>
     <string name="xrefreshview_footer_hint_fail">加载失败，请重试</string>

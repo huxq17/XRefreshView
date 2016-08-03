@@ -139,7 +139,7 @@ public class AdHeader extends LinearLayout implements IHeaderCallBack {
 	}
 
 	@Override
-	public void onStateFinish() {
+	public void onStateFinish(boolean success) {
 		mArrowImageView.setVisibility(View.GONE);
 		mOkImageView.setVisibility(View.VISIBLE);
 		mProgressBar.setVisibility(View.GONE);

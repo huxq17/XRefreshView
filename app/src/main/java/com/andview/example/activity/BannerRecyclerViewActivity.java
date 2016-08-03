@@ -22,6 +22,7 @@ import com.andview.refreshview.XRefreshViewFooter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BannerRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
@@ -84,7 +85,10 @@ public class BannerRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        xRefreshView.stopRefresh();
+                        //模拟数据加载失败的情况
+                        Random random = new Random();
+                        boolean success = random.nextBoolean();
+                        xRefreshView.stopRefresh(success);
                     }
                 }, 2000);
             }
