@@ -19,10 +19,12 @@ public class CustomHeader extends View implements IHeaderCallBack {
             , 0xFF00FFFF, 0xFFFF0000, 0xFF8B00FF, 0xFFFFFF00};
     // Default background for the progress spinner
     private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
+    private int mPinnedTime;
 
-    public CustomHeader(Context context) {
+    public CustomHeader(Context context, int pinnedTime) {
         super(context);
         initView();
+        this.mPinnedTime = pinnedTime;
     }
 
     public CustomHeader(Context context, AttributeSet attrs) {
@@ -110,8 +112,13 @@ public class CustomHeader extends View implements IHeaderCallBack {
 
     @Override
     public void onStateFinish(boolean success) {
-        isStop = true;
-        mDrawable.stop();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isStop = true;
+                mDrawable.stop();
+            }
+        }, mPinnedTime);
     }
 
     private boolean isStop = false;
@@ -143,7 +150,6 @@ public class CustomHeader extends View implements IHeaderCallBack {
     @Override
     public void hide() {
         setVisibility(View.GONE);
-
     }
 
     @Override

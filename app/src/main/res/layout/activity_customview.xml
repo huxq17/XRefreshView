@@ -1,6 +1,5 @@
 <com.andview.refreshview.XRefreshView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xrefreshview="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/custom_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

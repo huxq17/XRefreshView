@@ -26,6 +26,7 @@ public class CustomViewActivity extends Activity {
     private XRefreshView refreshView;
     private int mTotalItemCount;
     private StickylistAdapter adapter;
+    private final int mPinnedTime = 1000;
 
 
     @Override
@@ -39,8 +40,8 @@ public class CustomViewActivity extends Activity {
         refreshView = (XRefreshView) findViewById(R.id.custom_view);
         refreshView.setPullLoadEnable(true);
         refreshView.setAutoRefresh(true);
-//        refreshView.setPinnedTime(0);
-        refreshView.setCustomHeaderView(new CustomHeader(this));
+        refreshView.setPinnedTime(mPinnedTime);
+        refreshView.setCustomHeaderView(new CustomHeader(this,mPinnedTime));
         refreshView.setCustomFooterView(new CustomerFooter(this));
         refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 

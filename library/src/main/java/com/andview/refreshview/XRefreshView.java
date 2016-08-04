@@ -259,7 +259,7 @@ public class XRefreshView extends LinearLayout {
                 final int paddingBottom = getPaddingBottom();
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
                 int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-                        paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
+                        paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, getMeasuredWidth());
                 int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
                         paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
                 child.measure(childWidthSpec, childHeightSpec);
