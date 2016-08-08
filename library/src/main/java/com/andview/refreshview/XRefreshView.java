@@ -693,13 +693,11 @@ public class XRefreshView extends LinearLayout {
      */
     private void resetHeaderHeight() {
         float height = mHolder.mOffsetY;
-        if (height == 0) // not visible.
-            return;
         // refreshing and header isn't shown fully. do nothing.
-        if (mPullRefreshing && height <= mHeaderViewHeight) {
+        if (mPullRefreshing && (height <= mHeaderViewHeight || height == 0)) {
             return;
         }
-        int offsetY = 0;
+        int offsetY;
         if (mPullRefreshing) {
             offsetY = mHeaderViewHeight - mHolder.mOffsetY;
             startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY, getHeight()));
@@ -869,10 +867,8 @@ public class XRefreshView extends LinearLayout {
      * @param duration 滑动持续时间
      */
     public void startScroll(int offsetY, int duration) {
-        if (offsetY != 0) {
-            mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-            post(mRunnable);
-        }
+        mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
+        post(mRunnable);
     }
 
     private Runnable mRunnable = new Runnable() {

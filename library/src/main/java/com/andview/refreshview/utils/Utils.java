@@ -135,7 +135,7 @@ public class Utils {
         final int duration;
         float absDelta = (float) Math.abs(dy);
         duration = (int) (((absDelta / height) + 1) * 200);
-        return Math.min(duration, 500);
+        return dy == 0 ? 0 : Math.min(duration, 500);
     }
 
     private static float distanceInfluenceForSnapDuration(float f) {
