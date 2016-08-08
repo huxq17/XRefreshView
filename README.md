@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.3.0'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.4.0'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -32,6 +32,10 @@ dependencies {
 ![自定义头部](gif/xrefresh_customview.gif)
 
 还有listview,scrollview，webview等其他的view就不一一截图了。
+
+### 更新日志：<br/>
+2016-8-8：
+1.添加下拉刷新失败的处理
 
 ### 关于我
 QQ：1491359569  
