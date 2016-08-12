@@ -166,7 +166,6 @@ public class XRefreshView extends LinearLayout {
         // 根据属性设置参数
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-
                     R.styleable.XRefreshView, 0, 0);
             try {
                 isHeightMatchParent = a.getBoolean(
@@ -183,8 +182,6 @@ public class XRefreshView extends LinearLayout {
                 a.recycle();
             }
         }
-        mHeaderView = new XRefreshViewHeader(context);
-        mFooterView = new XRefreshViewFooter(context);
         this.getViewTreeObserver().addOnGlobalLayoutListener(
                 new OnGlobalLayoutListener() {
 
@@ -198,24 +195,32 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void addHeaderView() {
+        if (mHeaderView == null) {
+            mHeaderView = new XRefreshViewHeader(getContext());
+        }
         Utils.removeViewFromParent(mHeaderView);
         addView(mHeaderView, 0);
-        mHeaderView.measure(0, 0);
+//        mHeaderView.measure(0, 0);
+
+        mHeaderCallBack = (IHeaderCallBack) mHeaderView;
+        mHeaderViewHeight = mHeaderCallBack.getHeaderHeight();
+        setRefreshTime();
+        checkPullRefreshEnable();
+    }
+
+    private void attachContentView() {
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
         mContentView.setContainer(autoLoadMore ? this : null);
         mContentView.setContentViewLayoutParams(isHeightMatchParent, isWidthMatchParent);
-        mHeaderCallBack = (IHeaderCallBack) mHeaderView;
-        mFooterCallBack = (IFooterCallBack) mFooterView;
-        setRefreshTime();
-        checkPullRefreshEnable();
-        checkPullLoadEnable();
-    }
-
-    private void addFooterView(OnGlobalLayoutListener listener) {
-        mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
         mContentView.setHolder(mHolder);
         mContentView.setParent(this);
         mContentView.setScrollListener();
+    }
+
+    private void addFooterView(OnGlobalLayoutListener listener) {
+        if (mFooterView == null) {
+            mFooterView = new XRefreshViewFooter(getContext());
+        }
         if (needAddFooterView()) {
             LogUtils.d("test add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             Utils.removeViewFromParent(mFooterView);
@@ -226,10 +231,10 @@ public class XRefreshView extends LinearLayout {
         if (autoRefresh) {
             startRefresh();
         }
-        if (mHeadMoveDistence == 0) {
-            int ScreenHeight = Utils.getScreenSize(getContext()).y;
-            mHeadMoveDistence = ScreenHeight / 3;
-        }
+        attachContentView();
+        setHeadMoveLargestDistence(mHeadMoveDistence);
+        mFooterCallBack = (IFooterCallBack) mFooterView;
+        checkPullLoadEnable();
     }
 
     @SuppressWarnings("deprecation")
@@ -465,7 +470,12 @@ public class XRefreshView extends LinearLayout {
      * @param headMoveDistence
      */
     public void setHeadMoveLargestDistence(int headMoveDistence) {
-        mHeadMoveDistence = headMoveDistence;
+        if (headMoveDistence <= 0) {
+            int ScreenHeight = Utils.getScreenSize(getContext()).y;
+            mHeadMoveDistence = ScreenHeight / 3;
+        } else {
+            mHeadMoveDistence = headMoveDistence;
+        }
     }
 
     private void sendDownEvent() {
