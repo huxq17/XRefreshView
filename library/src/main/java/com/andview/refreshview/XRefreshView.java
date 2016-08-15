@@ -162,7 +162,6 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void initWithContext(Context context, AttributeSet attrs) {
-
         // 根据属性设置参数
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
@@ -182,13 +181,20 @@ public class XRefreshView extends LinearLayout {
                 a.recycle();
             }
         }
+        addHeaderView();
         this.getViewTreeObserver().addOnGlobalLayoutListener(
                 new OnGlobalLayoutListener() {
 
                     @Override
                     public void onGlobalLayout() {
-                        addHeaderView();
-                        addFooterView(this);
+                        if (autoRefresh) {
+                            startRefresh();
+                        }
+                        setHeadMoveLargestDistence(mHeadMoveDistence);
+                        attachContentView();
+                        addFooterView();
+                        // 移除视图树监听器
+                        removeViewTreeObserver(this);
                     }
                 });
         mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -198,16 +204,31 @@ public class XRefreshView extends LinearLayout {
         if (mHeaderView == null) {
             mHeaderView = new XRefreshViewHeader(getContext());
         }
-            dealAddHeaderView();
+        dealAddHeaderView();
     }
 
     private void dealAddHeaderView() {
-        if (indexOfChild(mHeaderView) == -1) {//只有在headerview不存在的时候才添加
+        if (indexOfChild(mHeaderView) == -1) {
             Utils.removeViewFromParent(mHeaderView);
             addView(mHeaderView, 0);
             mHeaderCallBack = (IHeaderCallBack) mHeaderView;
             setRefreshTime();
             checkPullRefreshEnable();
+        }
+    }
+
+    private void dealAddFooterView() {
+        if (indexOfChild(mFooterView) == -1) {
+            if (needAddFooterView()) {
+                Utils.removeViewFromParent(mFooterView);
+                try {
+                    addView(mFooterView, 2);
+                } catch (IndexOutOfBoundsException e) {
+                    new RuntimeException("XRefreshView is allowed to have one and only one child");
+                }
+            }
+            mFooterCallBack = (IFooterCallBack) mFooterView;
+            checkPullLoadEnable();
         }
     }
 
@@ -220,23 +241,11 @@ public class XRefreshView extends LinearLayout {
         mContentView.setScrollListener();
     }
 
-    private void addFooterView(OnGlobalLayoutListener listener) {
+    private void addFooterView() {
         if (mFooterView == null) {
             mFooterView = new XRefreshViewFooter(getContext());
         }
-        if (needAddFooterView()) {
-            Utils.removeViewFromParent(mFooterView);
-            addView(mFooterView);
-        }
-        // 移除视图树监听器
-        removeViewTreeObserver(listener);
-        if (autoRefresh) {
-            startRefresh();
-        }
-        attachContentView();
-        setHeadMoveLargestDistence(mHeadMoveDistence);
-        mFooterCallBack = (IFooterCallBack) mFooterView;
-        checkPullLoadEnable();
+//        dealAddFooterView();
     }
 
     @SuppressWarnings("deprecation")
@@ -492,6 +501,7 @@ public class XRefreshView extends LinearLayout {
         } else {
             mHeadMoveDistence = headMoveDistence;
         }
+        mHeadMoveDistence = mHeadMoveDistence <= mHeaderViewHeight ? mHeaderViewHeight + 1 : mHeadMoveDistence;
     }
 
     private void sendDownEvent() {
@@ -1042,7 +1052,6 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
-
     /**
      * 设置自定义footerView
      *
@@ -1050,7 +1059,11 @@ public class XRefreshView extends LinearLayout {
      */
     public void setCustomFooterView(View footerView) {
         if (footerView instanceof IFooterCallBack) {
+            if (mFooterView != null) {
+                removeView(mFooterView);
+            }
             mFooterView = footerView;
+            dealAddFooterView();
         } else {
             throw new RuntimeException(
                     "footerView must be implementes IFooterCallBack!");

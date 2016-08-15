@@ -41,8 +41,8 @@ public class CustomViewActivity extends Activity {
         refreshView.setPullLoadEnable(true);
         refreshView.setAutoRefresh(true);
         refreshView.setPinnedTime(mPinnedTime);
-        refreshView.setCustomHeaderView(new CustomHeader(this,mPinnedTime));
-        refreshView.setCustomFooterView(new CustomerFooter(this));
+        refreshView.setCustomHeaderView(new CustomHeader(CustomViewActivity.this,mPinnedTime));
+        refreshView.setCustomFooterView(new CustomerFooter(CustomViewActivity.this));
         refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
             @Override
