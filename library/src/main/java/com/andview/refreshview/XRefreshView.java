@@ -198,14 +198,17 @@ public class XRefreshView extends LinearLayout {
         if (mHeaderView == null) {
             mHeaderView = new XRefreshViewHeader(getContext());
         }
-        Utils.removeViewFromParent(mHeaderView);
-        addView(mHeaderView, 0);
-//        mHeaderView.measure(0, 0);
+            dealAddHeaderView();
+    }
 
-        mHeaderCallBack = (IHeaderCallBack) mHeaderView;
-        mHeaderViewHeight = mHeaderCallBack.getHeaderHeight();
-        setRefreshTime();
-        checkPullRefreshEnable();
+    private void dealAddHeaderView() {
+        if (indexOfChild(mHeaderView) == -1) {//只有在headerview不存在的时候才添加
+            Utils.removeViewFromParent(mHeaderView);
+            addView(mHeaderView, 0);
+            mHeaderCallBack = (IHeaderCallBack) mHeaderView;
+            setRefreshTime();
+            checkPullRefreshEnable();
+        }
     }
 
     private void attachContentView() {
@@ -222,7 +225,6 @@ public class XRefreshView extends LinearLayout {
             mFooterView = new XRefreshViewFooter(getContext());
         }
         if (needAddFooterView()) {
-            LogUtils.d("test add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
             Utils.removeViewFromParent(mFooterView);
             addView(mFooterView);
         }
@@ -244,6 +246,18 @@ public class XRefreshView extends LinearLayout {
             getViewTreeObserver().removeGlobalOnLayoutListener(listener);
         } else {
             getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        }
+    }
+
+    private void getHeaderHeight() {
+        if (mHeaderCallBack != null) {
+            mHeaderViewHeight = mHeaderCallBack.getHeaderHeight();
+        }
+    }
+
+    private void getFooterHeight() {
+        if (mFooterCallBack != null) {
+            mFootHeight = mFooterCallBack.getFooterHeight();
         }
     }
 
@@ -273,6 +287,8 @@ public class XRefreshView extends LinearLayout {
             }
         }
         setMeasuredDimension(width, finalHeight);
+        getHeaderHeight();
+        getFooterHeight();
     }
 
     @Override
@@ -280,7 +296,7 @@ public class XRefreshView extends LinearLayout {
 //        super.onLayout(changed, l, t2, r, b);
 //        if(mHolder.mOffsetY!=0)return;
         LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
-        mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
+
         int childCount = getChildCount();
         int top = getPaddingTop() + mHolder.mOffsetY;
         int adHeight = 0;
@@ -1015,7 +1031,11 @@ public class XRefreshView extends LinearLayout {
      */
     public void setCustomHeaderView(View headerView) {
         if (headerView instanceof IHeaderCallBack) {
+            if (mHeaderView != null) {
+                removeView(mHeaderView);
+            }
             mHeaderView = headerView;
+            dealAddHeaderView();
         } else {
             throw new RuntimeException(
                     "headerView must be implementes IHeaderCallBack!");

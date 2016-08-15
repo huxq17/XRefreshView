@@ -39,6 +39,7 @@ public class WebViewActivity extends Activity {
 		});
 		outView = (XRefreshView) findViewById(R.id.custom_view);
 		outView.setPullLoadEnable(true);
+		outView.setMoveForHorizontal(true);
 		outView.setPinnedTime(1000);
 		outView.setCustomFooterView(new CustomerFooter(this));
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
