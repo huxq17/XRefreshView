@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -949,6 +951,44 @@ public class XRefreshView extends LinearLayout {
      */
     public void setOnAbsListViewScrollListener(OnScrollListener scrollListener) {
         mContentView.setOnAbsListViewScrollListener(scrollListener);
+    }
+
+    private View mEmptyView;
+    private View mTempTarge;
+
+    public void setEmptyView(View emptyView) {
+        Utils.removeViewFromParent(emptyView);
+        mEmptyView = emptyView;
+    }
+
+    public void setEmptyView(@LayoutRes int emptyView) {
+        String resourceTypeName = getContext().getResources().getResourceTypeName(emptyView);
+        if (!resourceTypeName.contains("layout")) {
+            throw new RuntimeException(getContext().getResources().getResourceName(emptyView) + " is a illegal layoutid , please check your layout id first !");
+        }
+        mEmptyView = LayoutInflater.from(getContext()).inflate(emptyView, this, false);
+    }
+
+    public void enableEmptyView(boolean enable) {
+        if (!mLayoutReady) {
+            return;
+        }
+        if (enable) {
+            if (mEmptyView != null) {
+                mTempTarge = getChildAt(1);
+                swapContentView(mEmptyView);
+            }
+        } else {
+            if (mTempTarge != null) {
+                swapContentView(mTempTarge);
+            }
+        }
+    }
+
+    private void swapContentView(View newContentView) {
+        removeViewAt(1);
+        addView(newContentView, 1);
+        mContentView.setContentView(newContentView);
     }
 
     /**

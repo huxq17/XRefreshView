@@ -144,13 +144,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
 
     public void setHeaderView(View headerView, RecyclerView recyclerView) {
         if (recyclerView == null) return;
-        Utils.removeViewFromParent(customLoadMoreView);
+        Utils.removeViewFromParent(headerView);
         customHeaderView = headerView;
         notifyDataSetChanged();
     }
 
     public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
-
         if (recyclerView == null) return null;
         Context context = recyclerView.getContext();
         String resourceTypeName = context.getResources().getResourceTypeName(id);
