@@ -251,7 +251,7 @@ public class XRefreshView extends LinearLayout {
         if (mFooterView == null) {
             mFooterView = new XRefreshViewFooter(getContext());
         }
-//        dealAddFooterView();
+        dealAddFooterView();
     }
 
     @SuppressWarnings("deprecation")
