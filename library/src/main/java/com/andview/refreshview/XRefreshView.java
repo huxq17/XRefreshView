@@ -97,6 +97,11 @@ public class XRefreshView extends LinearLayout {
      * 当Recyclerview加载完成的时候，不允许界面被上拉
      */
     private boolean enablePullUp = true;
+    /**
+     * 布局是否准备好了，准备好以后才能进行自动刷新这种操作
+     */
+    private boolean mLayoutReady = false;
+    private boolean mNeedToRefresh = false;
 
     public XRefreshView(Context context) {
         this(context, null);
@@ -187,7 +192,8 @@ public class XRefreshView extends LinearLayout {
 
                     @Override
                     public void onGlobalLayout() {
-                        if (autoRefresh) {
+                        mLayoutReady = true;
+                        if (autoRefresh || mNeedToRefresh) {
                             startRefresh();
                         }
                         setHeadMoveLargestDistence(mHeadMoveDistence);
@@ -706,21 +712,19 @@ public class XRefreshView extends LinearLayout {
     }
 
     public void startRefresh() {
-        if (!mEnablePullRefresh || mHolder.mOffsetY != 0 || mContentView.isLoading() || !isEnabled()) {
+        if (!mEnablePullRefresh || mHolder.mOffsetY != 0 || mContentView.isLoading() || mPullRefreshing || !isEnabled()) {
             return;
         }
-        // 如果条件成立，代表布局还没有初始化完成，改变标记，等待该方法再次调用，完成开始刷新
-        if (mHeaderCallBack == null) {
-            this.autoRefresh = true;
-        } else {
-            if (!mPullRefreshing) {
-                updateHeaderHeight(0, mHeaderViewHeight, 0);
-                mPullRefreshing = true;
-                if (mRefreshViewListener != null) {
-                    mRefreshViewListener.onRefresh();
-                }
-                mContentView.scrollToTop();
+        if (mLayoutReady) {
+            mNeedToRefresh = false;
+            updateHeaderHeight(0, mHeaderViewHeight, 0);
+            mPullRefreshing = true;
+            if (mRefreshViewListener != null) {
+                mRefreshViewListener.onRefresh();
             }
+            mContentView.scrollToTop();
+        } else {
+            mNeedToRefresh = true;
         }
     }
 
