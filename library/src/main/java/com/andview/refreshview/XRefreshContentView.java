@@ -14,7 +14,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
-import com.andview.refreshview.XScrollView.OnScrollBottomListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
@@ -96,8 +95,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             absListView.setSelection(0);
         } else if (child instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) child;
-            RecyclerView.LayoutManager layoutManager = null;
-            layoutManager = recyclerView.getLayoutManager();
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             layoutManager.scrollToPosition(0);
         }
     }
@@ -125,17 +123,23 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     private void setScrollViewScrollListener() {
         if (child instanceof XScrollView) {
             XScrollView scrollView = (XScrollView) child;
-            scrollView.registerOnBottomListener(new OnScrollBottomListener() {
+            scrollView.setOnScrollListener(mParent, new XScrollView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(ScrollView view, int scrollState, boolean arriveBottom) {
+                    if (scrollState == SCROLL_STATE_IDLE && arriveBottom) {
+                        if (mSilenceLoadMore) {
+                            if (mRefreshViewListener != null) {
+                                mRefreshViewListener.onLoadMore(true);
+                            }
+                        } else if (mContainer != null && !hasLoadCompleted()) {
+                            mContainer.invokeLoadMore();
+                        }
+                    }
+                }
 
                 @Override
-                public void srollToBottom() {
-                    if (mSilenceLoadMore) {
-                        if (mRefreshViewListener != null) {
-                            mRefreshViewListener.onLoadMore(true);
-                        }
-                    } else if (mContainer != null && !hasLoadCompleted()) {
-                        mContainer.invokeLoadMore();
-                    }
+                public void onScroll(int l, int t, int oldl, int oldt) {
+
                 }
             });
         } else {

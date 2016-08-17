@@ -271,7 +271,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
      */
     public void clear(List<?> list) {
         int start = getStart();
-        int size = list.size() + start;
+        int size = list.size();
         list.clear();
         notifyItemRangeRemoved(start, size);
     }

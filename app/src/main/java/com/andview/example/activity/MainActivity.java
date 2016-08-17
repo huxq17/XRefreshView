@@ -42,6 +42,9 @@ public class MainActivity extends Activity {
             case R.id.bt_not_full_screen:
                 intent = new Intent(this, NotFullScreenActivity.class);
                 break;
+            case R.id.bt_emptyview:
+                intent = new Intent(this, EmptyViewActivity.class);
+                break;
             case R.id.bt_rain:
 //                intent = new Intent(this, RainDropActivity.class);
                 break;

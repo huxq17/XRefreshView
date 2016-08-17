@@ -40,12 +40,12 @@ public class GridRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList,this);
         // 设置静默加载模式
-//		xRefreshView.setSilenceLoadMore();
+//		xRefreshView1.setSilenceLoadMore();
         layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(false);
+//        xRefreshView1.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
 
@@ -53,13 +53,13 @@ public class GridRecyclerViewActivity extends Activity {
         //并注释掉第四行代码
 //        CustomerFooter customerFooter = new CustomerFooter(this);
 //        customerFooter.setRecyclerView(recyclerView);
-//        adapter.setCustomLoadMoreView(customerFooter);
+//        recyclerviewAdapter.setCustomLoadMoreView(customerFooter);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 
-//        adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-//		xRefreshView.setPullLoadEnable(false);
+//        recyclerviewAdapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+//		xRefreshView1.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
-//		xRefreshView.setPreLoadCount(2);
+//		xRefreshView1.setPreLoadCount(2);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -93,7 +93,7 @@ public class GridRecyclerViewActivity extends Activity {
             }
         });
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
-//		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //				super.onScrolled(recyclerView, dx, dy);
@@ -103,7 +103,7 @@ public class GridRecyclerViewActivity extends Activity {
 //			public void onScrollStateChanged(RecyclerView recyclerView,
 //											 int newState) {
 //				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
 //				}
 //			}
 //		});

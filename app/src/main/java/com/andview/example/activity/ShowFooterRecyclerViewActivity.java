@@ -39,7 +39,7 @@ public class ShowFooterRecyclerViewActivity extends Activity {
 
         adapter = new MultiItemAdapter(personList);
         // 设置静默加载模式
-//        xRefreshView.setSilenceLoadMore();
+//        xRefreshView1.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
@@ -48,11 +48,11 @@ public class ShowFooterRecyclerViewActivity extends Activity {
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
-//        xRefreshView.setAutoLoadMore(true);
-//        xRefreshView.setHideFooterWhenComplete(false);
+//        xRefreshView1.setAutoLoadMore(true);
+//        xRefreshView1.setHideFooterWhenComplete(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
-//        xRefreshView.setPreLoadCount(4);
+//        xRefreshView1.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -91,7 +91,7 @@ public class ShowFooterRecyclerViewActivity extends Activity {
             }
         });
         //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
-//        xRefreshView.setHideFooterWhenComplete(false);
+//        xRefreshView1.setHideFooterWhenComplete(false);
         requestData();
     }
 

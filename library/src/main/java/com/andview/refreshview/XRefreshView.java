@@ -26,6 +26,7 @@ import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
 import java.util.Calendar;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class XRefreshView extends LinearLayout {
     // -- header view
@@ -350,6 +351,38 @@ public class XRefreshView extends LinearLayout {
     private boolean isIntercepted = false;
     private int mHeadMoveDistence;
 
+    private final CopyOnWriteArrayList<TouchLifeCycle> mTouchLifeCycles = new CopyOnWriteArrayList<>();
+
+    interface TouchLifeCycle {
+        int ACTION_DOWN = 0;
+        int ACTION_MOVE = 1;
+        int ACTION_UP = 2;
+
+        void onTouch(int action);
+    }
+
+
+    public void addTouchLifeCycle(TouchLifeCycle lifeCycle) {
+        mTouchLifeCycles.add(lifeCycle);
+    }
+
+    public void removeTouchLifeCycle(TouchLifeCycle lifeCycle) {
+        if (lifeCycle == null) {
+            return;
+        }
+        if (mTouchLifeCycles.contains(lifeCycle)) {
+            mTouchLifeCycles.remove(lifeCycle);
+        }
+    }
+
+    private void updateTouchAction(int action) {
+        for (TouchLifeCycle lifeCycle : mTouchLifeCycles) {
+            if (lifeCycle != null) {
+                lifeCycle.onTouch(action);
+            }
+        }
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
@@ -357,6 +390,7 @@ public class XRefreshView extends LinearLayout {
         int deltaX = 0;
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                updateTouchAction(TouchLifeCycle.ACTION_DOWN);
                 mHasSendCancelEvent = false;
                 mHasSendDownEvent = false;
                 mLastY = (int) ev.getRawY();
@@ -364,6 +398,7 @@ public class XRefreshView extends LinearLayout {
                 mInitialMotionY = mLastY;
                 break;
             case MotionEvent.ACTION_MOVE:
+                updateTouchAction(TouchLifeCycle.ACTION_MOVE);
                 mLastMoveEvent = ev;
                 if (/*!enablePullUp ||*/ mStopingRefresh || !isEnabled() || mIsIntercept) {
                     return super.dispatchTouchEvent(ev);
@@ -419,6 +454,7 @@ public class XRefreshView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                updateTouchAction(TouchLifeCycle.ACTION_UP);
                 // if (mHolder.mOffsetY != 0 && mRefreshViewListener != null
                 // && !mPullRefreshing && !mPullLoading) {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);
@@ -435,7 +471,7 @@ public class XRefreshView extends LinearLayout {
                     resetHeaderHeight();
                 } else if (mHolder.hasFooterPullUp()) {
                     if (!mStopingRefresh) {
-                        if (mEnablePullLoad && needAddFooterView() && !mHasLoadComplete) {
+                        if (mEnablePullLoad && !isEmptyViewShowing() && needAddFooterView() && !mHasLoadComplete) {
                             invokeLoadMore();
                         } else {
                             int offset = 0 - mHolder.mOffsetY;
@@ -454,7 +490,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     public boolean invokeLoadMore() {
-        if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
+        if (mEnablePullLoad && !isEmptyViewShowing() && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             if (offset != 0) {
                 startScroll(offset, Utils.computeScrollVerticalDuration(offset, getHeight()));
@@ -666,9 +702,15 @@ public class XRefreshView extends LinearLayout {
     private void updateFooterHeight(int deltaY) {
         if (mEnablePullLoad) {
             if (needAddFooterView()) {
-                if (mState != XRefreshViewState.STATE_LOADING) {
-                    mFooterCallBack.onStateRefreshing();
-                    mState = XRefreshViewState.STATE_LOADING;
+                if (isEmptyViewShowing()) {
+                    if (mFooterCallBack.isShowing()) {
+                        mFooterCallBack.show(false);
+                    }
+                } else {
+                    if (mState != XRefreshViewState.STATE_LOADING) {
+                        mFooterCallBack.onStateRefreshing();
+                        mState = XRefreshViewState.STATE_LOADING;
+                    }
                 }
             } else if (canReleaseToLoadMore()) {
                 releaseToLoadMore(mHolder.mOffsetY != 0);
@@ -959,6 +1001,18 @@ public class XRefreshView extends LinearLayout {
     public void setEmptyView(View emptyView) {
         Utils.removeViewFromParent(emptyView);
         mEmptyView = emptyView;
+        addEmptyViewLayoutParams();
+    }
+
+    private void addEmptyViewLayoutParams() {
+        if (mEmptyView == null) {
+            return;
+        }
+        LayoutParams layoutparams = generateDefaultLayoutParams();
+        layoutparams.height = LayoutParams.MATCH_PARENT;
+        layoutparams.width = LayoutParams.MATCH_PARENT;
+        mEmptyView.setLayoutParams(layoutparams);
+
     }
 
     public void setEmptyView(@LayoutRes int emptyView) {
@@ -967,6 +1021,7 @@ public class XRefreshView extends LinearLayout {
             throw new RuntimeException(getContext().getResources().getResourceName(emptyView) + " is a illegal layoutid , please check your layout id first !");
         }
         mEmptyView = LayoutInflater.from(getContext()).inflate(emptyView, this, false);
+        setEmptyView(mEmptyView);
     }
 
     public void enableEmptyView(boolean enable) {
@@ -985,10 +1040,23 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
+    public boolean isEmptyViewShowing() {
+        if (mEmptyView != null && getChildCount() >= 2) {
+            View child = getChildAt(1);
+            return child == mEmptyView;
+        }
+        return false;
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
+    }
+
     private void swapContentView(View newContentView) {
         removeViewAt(1);
         addView(newContentView, 1);
         mContentView.setContentView(newContentView);
+        mContentView.scrollToTop();
     }
 
     /**

@@ -44,7 +44,7 @@ public class LinearRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//        xRefreshView.setSilenceLoadMore();
+//        xRefreshView1.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
@@ -59,7 +59,7 @@ public class LinearRecyclerViewActivity extends Activity {
         xRefreshView.enableRecyclerViewPullUp(true);
         xRefreshView.enablePullUpWhenLoadCompleted(true);
         //设置静默加载时提前加载的item个数
-//        xRefreshView.setPreLoadCount(4);
+//        xRefreshView1.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -78,8 +78,8 @@ public class LinearRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
 //                        for (int i = 0; i < 6; i++) {
-//                            adapter.insert(new Person("More ", mLoadCount + "21"),
-//                                    adapter.getAdapterItemCount());
+//                            recyclerviewAdapter.insert(new Person("More ", mLoadCount + "21"),
+//                                    recyclerviewAdapter.getAdapterItemCount());
 //                        }
                         mLoadCount++;
                         if (mLoadCount >= 3) {//模拟没有更多数据的情况
@@ -89,14 +89,14 @@ public class LinearRecyclerViewActivity extends Activity {
                             xRefreshView.stopLoadMore();
                             //当数据加载失败 不需要隐藏footerview时，可以调用以下方法，传入false，不传默认为true
                             // 同时在Footerview的onStateFinish(boolean hideFooter)，可以在hideFooter为false时，显示数据加载失败的ui
-//                            xRefreshView.stopLoadMore(false);
+//                            xRefreshView1.stopLoadMore(false);
                         }
                     }
                 }, 1000);
             }
         });
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
-//		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //				super.onScrolled(recyclerView, dx, dy);
@@ -106,7 +106,7 @@ public class LinearRecyclerViewActivity extends Activity {
 //			public void onScrollStateChanged(RecyclerView recyclerView,
 //											 int newState) {
 //				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
 //				}
 //			}
 //		});

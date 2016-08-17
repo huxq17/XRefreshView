@@ -51,7 +51,7 @@ public class BannerRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//		xRefreshView.setSilenceLoadMore();
+//		xRefreshView1.setSilenceLoadMore();
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         headerView = adapter.setHeaderView(R.layout.bannerview, recyclerView);
@@ -67,16 +67,16 @@ public class BannerRecyclerViewActivity extends Activity {
         xRefreshView.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
-//        adapter.setHeaderView(headerView, recyclerView);
+//        recyclerviewAdapter.setHeaderView(headerView, recyclerView);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-//        xRefreshView.setPullRefreshEnable(false);
+//        xRefreshView1.setPullRefreshEnable(false);
         //设置在下拉刷新被禁用的情况下，是否允许界面被下拉,默认是true
-//        xRefreshView.setMoveHeadWhenDisablePullRefresh(false);
-//        xRefreshView.enablePullUpWhenLoadCompleted(false);
-//		xRefreshView.setPullLoadEnable(false);
-//        xRefreshView.enableRecyclerViewPullUp(false);
+//        xRefreshView1.setMoveHeadWhenDisablePullRefresh(false);
+//        xRefreshView1.enablePullUpWhenLoadCompleted(false);
+//		xRefreshView1.setPullLoadEnable(false);
+//        xRefreshView1.enableRecyclerViewPullUp(false);
         //设置静默加载时提前加载的item个数
-//		xRefreshView.setPreLoadCount(2);
+//		xRefreshView1.setPreLoadCount(2);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -94,7 +94,7 @@ public class BannerRecyclerViewActivity extends Activity {
                             xRefreshView.stopRefresh(false);
                         }
                         //或者
-//                        xRefreshView.stopRefresh(success);
+//                        xRefreshView1.stopRefresh(success);
                     }
                 }, 2000);
             }
@@ -151,8 +151,8 @@ public class BannerRecyclerViewActivity extends Activity {
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();
-//                xRefreshView.setPullRefreshEnable(true);
-//                xRefreshView.setPullLoadEnable(!xRefreshView.getPullLoadEnable());
+//                xRefreshView1.setPullRefreshEnable(true);
+//                xRefreshView1.setPullLoadEnable(!xRefreshView1.getPullLoadEnable());
                 break;
 
         }

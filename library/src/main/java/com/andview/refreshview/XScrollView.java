@@ -2,41 +2,128 @@ package com.andview.refreshview;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ScrollView;
 
 public class XScrollView extends ScrollView {
-	private OnScrollBottomListener _listener;
-	private int _calCount;
 
-	public interface OnScrollBottomListener {
-		void srollToBottom();
-	}
+    // 外部设置的监听方法
+    private OnScrollListener onScrollListener;
+    // 是否在触摸状态
+    private boolean inTouch = false;
+    // 上次滑动的最后位置
+    private int lastT = 0;
+    private XRefreshView mParent;
 
-	public void registerOnBottomListener(OnScrollBottomListener l) {
-		_listener = l;
-	}
+    public XScrollView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public void unRegisterOnBottomListener() {
-		_listener = null;
-	}
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (onScrollListener == null) {
+            return;
+        }
+        if (inTouch) {
+            if (t != oldt) {
+                // 有手指触摸，并且位置有滚动
+                onScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_TOUCH_SCROLL, isBottom());
+            }
+        } else {
+            if (t != oldt) {
+                // 没有手指触摸，并且位置有滚动，就可以简单的认为是在fling
+                onScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_FLING, isBottom());
+                // 记住上次滑动的最后位置
+                lastT = t;
+                removeCallbacks(mRunnable);
+                postDelayed(mRunnable, 20);
+            }
+        }
+        onScrollListener.onScroll(l, t, oldl, oldt);
+    }
 
-	public XScrollView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (lastT == getScrollY() && !inTouch) {
+                // 如果上次的位置和当前的位置相同，可认为是在空闲状态
+                onScrollListener.onScrollStateChanged(XScrollView.this, OnScrollListener.SCROLL_STATE_IDLE, isBottom());
+            }
+        }
+    };
 
-	@Override
-	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-		View view = this.getChildAt(0);
-		if (this.getHeight() + this.getScrollY() == view.getHeight()) {
-			_calCount++;
-			if (_calCount == 1) {
-				if (_listener != null) {
-					_listener.srollToBottom();
-				}
-			}
-		} else {
-			_calCount = 0;
-		}
-	}
+    private boolean isBottom() {
+        return getScrollY() + getHeight() >= computeVerticalScrollRange();
+    }
+
+
+    /**
+     * 设置滚动监听事件
+     *
+     * @param onScrollListener {@link OnScrollListener} 滚动监听事件（注意类的不同，虽然名字相同）
+     */
+    public void setOnScrollListener(XRefreshView parent, OnScrollListener onScrollListener) {
+        mParent = parent;
+        this.onScrollListener = onScrollListener;
+        mParent.addTouchLifeCycle(new XRefreshView.TouchLifeCycle() {
+            @Override
+            public void onTouch(int action) {
+                switch (action) {
+                    case ACTION_DOWN:
+                    case ACTION_MOVE:
+                        inTouch = true;
+                        break;
+                    case ACTION_UP:
+                        inTouch = false;
+                        lastT = getScrollY();
+                        removeCallbacks(mRunnable);
+                        postDelayed(mRunnable, 20);
+                        break;
+                }
+            }
+        });
+    }
+
+    /**
+     * 滚动监听事件
+     */
+    public interface OnScrollListener {
+        /**
+         * The view is not scrolling. Note navigating the list using the
+         * trackball counts as being in the idle state since these transitions
+         * are not animated.
+         */
+        int SCROLL_STATE_IDLE = 0;
+
+        /**
+         * The user is scrolling using touch, and their finger is still on the
+         * screen
+         */
+        int SCROLL_STATE_TOUCH_SCROLL = 1;
+
+        /**
+         * The user had previously been scrolling using touch and had performed
+         * a fling. The animation is now coasting to a stop
+         */
+        int SCROLL_STATE_FLING = 2;
+
+        /**
+         * 滑动状态回调
+         *
+         * @param view         当前的scrollView
+         * @param scrollState  当前的状态
+         * @param arriveBottom 是否到达底部
+         */
+        void onScrollStateChanged(ScrollView view, int scrollState, boolean arriveBottom);
+
+        /**
+         * 滑动位置回调
+         *
+         * @param l
+         * @param t
+         * @param oldl
+         * @param oldt
+         */
+        void onScroll(int l, int t, int oldl, int oldt);
+    }
 }

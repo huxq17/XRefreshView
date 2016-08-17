@@ -27,7 +27,7 @@ public class RecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
         if (xRefreshView == null || mAdapter == null) {
             return;
         }
-        if (mAdapter.getAdapterItemCount() == 0) {
+        if (mAdapter.getAdapterItemCount() == 0 && mAdapter.getStart() == 0) {
             if (hasData) {
                 xRefreshView.enableEmptyView(true);
                 hasData = false;
@@ -47,6 +47,11 @@ public class RecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
 
     @Override
     public void onItemRangeChanged(int positionStart, int itemCount) {
+        onChanged();
+    }
+
+    @Override
+    public void onItemRangeInserted(int positionStart, int itemCount) {
         onChanged();
     }
 

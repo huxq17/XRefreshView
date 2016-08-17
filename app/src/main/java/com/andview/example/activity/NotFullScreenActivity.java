@@ -3,6 +3,7 @@ package com.andview.example.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -42,7 +43,7 @@ public class NotFullScreenActivity extends Activity {
 
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//        xRefreshView.setSilenceLoadMore();
+//        xRefreshView1.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
@@ -55,7 +56,7 @@ public class NotFullScreenActivity extends Activity {
         xRefreshView.setEmptyView(R.layout.layout_emptyview);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
-//        xRefreshView.setPreLoadCount(4);
+//        xRefreshView1.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -71,13 +72,14 @@ public class NotFullScreenActivity extends Activity {
 
             @Override
             public void onLoadMore(boolean isSlience) {
+                LogUtils.e("loadmore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
                             adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
-                        LogUtils.i("test onLoadMore adapter.count=" + adapter.getItemCount());
+                        LogUtils.i("test onLoadMore recyclerviewAdapter.count=" + adapter.getItemCount());
                         mLoadCount++;
 
                         if (mLoadCount >= 5) {
@@ -91,10 +93,10 @@ public class NotFullScreenActivity extends Activity {
             }
         });
         //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
-//        xRefreshView.setHideFooterWhenComplete(false);
+//        xRefreshView1.setHideFooterWhenComplete(false);
         requestData();
 //		// 实现Recyclerview的滚动监听
-//		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //				super.onScrolled(recyclerView, dx, dy);
@@ -104,7 +106,7 @@ public class NotFullScreenActivity extends Activity {
 //			public void onScrollStateChanged(RecyclerView recyclerView,
 //											 int newState) {
 //				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
 //				}
 //			}
 //		});
@@ -139,21 +141,20 @@ public class NotFullScreenActivity extends Activity {
         int menuId = item.getItemId();
         switch (menuId) {
             case R.id.menu_clear:
-//                mLoadCount = 0;
-//                xRefreshView.setLoadComplete(false);
-//                //切换布局
-//                isList = !isList;
-//
-//                if (isList) {
-//                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-//                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//                    recyclerView.setLayoutManager(layoutManager);
-//                } else {
-//                    recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
-//                }
-//                //当切换layoutManager时，需调用此方法
-//                xRefreshView.notifyLayoutManagerChanged();
-                adapter.clear();
+                mLoadCount = 0;
+                xRefreshView.setLoadComplete(false);
+                //切换布局
+                isList = !isList;
+
+                if (isList) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(layoutManager);
+                } else {
+                    recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                }
+                //当切换layoutManager时，需调用此方法
+                xRefreshView.notifyLayoutManagerChanged();
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();

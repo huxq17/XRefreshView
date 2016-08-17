@@ -52,12 +52,12 @@ public class SilenceRecyclerViewActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-//        xRefreshView.setAutoLoadMore(true);
+//        xRefreshView1.setAutoLoadMore(true);
         //设置刷新完成以后，headerview固定的时间
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
-//        adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-//		xRefreshView.setPullLoadEnable(false);
+//        recyclerviewAdapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+//		xRefreshView1.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
         xRefreshView.setPreLoadCount(4);
 
@@ -94,7 +94,7 @@ public class SilenceRecyclerViewActivity extends Activity {
             }
         });
 //		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
-//		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //				super.onScrolled(recyclerView, dx, dy);
@@ -104,7 +104,7 @@ public class SilenceRecyclerViewActivity extends Activity {
 //			public void onScrollStateChanged(RecyclerView recyclerView,
 //											 int newState) {
 //				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
 //				}
 //			}
 //		});

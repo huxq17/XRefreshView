@@ -1,5 +1,4 @@
 <com.andview.example.FlowView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -36,14 +35,6 @@
         android:text="自定义view" />
 
     <Button
-        android:id="@+id/bt_webView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="webView" />
-
-    <Button
         android:id="@+id/bt_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,12 +43,28 @@
         android:text="ScrollView" />
 
     <Button
+        android:id="@+id/bt_emptyview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="空布局" />
+
+    <Button
         android:id="@+id/bt_not_full_screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:onClick="onClick"
         android:text="数据不满一屏" />
+
+    <Button
+        android:id="@+id/bt_webView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="webView" />
 
     <Button
         android:id="@+id/bt_headAd"
