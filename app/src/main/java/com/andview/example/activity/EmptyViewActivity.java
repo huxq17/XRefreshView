@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andview.example.DensityUtil;
 import com.andview.example.R;
@@ -95,6 +96,7 @@ public class EmptyViewActivity extends Activity {
         setEmptyViewClickListener(xRefreshView2, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //非Recyclerview得在有数据和没有数据的时候，手动调用enableEmptyView方法来显示和关闭emptyView。
                 xRefreshView2.enableEmptyView(false);
             }
         });
@@ -134,6 +136,11 @@ public class EmptyViewActivity extends Activity {
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
         xRefreshView.setAutoLoadMore(true);
+        //两种方式设置空布局，传入空布局的view或者传入布局id都可以
+//        TextView textView = new TextView(this);
+//        textView.setText("没有数据，点击刷新");
+//        textView.setGravity(Gravity.CENTER);
+//        xRefreshView.setEmptyView(textView);
         xRefreshView.setEmptyView(R.layout.layout_emptyview);
         xRefreshView.setXRefreshViewListener(listener);
     }
@@ -175,6 +182,7 @@ public class EmptyViewActivity extends Activity {
             case R.id.menu_change:
                 xRefreshView1.setVisibility(showingRecyclerView ? View.GONE : View.VISIBLE);
                 xRefreshView2.setVisibility(showingRecyclerView ? View.VISIBLE : View.GONE);
+                toast(showingRecyclerView ? "切换至ScrollView" : "切换至Recyclerview");
                 break;
             case R.id.menu_clear_or_fill:
                 if (showingRecyclerView) {
@@ -190,5 +198,9 @@ public class EmptyViewActivity extends Activity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

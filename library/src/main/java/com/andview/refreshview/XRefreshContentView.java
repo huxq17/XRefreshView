@@ -18,7 +18,6 @@ import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
-import com.andview.refreshview.recyclerview.RecyclerViewDataObserver;
 import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
@@ -194,8 +193,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         }
     }
 
-    private final RecyclerViewDataObserver observer = new RecyclerViewDataObserver();
-
     private void setRecyclerViewScrollListener() {
         layoutManagerType = null;
         final RecyclerView recyclerView = (RecyclerView) child;
@@ -206,11 +203,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
         }
         final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
-        if (!observer.hasAttached()) {
-            observer.setData(adapter, mParent);
-            observer.attach();
-            adapter.registerAdapterDataObserver(observer);
-        }
         adapter.insideEnableFooter(mParent.getPullLoadEnable());
         recyclerView.removeOnScrollListener(mOnScrollListener);
         mOnScrollListener = new RecyclerView.OnScrollListener() {

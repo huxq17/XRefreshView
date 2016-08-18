@@ -202,6 +202,10 @@ public class XRefreshView extends LinearLayout {
                         setHeadMoveLargestDistence(mHeadMoveDistence);
                         attachContentView();
                         addFooterView();
+                        if (waitForShowEmptyView == 1) {
+                            enableEmptyView(true);
+                            waitForShowEmptyView = 0;
+                        }
                         // 移除视图树监听器
                         removeViewTreeObserver(this);
                     }
@@ -267,6 +271,12 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
+    private int mHeaderGap;
+
+    public void setHeaderGap(int headerGap) {
+        mHeaderGap = headerGap;
+    }
+
     private void getHeaderHeight() {
         if (mHeaderCallBack != null) {
             mHeaderViewHeight = mHeaderCallBack.getHeaderHeight();
@@ -277,6 +287,9 @@ public class XRefreshView extends LinearLayout {
         if (mFooterCallBack != null) {
             mFootHeight = mFooterCallBack.getFooterHeight();
         }
+//        if (mFooterView != null) {
+//            mFootHeight = mFooterView.getMeasuredHeight();
+//        }
     }
 
     @Override
@@ -331,7 +344,6 @@ public class XRefreshView extends LinearLayout {
             if (child.getVisibility() != View.GONE) {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
-                    // 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
                     child.layout(l, top - mHeaderViewHeight, l + r, top + adHeight);
                     top += adHeight;
                 } else if (i == 1) {
@@ -799,8 +811,7 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             mFooterView.offsetTopAndBottom(deltaY);
         }
-        if (mRefreshViewListener != null
-                && (mContentView.isTop() || mPullRefreshing)) {
+        if (mRefreshViewListener != null && (mContentView.isTop() || mPullRefreshing)) {
             double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
             offset = offset > 1 ? 1 : offset;
             mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
@@ -996,7 +1007,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     private View mEmptyView;
-    private View mTempTarge;
+    private View mTempTarget;
 
     public void setEmptyView(View emptyView) {
         Utils.removeViewFromParent(emptyView);
@@ -1020,22 +1031,25 @@ public class XRefreshView extends LinearLayout {
         if (!resourceTypeName.contains("layout")) {
             throw new RuntimeException(getContext().getResources().getResourceName(emptyView) + " is a illegal layoutid , please check your layout id first !");
         }
-        mEmptyView = LayoutInflater.from(getContext()).inflate(emptyView, this, false);
-        setEmptyView(mEmptyView);
+        setEmptyView(LayoutInflater.from(getContext()).inflate(emptyView, this, false));
     }
+
+    private int waitForShowEmptyView = 0;
 
     public void enableEmptyView(boolean enable) {
         if (!mLayoutReady) {
+            waitForShowEmptyView = enable ? 1 : 2;
             return;
         }
+        View contentView = getChildAt(1);
         if (enable) {
-            if (mEmptyView != null) {
-                mTempTarge = getChildAt(1);
+            if (mEmptyView != null && contentView != mEmptyView) {
+                mTempTarget = getChildAt(1);
                 swapContentView(mEmptyView);
             }
         } else {
-            if (mTempTarge != null) {
-                swapContentView(mTempTarge);
+            if (mTempTarget != null && contentView == mEmptyView) {
+                swapContentView(mTempTarget);
             }
         }
     }
@@ -1159,8 +1173,7 @@ public class XRefreshView extends LinearLayout {
             mHeaderView = headerView;
             dealAddHeaderView();
         } else {
-            throw new RuntimeException(
-                    "headerView must be implementes IHeaderCallBack!");
+            throw new RuntimeException("headerView must be implementes IHeaderCallBack!");
         }
     }
 

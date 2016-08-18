@@ -67,7 +67,7 @@ public class AdHeader extends LinearLayout implements IHeaderCallBack {
 		mRotateDownAnim = new RotateAnimation(-180.0f, 0.0f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
-		mRotateDownAnim.setDuration(ROTATE_ANIM_DURATION);
+		mRotateDownAnim.setDuration(0);
 		mRotateDownAnim.setFillAfter(true);
 	}
 

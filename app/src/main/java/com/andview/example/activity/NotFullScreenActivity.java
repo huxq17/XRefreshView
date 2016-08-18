@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.andview.example.R;
 import com.andview.example.recylerview.Person;
@@ -54,6 +55,8 @@ public class NotFullScreenActivity extends Activity {
         xRefreshView.setMoveForHorizontal(true);
         xRefreshView.setAutoLoadMore(true);
         xRefreshView.setEmptyView(R.layout.layout_emptyview);
+        showXRefreshView(false);
+
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView1.setPreLoadCount(4);
@@ -112,6 +115,10 @@ public class NotFullScreenActivity extends Activity {
 //		});
     }
 
+    public void showXRefreshView(boolean show) {
+        xRefreshView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     public void requestData() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -126,6 +133,7 @@ public class NotFullScreenActivity extends Activity {
         for (int i = 0; i < 1; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
+            showXRefreshView(true);
         }
     }
 

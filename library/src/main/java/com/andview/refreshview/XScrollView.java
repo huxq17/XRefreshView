@@ -14,6 +14,10 @@ public class XScrollView extends ScrollView {
     private int lastT = 0;
     private XRefreshView mParent;
 
+    public XScrollView(Context context) {
+        super(context);
+    }
+
     public XScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

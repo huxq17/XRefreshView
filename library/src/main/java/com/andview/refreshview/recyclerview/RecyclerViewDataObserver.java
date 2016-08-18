@@ -11,7 +11,7 @@ public class RecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
     private BaseRecyclerAdapter mAdapter;
     private XRefreshView xRefreshView;
     private boolean mAttached;
-    private boolean hasData;
+    private boolean hasData = true;
 
     public RecyclerViewDataObserver() {
 
@@ -22,19 +22,25 @@ public class RecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
         this.xRefreshView = xRefreshView;
     }
 
+    private void enableEmptyView(boolean enable) {
+        if (xRefreshView != null) {
+            xRefreshView.enableEmptyView(enable);
+        }
+    }
+
     @Override
     public void onChanged() {
-        if (xRefreshView == null || mAdapter == null) {
+        if (mAdapter == null) {
             return;
         }
-        if (mAdapter.getAdapterItemCount() == 0 && mAdapter.getStart() == 0) {
+        if (mAdapter.isEmpty()) {
             if (hasData) {
-                xRefreshView.enableEmptyView(true);
+                enableEmptyView(true);
                 hasData = false;
             }
         } else {
             if (!hasData) {
-                xRefreshView.enableEmptyView(false);
+                enableEmptyView(false);
                 hasData = true;
             }
         }

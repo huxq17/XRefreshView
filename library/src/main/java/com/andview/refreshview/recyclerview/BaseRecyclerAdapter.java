@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
@@ -83,6 +84,15 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     public abstract VH getViewHolder(View view);
 
     /**
+     * 会调用此方法来判断是否显示空布局，返回true就会显示空布局<br/>
+     * 如有特殊需要，可重写此方法
+     * @return
+     */
+    public boolean isEmpty() {
+        return getAdapterItemCount() == 0;
+    }
+
+    /**
      * @param parent
      * @param viewType
      * @param isItem   如果是true，才需要做处理 ,但是这个值总是true
@@ -116,14 +126,19 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
         }
     }
 
+    private final RecyclerViewDataObserver observer = new RecyclerViewDataObserver();
+
+    private XRefreshView mParent;
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-//        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-//        if (manager instanceof GridLayoutManager) {
-//            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
-//            gridManager.setSpanSizeLookup(new XSpanSizeLookup(this, ((GridLayoutManager) manager).getSpanCount()));
-//        }
+        mParent = (XRefreshView) recyclerView.getParent();
+        if (mParent != null && !observer.hasAttached()) {
+            observer.setData(this, mParent);
+            observer.attach();
+            registerAdapterDataObserver(observer);
+        }
     }
 
     /**
@@ -238,6 +253,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     public void insideEnableFooter(boolean enable) {
         isFooterEnable = enable;
     }
+
 
     /**
      * Insert a item to the list of the adapter
