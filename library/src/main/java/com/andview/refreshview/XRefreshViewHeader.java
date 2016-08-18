@@ -91,7 +91,7 @@ public class XRefreshViewHeader extends LinearLayout implements IHeaderCallBack 
     }
 
     /**
-     * hide footer when disable pull load more
+     * hide footer when disable pull refresh
      */
     public void hide() {
         setVisibility(View.GONE);

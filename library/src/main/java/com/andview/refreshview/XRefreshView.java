@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.LayoutRes;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -317,7 +318,7 @@ public class XRefreshView extends LinearLayout {
                 finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
             }
         }
-        setMeasuredDimension(width, finalHeight);
+        setMeasuredDimension(width, height);
         getHeaderHeight();
         getFooterHeight();
     }
@@ -773,6 +774,8 @@ public class XRefreshView extends LinearLayout {
         }
         if (mLayoutReady) {
             mNeedToRefresh = false;
+            int[] location = new int[2];
+            mHeaderView.getLocationInWindow(location);
             updateHeaderHeight(0, mHeaderViewHeight, 0);
             mPullRefreshing = true;
             if (mRefreshViewListener != null) {
@@ -811,6 +814,7 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             mFooterView.offsetTopAndBottom(deltaY);
         }
+        ViewCompat.postInvalidateOnAnimation(this);
         if (mRefreshViewListener != null && (mContentView.isTop() || mPullRefreshing)) {
             double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
             offset = offset > 1 ? 1 : offset;
@@ -975,7 +979,8 @@ public class XRefreshView extends LinearLayout {
                 int offsetY = currentY - lastScrollY;
                 lastScrollY = currentY;
                 moveView(offsetY);
-
+                int[] location = new int[2];
+                mHeaderView.getLocationInWindow(location);
                 LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
                 if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
                     mReleaseToLoadMore = false;
