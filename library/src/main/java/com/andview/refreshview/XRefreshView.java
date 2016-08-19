@@ -297,8 +297,6 @@ public class XRefreshView extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-//        int width2 = getDefaultSize(0, widthMeasureSpec);
-//        int height2 = getDefaultSize(0, heightMeasureSpec);
         int childCount = getChildCount();
         int finalHeight = 0;
         for (int i = 0; i < childCount; i++) {
@@ -318,7 +316,7 @@ public class XRefreshView extends LinearLayout {
                 finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
             }
         }
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(width, finalHeight);
         getHeaderHeight();
         getFooterHeight();
     }
@@ -367,11 +365,8 @@ public class XRefreshView extends LinearLayout {
     private final CopyOnWriteArrayList<TouchLifeCycle> mTouchLifeCycles = new CopyOnWriteArrayList<>();
 
     interface TouchLifeCycle {
-        int ACTION_DOWN = 0;
-        int ACTION_MOVE = 1;
-        int ACTION_UP = 2;
 
-        void onTouch(int action);
+        void onTouch(MotionEvent event);
     }
 
 
@@ -388,10 +383,10 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
-    private void updateTouchAction(int action) {
+    private void updateTouchAction(MotionEvent event) {
         for (TouchLifeCycle lifeCycle : mTouchLifeCycles) {
             if (lifeCycle != null) {
-                lifeCycle.onTouch(action);
+                lifeCycle.onTouch(event);
             }
         }
     }
@@ -401,9 +396,9 @@ public class XRefreshView extends LinearLayout {
         final int action = ev.getAction();
         int deltaY = 0;
         int deltaX = 0;
+        updateTouchAction(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                updateTouchAction(TouchLifeCycle.ACTION_DOWN);
                 mHasSendCancelEvent = false;
                 mHasSendDownEvent = false;
                 mLastY = (int) ev.getRawY();
@@ -411,7 +406,6 @@ public class XRefreshView extends LinearLayout {
                 mInitialMotionY = mLastY;
                 break;
             case MotionEvent.ACTION_MOVE:
-                updateTouchAction(TouchLifeCycle.ACTION_MOVE);
                 mLastMoveEvent = ev;
                 if (/*!enablePullUp ||*/ mStopingRefresh || !isEnabled() || mIsIntercept) {
                     return super.dispatchTouchEvent(ev);
@@ -467,7 +461,6 @@ public class XRefreshView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                updateTouchAction(TouchLifeCycle.ACTION_UP);
                 // if (mHolder.mOffsetY != 0 && mRefreshViewListener != null
                 // && !mPullRefreshing && !mPullLoading) {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);

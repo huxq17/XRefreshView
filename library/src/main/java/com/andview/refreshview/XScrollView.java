@@ -2,6 +2,7 @@ package com.andview.refreshview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.ScrollView;
 
 public class XScrollView extends ScrollView {
@@ -71,13 +72,15 @@ public class XScrollView extends ScrollView {
         this.onScrollListener = onScrollListener;
         mParent.addTouchLifeCycle(new XRefreshView.TouchLifeCycle() {
             @Override
-            public void onTouch(int action) {
+            public void onTouch(MotionEvent event) {
+                int action = event.getAction();
                 switch (action) {
-                    case ACTION_DOWN:
-                    case ACTION_MOVE:
+                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_MOVE:
                         inTouch = true;
                         break;
-                    case ACTION_UP:
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
                         inTouch = false;
                         lastT = getScrollY();
                         removeCallbacks(mRunnable);
