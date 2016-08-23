@@ -34,6 +34,7 @@
         <activity android:name=".activity.EmptyViewActivity" />
         <activity android:name=".activity.MultiItemRecyclerViewActivity" />
         <activity android:name=".activity.ShowFooterRecyclerViewActivity" />
+        <activity android:name=".activity.NotFullScreenWithoutFooterActivity" />
     </application>
 
 </manifest>

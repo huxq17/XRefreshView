@@ -495,6 +495,10 @@ public class XRefreshView extends LinearLayout {
         return super.dispatchTouchEvent(ev);
     }
 
+    public XRefreshContentView getContentView() {
+        return mContentView;
+    }
+
     public boolean invokeLoadMore() {
         if (mEnablePullLoad && !isEmptyViewShowing() && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;

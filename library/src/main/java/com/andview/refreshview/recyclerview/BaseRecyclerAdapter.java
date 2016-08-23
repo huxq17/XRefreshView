@@ -86,6 +86,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     /**
      * 会调用此方法来判断是否显示空布局，返回true就会显示空布局<br/>
      * 如有特殊需要，可重写此方法
+     *
      * @return
      */
     public boolean isEmpty() {
@@ -147,9 +148,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
-        Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
+            Utils.removeViewFromParent(customLoadMoreView);
+            if(mParent!=null&&mParent.getContentView()!=null){
+                mParent.getContentView().initFooterCallBack(this);
+            }
             showFooter(customLoadMoreView, false);
             notifyDataSetChanged();
         } else {

@@ -230,7 +230,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         initFooterCallBack(adapter);
     }
 
-    private void initFooterCallBack(BaseRecyclerAdapter adapter) {
+    public void initFooterCallBack(BaseRecyclerAdapter adapter) {
         if (!mSilenceLoadMore) {
             if (adapter != null) {
                 View footerView = adapter.getCustomLoadMoreView();
@@ -238,7 +238,6 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     return;
                 }
                 mFooterCallBack = (IFooterCallBack) footerView;
-                // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
                     mFooterCallBack.callWhenNotAutoLoadMore(mParent);
@@ -348,9 +347,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     }
 
     public void notifyDatasetChanged() {
-        final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
+        if (child instanceof RecyclerView) {
+            final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 

@@ -20,6 +20,7 @@ public class RecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
     public void setData(BaseRecyclerAdapter adapter, XRefreshView xRefreshView) {
         mAdapter = adapter;
         this.xRefreshView = xRefreshView;
+        onChanged();
     }
 
     private void enableEmptyView(boolean enable) {
