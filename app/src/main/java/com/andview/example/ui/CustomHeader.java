@@ -94,8 +94,8 @@ public class CustomHeader extends View implements IHeaderCallBack {
     @Override
     public void onStateNormal() {
         mScale = 1f;
-        mDrawable.stop();
-
+        isStop = false;
+//        mDrawable.stop();
     }
 
     @Override
