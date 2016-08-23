@@ -152,7 +152,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
             customLoadMoreView = footerView;
             Utils.removeViewFromParent(customLoadMoreView);
             if(mParent!=null&&mParent.getContentView()!=null){
-                mParent.getContentView().initFooterCallBack(this);
+                mParent.getContentView().initFooterCallBack(this,mParent);
             }
             showFooter(customLoadMoreView, false);
             notifyDataSetChanged();

@@ -37,6 +37,7 @@ public class CustomFooterView extends LinearLayout implements IFooterCallBack {
         View childView = xRefreshView.getChildAt(1);
         if (childView != null && childView instanceof RecyclerView) {
             show(Utils.isRecyclerViewFullscreen((RecyclerView) childView));
+            xRefreshView.enableReleaseToLoadMore(Utils.isRecyclerViewFullscreen((RecyclerView) childView));
         }
         mClickView.setText(com.andview.refreshview.R.string.xrefreshview_footer_hint_click);
         mClickView.setOnClickListener(new OnClickListener() {
