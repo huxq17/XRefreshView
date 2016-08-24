@@ -771,8 +771,6 @@ public class XRefreshView extends LinearLayout {
         }
         if (mLayoutReady) {
             mNeedToRefresh = false;
-            int[] location = new int[2];
-            mHeaderView.getLocationInWindow(location);
             updateHeaderHeight(0, mHeaderViewHeight, 0);
             mPullRefreshing = true;
             if (mRefreshViewListener != null) {

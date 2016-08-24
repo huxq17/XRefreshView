@@ -126,7 +126,7 @@ public class NotFullScreenWithoutFooterActivity extends Activity {
     }
 
     private void addData() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }
