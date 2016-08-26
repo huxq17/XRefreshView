@@ -811,10 +811,10 @@ public class XRefreshView extends LinearLayout {
         }
         ViewCompat.postInvalidateOnAnimation(this);
         if (mRefreshViewListener != null && (mContentView.isTop() || mPullRefreshing)) {
-            double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
-            offset = offset > 1 ? 1 : offset;
-            mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
-            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY, deltaY);
+            double headerMovePercent = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
+//            headerMovePercent = headerMovePercent > 1 ? 1 : headerMovePercent;
+            mRefreshViewListener.onHeaderMove(headerMovePercent, mHolder.mOffsetY);
+            mHeaderCallBack.onHeaderMove(headerMovePercent, mHolder.mOffsetY, deltaY);
         }
     }
 
@@ -1216,11 +1216,10 @@ public class XRefreshView extends LinearLayout {
         /**
          * 获取headerview显示的高度与headerview高度的比例
          *
-         * @param offset  移动距离和headerview高度的比例，范围是0~1，0：headerview完全没显示
-         *                1：headerview完全显示
+         * @param headerMovePercent  移动距离和headerview高度的比例
          * @param offsetY headerview移动的距离
          */
-        public void onHeaderMove(double offset, int offsetY);
+        public void onHeaderMove(double headerMovePercent, int offsetY);
     }
 
     public static class SimpleXRefreshListener implements XRefreshViewListener {

@@ -44,9 +44,6 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
     public void setRefreshTime(long lastRefreshTime) {
     }
 
-    /**
-     * hide footer when disable pull load more
-     */
     public void hide() {
         setVisibility(View.GONE);
     }
@@ -87,7 +84,7 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
     }
 
     @Override
-    public void onHeaderMove(double offset, int offsetY, int deltaY) {
+    public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY) {
         //
     }
 

@@ -12,7 +12,7 @@ import com.andview.example.StickyListBean;
 import com.andview.example.StickylistAdapter;
 import com.andview.example.stickyListHeaders.StickyListHeadersListView;
 import com.andview.example.ui.CustomHeader;
-import com.andview.example.ui.raindrop.CustomerFooter;
+import com.andview.example.ui.smileyloadingview.SmileyHeaderView;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
@@ -39,10 +39,11 @@ public class CustomViewActivity extends Activity {
         stickyLv.setAdapter(adapter);
         refreshView = (XRefreshView) findViewById(R.id.custom_view);
         refreshView.setPullLoadEnable(true);
-        refreshView.setAutoRefresh(true);
+//        refreshView.setAutoRefresh(true);
         refreshView.setPinnedTime(mPinnedTime);
+        refreshView.setCustomHeaderView(new SmileyHeaderView(this));
         refreshView.setCustomHeaderView(new CustomHeader(CustomViewActivity.this,mPinnedTime));
-        refreshView.setCustomFooterView(new CustomerFooter(CustomViewActivity.this));
+//        refreshView.setCustomFooterView(new CustomerFooter(CustomViewActivity.this));
         refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
             @Override

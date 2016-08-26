@@ -31,10 +31,10 @@ public interface IHeaderCallBack {
     /**
      * 获取headerview显示的高度与headerview高度的比例
      *
-     * @param offset  移动距离和headerview高度的比例，范围是0~1，0：headerview完全没显示 1：headerview完全显示
+     * @param headerMovePercent  移动距离和headerview高度的比例
      * @param offsetY headerview移动的距离
      */
-    public void onHeaderMove(double offset, int offsetY, int deltaY);
+    public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY);
 
     /**
      * 设置显示上一次刷新的时间

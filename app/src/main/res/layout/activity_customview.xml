@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    xrefreshview:autoRefresh="true" >
+    >
 
     <com.andview.example.stickyListHeaders.StickyListHeadersListView
         android:id="@+id/sticky_list"
