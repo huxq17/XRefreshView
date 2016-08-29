@@ -48,6 +48,9 @@ public class MainActivity extends Activity {
             case R.id.bt_emptyview:
                 intent = new Intent(this, EmptyViewActivity.class);
                 break;
+            case R.id.bt_smileview:
+                intent = new Intent(this, SmileViewActivity.class);
+                break;
             case R.id.bt_rain:
 //                intent = new Intent(this, RainDropActivity.class);
                 break;

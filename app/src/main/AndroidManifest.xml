@@ -35,6 +35,7 @@
         <activity android:name=".activity.MultiItemRecyclerViewActivity" />
         <activity android:name=".activity.ShowFooterRecyclerViewActivity" />
         <activity android:name=".activity.NotFullScreenWithoutFooterActivity" />
+        <activity android:name=".activity.SmileViewActivity" />
     </application>
 
 </manifest>

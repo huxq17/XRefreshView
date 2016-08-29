@@ -33,11 +33,13 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.andview.example.R;
-import com.andview.refreshview.utils.LogUtils;
 
 /**
  * Create by andy (https://github.com/andyxialm)
  * Create time: 16/8/18 10:17
+ *
+ * Modify by huxq17 (https://github.com/huxq17) at 16/8/29 17:30
+ *
  * Description : SmileyLoadingView
  */
 public class SmileyLoadingView extends View {
@@ -63,7 +65,7 @@ public class SmileyLoadingView extends View {
     private int mAnimRepeatCount;
 
     private int mStrokeWidth;
-    private boolean mRunning;
+    public boolean mRunning;
     private boolean mStopping;
 
     private boolean mFirstStep;
@@ -390,7 +392,6 @@ public class SmileyLoadingView extends View {
      * @param angle
      */
     public void smile(float angle) {
-        LogUtils.e("smile angle=" + angle);
         update(angle);
     }
 

@@ -67,6 +67,14 @@
         android:text="数据少时不显示加载更多" />
 
     <Button
+        android:id="@+id/bt_smileview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="笑脸刷新" />
+
+    <Button
         android:id="@+id/bt_webView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

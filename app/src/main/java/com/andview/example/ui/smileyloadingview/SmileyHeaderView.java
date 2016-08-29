@@ -6,11 +6,12 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 
 import com.andview.example.R;
 import com.andview.refreshview.callback.IHeaderCallBack;
-import com.andview.refreshview.utils.LogUtils;
 
 /**
  * Created by 2144 on 2016/8/26.
@@ -36,15 +37,17 @@ public class SmileyHeaderView extends LinearLayout implements IHeaderCallBack {
     }
 
     private SmileyLoadingView loadingView;
+    private Scroller mScroller;
 
     private void init(Context context) {
         View contentView = LayoutInflater.from(context).inflate(R.layout.smiley_headerview, this);
         loadingView = (SmileyLoadingView) contentView.findViewById(R.id.loading_view);
+        mScroller = new Scroller(getContext(), new LinearInterpolator());
     }
 
     @Override
     public void onStateNormal() {
-
+        finished = false;
     }
 
     @Override
@@ -53,21 +56,66 @@ public class SmileyHeaderView extends LinearLayout implements IHeaderCallBack {
 
     @Override
     public void onStateRefreshing() {
-        loadingView.start(mAngle);
+        refreshing = true;
+        start();
     }
 
     @Override
     public void onStateFinish(boolean success) {
-        loadingView.stop();
+        refreshing = false;
+        finished = true;
+        mScroller.forceFinished(true);
+        removeCallbacks(mRunnable);
+        loadingView.smile(360 + 180);
+        hasHeaderMove = false;
     }
 
-    private float mAngle;
+    private void start() {
+        if (!refreshing) {
+            return;
+        }
+        loadingView.mRunning = true;
+        if (!hasHeaderMove) {
+            mAngle = 90;
+        }
+        int duration = (int) ((720.0f + 2 * 90 - mAngle) * 2000 / (720.0f + 90));
+        mScroller.startScroll(mAngle, 0, (int) (720.0f + 2 * 90 - mAngle), 0, duration);
+        post(mRunnable);
+    }
+
+
+    private boolean hasHeaderMove = false;
+
+    private AnimalRunnable mRunnable = new AnimalRunnable();
+
+    public class AnimalRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            int curX = mScroller.getCurrX();
+            if (curX != 0)
+                loadingView.smile(curX);
+            if (mScroller.computeScrollOffset()) {
+                post(this);
+            } else {
+                mAngle = 90;
+                loadingView.mRunning = false;
+                start();
+            }
+        }
+    }
+
+    private boolean finished = false;
+    private boolean refreshing = false;
+
+    private int mAngle;
 
     @Override
     public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY) {
-        LogUtils.e("onHeaderMove headerMovePercent=" + headerMovePercent + ";offsetY=" + offsetY + ";deltaY=" + deltaY);
+        if (finished || refreshing) return;
+        hasHeaderMove = true;
         if (headerMovePercent <= 1) {
-            mAngle = (float) ((360 + 180 - 90) * headerMovePercent + 90);
+            mAngle = (int) ((360 + 180 - 90) * headerMovePercent + 90);
             loadingView.smile(mAngle);
         }
     }

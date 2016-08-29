@@ -11,7 +11,7 @@ import com.andview.example.R;
 import com.andview.example.StickyListBean;
 import com.andview.example.StickylistAdapter;
 import com.andview.example.stickyListHeaders.StickyListHeadersListView;
-import com.andview.example.ui.CustomHeader;
+import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.example.ui.smileyloadingview.SmileyHeaderView;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
@@ -20,7 +20,7 @@ import com.andview.refreshview.listener.OnTopRefreshTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomViewActivity extends Activity {
+public class SmileViewActivity extends Activity {
     private StickyListHeadersListView stickyLv;
     private List<StickyListBean> list = new ArrayList<StickyListBean>();
     private XRefreshView refreshView;
@@ -39,10 +39,9 @@ public class CustomViewActivity extends Activity {
         stickyLv.setAdapter(adapter);
         refreshView = (XRefreshView) findViewById(R.id.custom_view);
         refreshView.setPullLoadEnable(true);
-        refreshView.setAutoRefresh(true);
         refreshView.setPinnedTime(mPinnedTime);
         refreshView.setCustomHeaderView(new SmileyHeaderView(this));
-        refreshView.setCustomHeaderView(new CustomHeader(CustomViewActivity.this,mPinnedTime));
+        refreshView.setCustomFooterView(new CustomerFooter(SmileViewActivity.this));
         refreshView.setOnTopRefreshTime(new OnTopRefreshTime() {
 
             @Override
@@ -88,7 +87,7 @@ public class CustomViewActivity extends Activity {
                     public void run() {
                         refreshView.stopRefresh();
                     }
-                }, 2000);
+                }, 4000);
             }
 
             @Override

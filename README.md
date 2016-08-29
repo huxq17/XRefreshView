@@ -1,4 +1,4 @@
-﻿# XRefreshView
+﻿﻿# XRefreshView
 
 ###Usage
 ----
@@ -16,20 +16,17 @@ dependencies {
 
 ##最新的使用说明请移步[我的博客](http://blog.csdn.net/footballclub/article/details/46982115 "description")
 ##效果图
-###松开加载更多的Recyclerview
-![松开加载更多的Recyclerview](gif/xrefresh_releasetoloadmore.gif)
-###带Banner的Recyclerview
-![带Banner的Recyclerview](gif/xrefresh_banner.gif)
-###LinearLayout样式的Recyclerview
-![LinearLayout样式的Recyclerview](gif/xrefresh_linearlayout.gif)
-###GridLayout样式的Recyclerview
-![GridLayout样式的Recyclerview](gif/xrefresh_gridlayout.gif)
-###Staggered样式的Recyclerview
-![Staggered样式的Recyclerview](gif/xrefresh_staggeredlayout.gif)
-###GridView
-![自带的头部](gif/xrefresh_gridview.gif)
-###自定义View
-![自定义头部](gif/xrefresh_customview.gif)
+|松开加载更多的Recyclerview|带Banner的Recyclerview| LinearLayout样式的Recyclerview|
+|:-----|:-----|:-----|
+| <img src="gif/xrefresh_releasetoloadmore.gif" width="280" height="475" />    | <img src="gif/xrefresh_banner.gif" width="280" height="475" /> | <img src="gif/xrefresh_linearlayout.gif" width="280" height="475" /> |
+
+|GridLayout样式的Recyclerview|Staggered样式的Recyclerview|
+|:-----|:-----|
+| <img src="gif/xrefresh_gridlayout.gif" width="280" height="475" />| <img src="gif/xrefresh_staggeredlayout.gif" width="280" height="475" />|
+
+|GridView|自定义View|笑脸刷新|
+|:-----|:-----|
+| <img src="gif/xrefresh_gridview.gif" width="280" height="475" />| <img src="gif/xrefresh_customview.gif" width="280" height="475" />|<img src="gif/xrefresh_smile.gif" width="280" height="475" />|
 
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
