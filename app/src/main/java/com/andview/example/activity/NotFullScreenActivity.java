@@ -74,7 +74,7 @@ public class NotFullScreenActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
                 LogUtils.e("loadmore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {

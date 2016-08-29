@@ -49,7 +49,7 @@ public class WebViewActivity extends Activity {
 			}
 
 			@Override
-			public void onLoadMore(boolean isSlience) {
+			public void onLoadMore(boolean isSilence) {
 				new Handler().postDelayed(new Runnable() {
 
 					@Override

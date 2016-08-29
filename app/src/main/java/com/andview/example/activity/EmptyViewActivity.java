@@ -52,7 +52,7 @@ public class EmptyViewActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
@@ -78,7 +78,7 @@ public class EmptyViewActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         // 刷新完成必须调用此方法停止加载

@@ -72,7 +72,7 @@ public class ShowFooterRecyclerViewActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
