@@ -3,7 +3,6 @@ package com.andview.example;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ public class IndexPageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ((ViewPager) container).removeView((View) object);
+        container.removeView((View) object);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class IndexPageAdapter extends PagerAdapter {
         final int index = position % images.length;
         imageView.setBackgroundResource(images[index]);
 
-        ((ViewPager) view).addView(imageLayout, 0);
+        view.addView(imageLayout, 0);
 
         return imageLayout;
     }

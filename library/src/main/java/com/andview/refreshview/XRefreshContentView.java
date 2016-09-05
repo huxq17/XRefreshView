@@ -227,10 +227,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
         }
-        initFooterCallBack(adapter,mParent);
+        initFooterCallBack(adapter, mParent);
     }
 
-    public void initFooterCallBack(BaseRecyclerAdapter adapter,XRefreshView parent) {
+    public void initFooterCallBack(BaseRecyclerAdapter adapter, XRefreshView parent) {
         if (!mSilenceLoadMore) {
             if (adapter != null) {
                 View footerView = adapter.getCustomLoadMoreView();
@@ -792,8 +792,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             View childView = scrollView.getChildAt(0);
             if (childView != null) {
                 return canScrollVertically(child, 1)
-                        || scrollView.getScrollY() != childView.getHeight()
-                        - scrollView.getHeight();
+                        || scrollView.getScrollY() != childView.getHeight() - scrollView.getHeight();
             }
         } else {
             return canScrollVertically(child, 1);

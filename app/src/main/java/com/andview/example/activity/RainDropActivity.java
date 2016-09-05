@@ -19,7 +19,7 @@ public class RainDropActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scrollview);
+        setContentView(R.layout.adapter_scrollview);
 
         outView = (XRefreshView) findViewById(R.id.custom_view);
         ll = (LinearLayout) findViewById(R.id.ll);
