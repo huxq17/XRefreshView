@@ -792,7 +792,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             View childView = scrollView.getChildAt(0);
             if (childView != null) {
                 return canScrollVertically(child, 1)
-                        || scrollView.getScrollY() != childView.getHeight() - scrollView.getHeight();
+                        || scrollView.getScrollY() < childView.getHeight() - scrollView.getHeight();
             }
         } else {
             return canScrollVertically(child, 1);
