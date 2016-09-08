@@ -134,11 +134,13 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        mParent = (XRefreshView) recyclerView.getParent();
-        if (mParent != null && !observer.hasAttached()) {
-            observer.setData(this, mParent);
-            observer.attach();
-            registerAdapterDataObserver(observer);
+        if (recyclerView.getParent() instanceof XRefreshView) {
+            mParent = (XRefreshView) recyclerView.getParent();
+            if (mParent != null && !observer.hasAttached()) {
+                observer.setData(this, mParent);
+                observer.attach();
+                registerAdapterDataObserver(observer);
+            }
         }
     }
 
@@ -151,8 +153,8 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
             Utils.removeViewFromParent(customLoadMoreView);
-            if(mParent!=null&&mParent.getContentView()!=null){
-                mParent.getContentView().initFooterCallBack(this,mParent);
+            if (mParent != null && mParent.getContentView() != null) {
+                mParent.getContentView().initFooterCallBack(this, mParent);
             }
             showFooter(customLoadMoreView, false);
             notifyDataSetChanged();
