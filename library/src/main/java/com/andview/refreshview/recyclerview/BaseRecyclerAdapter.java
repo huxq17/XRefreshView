@@ -7,6 +7,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import com.andview.refreshview.XRefreshView;
@@ -134,7 +135,8 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        if (recyclerView.getParent() instanceof XRefreshView) {
+        ViewParent parent = recyclerView.getParent();
+        if (parent != null && parent instanceof XRefreshView) {
             mParent = (XRefreshView) recyclerView.getParent();
             if (mParent != null && !observer.hasAttached()) {
                 observer.setData(this, mParent);

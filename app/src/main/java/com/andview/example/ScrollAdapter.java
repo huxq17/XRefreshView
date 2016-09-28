@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
+import com.andview.refreshview.XScrollView;
 
 public class ScrollAdapter extends PagerAdapter {
 
@@ -41,6 +43,16 @@ public class ScrollAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup view, int position) {
         final View imageLayout = mInflater.inflate(R.layout.adapter_scrollview, view, false);
         final XRefreshView outView = (XRefreshView) imageLayout.findViewById(R.id.custom_view);
+        final XScrollView scrollView = (XScrollView) imageLayout.findViewById(R.id.xscrollview);
+        scrollView.setOnScrollListener(new XScrollView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(ScrollView view, int scrollState, boolean arriveBottom) {
+            }
+
+            @Override
+            public void onScroll(int l, int t, int oldl, int oldt) {
+            }
+        });
         outView.setAutoRefresh(false);
         outView.setPullLoadEnable(true);
         outView.setPinnedTime(1000);

@@ -19,6 +19,7 @@ public class ScrollViewActivity extends Activity {
         mViewPager = (ViewPager) findViewById(R.id.index_viewpager);
         ScrollAdapter adapter = new ScrollAdapter(this);
         mViewPager.setAdapter(adapter);
+
     }
 
     @Override

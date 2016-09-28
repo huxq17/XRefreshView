@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.2'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.5'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
 ### 更新日志：<br/>
+    2016-9-28：
+    1.添加xscrollview的滑动监听
+
     2016-9-6：
     1.解决issue[#36](https://github.com/huxq17/XRefreshView/issues/36)
 

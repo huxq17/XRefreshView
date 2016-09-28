@@ -8,7 +8,7 @@
     xrefreshview:autoRefresh="false" >
 
     <com.andview.refreshview.XScrollView
-        android:id="@+id/gv"
+        android:id="@+id/xscrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

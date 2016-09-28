@@ -7,8 +7,7 @@ import android.widget.ScrollView;
 
 public class XScrollView extends ScrollView {
 
-    // 外部设置的监听方法
-    private OnScrollListener onScrollListener;
+    private OnScrollListener onScrollListener, mScrollListener;
     // 是否在触摸状态
     private boolean inTouch = false;
     // 上次滑动的最后位置
@@ -33,11 +32,17 @@ public class XScrollView extends ScrollView {
             if (t != oldt) {
                 // 有手指触摸，并且位置有滚动
                 onScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_TOUCH_SCROLL, isBottom());
+                if (mScrollListener != null) {
+                    mScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_TOUCH_SCROLL, isBottom());
+                }
             }
         } else {
             if (t != oldt) {
                 // 没有手指触摸，并且位置有滚动，就可以简单的认为是在fling
                 onScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_FLING, isBottom());
+                if (mScrollListener != null) {
+                    mScrollListener.onScrollStateChanged(this, OnScrollListener.SCROLL_STATE_FLING, isBottom());
+                }
                 // 记住上次滑动的最后位置
                 lastT = t;
                 removeCallbacks(mRunnable);
@@ -45,6 +50,9 @@ public class XScrollView extends ScrollView {
             }
         }
         onScrollListener.onScroll(l, t, oldl, oldt);
+        if (mScrollListener != null) {
+            mScrollListener.onScroll(l, t, oldl, oldt);
+        }
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -53,6 +61,9 @@ public class XScrollView extends ScrollView {
             if (lastT == getScrollY() && !inTouch) {
                 // 如果上次的位置和当前的位置相同，可认为是在空闲状态
                 onScrollListener.onScrollStateChanged(XScrollView.this, OnScrollListener.SCROLL_STATE_IDLE, isBottom());
+                if (mScrollListener != null) {
+                    mScrollListener.onScrollStateChanged(XScrollView.this, OnScrollListener.SCROLL_STATE_IDLE, isBottom());
+                }
             }
         }
     };
@@ -62,14 +73,9 @@ public class XScrollView extends ScrollView {
     }
 
 
-    /**
-     * 设置滚动监听事件
-     *
-     * @param onScrollListener {@link OnScrollListener} 滚动监听事件（注意类的不同，虽然名字相同）
-     */
-    public void setOnScrollListener(XRefreshView parent, OnScrollListener onScrollListener) {
+    protected void setOnScrollListener(XRefreshView parent, OnScrollListener scrollListener) {
         mParent = parent;
-        this.onScrollListener = onScrollListener;
+        this.onScrollListener = scrollListener;
         mParent.addTouchLifeCycle(new XRefreshView.TouchLifeCycle() {
             @Override
             public void onTouch(MotionEvent event) {
@@ -89,6 +95,14 @@ public class XScrollView extends ScrollView {
                 }
             }
         });
+    }
+
+    /**
+     * 设置XScrollView的滚动监听
+     * @param scrollListener
+     */
+    public void setOnScrollListener(OnScrollListener scrollListener) {
+        mScrollListener = scrollListener;
     }
 
     /**
