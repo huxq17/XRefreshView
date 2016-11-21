@@ -28,7 +28,7 @@ dependencies {
 |:-----|:-----|:-----|
 | <img src="gif/xrefresh_gridview.gif" width="280" height="475" />| <img src="gif/xrefresh_customview.gif" width="280" height="475" />|<img src="gif/xrefresh_smile.gif" width="280" height="475" />|
 
-还有listview,scrollview，webview等其他的view就不一一截图了。
+还有listview,scrollview，webview等其他的view就不一一截图了。建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。
 
 ### 更新日志：<br/>
     2016-9-28：
