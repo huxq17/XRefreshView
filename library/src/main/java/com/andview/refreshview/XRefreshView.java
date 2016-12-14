@@ -900,10 +900,17 @@ public class XRefreshView extends LinearLayout {
     /**
      * 停止加载更多，流畅的回到初始位置，而不是瞬间到达
      *
-     * @param hideFooter hide footerview if true
+     * @param hideFooter hide footerview if true  和stopLoadMore的参数一样的意思
      */
     public void stopLoadMoreSmoothly(boolean hideFooter) {
         stopLoadMore(hideFooter, SCROLLBACK_DURATION);
+    }
+
+    /**
+     * 停止加载更多，流畅的回到初始位置，而不是瞬间到达
+     */
+    public void stopLoadMoreSmoothly() {
+        stopLoadMore(true, SCROLLBACK_DURATION);
     }
 
     private void stopLoadMore(final boolean hideFooter, final int scrollBackDuration) {
@@ -956,7 +963,7 @@ public class XRefreshView extends LinearLayout {
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (needAddFooterView()) {
-            stopLoadMoreSmoothly(true);
+            stopLoadMoreSmoothly();
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
 //                mFooterCallBack.show(true);
@@ -972,7 +979,7 @@ public class XRefreshView extends LinearLayout {
     private int SCROLLBACK_DURATION = 300;
 
     /**
-     * 设置当非recyclerview上拉加载完成以后的回弹时间
+     * 设置当非AbsListView上拉加载完成以后的回弹时间
      *
      * @param duration
      */
