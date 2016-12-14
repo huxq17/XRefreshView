@@ -47,7 +47,7 @@ public class GridViewActivity extends Activity {
         xRefreshView.setMoveForHorizontal(true);
         xRefreshView.setCustomFooterView(new CustomerFooter(this));
 //		xRefreshView.setPinnedContent(true);
-        //设置当非AbsListView上拉加载完成以后的回弹时间
+        //设置当AbsListView上拉加载完成以后的回弹时间
         xRefreshView.setScrollBackDuration(300);
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
             @Override
