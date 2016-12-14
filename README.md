@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.5'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.6'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。
 
 ### 更新日志：<br/>
+    2016-12-14：
+    1.AbsListView(ListView、GridView)支持加载更多数据完成之后露出新加载的数据。
+
     2016-9-28：
     1.添加xscrollview的滑动监听
 

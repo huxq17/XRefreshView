@@ -22,7 +22,7 @@ import java.util.Random;
 public class GridViewActivity extends Activity {
     private GridView gv;
     private List<String> str_name = new ArrayList<String>();
-    private XRefreshView outView;
+    private XRefreshView xRefreshView;
     private ArrayAdapter<String> adapter;
 
     @Override
@@ -33,21 +33,22 @@ public class GridViewActivity extends Activity {
             str_name.add("数据" + i);
         }
         gv = (GridView) findViewById(R.id.gv);
-        outView = (XRefreshView) findViewById(R.id.custom_view);
-        outView.setPullLoadEnable(true);
+        xRefreshView = (XRefreshView) findViewById(R.id.custom_view);
+        xRefreshView.setPullLoadEnable(true);
         //设置在上拉加载被禁用的情况下，是否允许界面被上拉
-//		outView.setMoveFootWhenDisablePullLoadMore(false);
+//		xRefreshView.setMoveFootWhenDisablePullLoadMore(false);
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, str_name);
         gv.setAdapter(adapter);
-        outView.setPinnedTime(1000);
-//		outView.setAutoLoadMore(true);
-//		outView.setCustomHeaderView(new CustomHeader(this));
-//		outView.setCustomHeaderView(new XRefreshViewHeader(this));
-        outView.setMoveForHorizontal(true);
-        outView.setCustomFooterView(new CustomerFooter(this));
-//		outView.setPinnedContent(true);
-        outView.setXRefreshViewListener(new SimpleXRefreshListener() {
+        xRefreshView.setPinnedTime(1000);
+//		xRefreshView.setAutoLoadMore(true);
+//		xRefreshView.setCustomHeaderView(new CustomHeader(this));
+//		xRefreshView.setCustomHeaderView(new XRefreshViewHeader(this));
+        xRefreshView.setMoveForHorizontal(true);
+        xRefreshView.setCustomFooterView(new CustomerFooter(this));
+//		xRefreshView.setPinnedContent(true);
+        xRefreshView.setScrollBackDuration(300);
+        xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
             @Override
             public void onRefresh() {
 
@@ -57,13 +58,13 @@ public class GridViewActivity extends Activity {
                         //模拟数据加载失败的情况
                         Random random = new Random();
                         boolean success = random.nextBoolean();
-                        if(success){
-                            outView.stopRefresh();
-                        }else{
-                            outView.stopRefresh(false);
+                        if (success) {
+                            xRefreshView.stopRefresh();
+                        } else {
+                            xRefreshView.stopRefresh(false);
                         }
                         //或者
-//                        outView.stopRefresh(success);
+//                        xRefreshView.stopRefresh(success);
                     }
                 }, 2000);
             }
@@ -84,9 +85,9 @@ public class GridViewActivity extends Activity {
                             if (Build.VERSION.SDK_INT >= 11) {
                                 adapter.addAll(addlist);
                             }
-                            outView.stopLoadMore();
+                            xRefreshView.stopLoadMore();
                         } else {
-                            outView.setLoadComplete(true);
+                            xRefreshView.setLoadComplete(true);
                         }
                     }
                 }, 2000);
@@ -97,7 +98,7 @@ public class GridViewActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        outView.startRefresh();
+        xRefreshView.startRefresh();
     }
 
     @Override
@@ -117,10 +118,10 @@ public class GridViewActivity extends Activity {
                     str_name.add("数据" + i);
                 }
                 adapter.notifyDataSetChanged();
-                outView.setLoadComplete(false);
+                xRefreshView.setLoadComplete(false);
                 break;
             case R.id.menu_refresh:
-                outView.startRefresh();
+                xRefreshView.startRefresh();
                 break;
 
             default:

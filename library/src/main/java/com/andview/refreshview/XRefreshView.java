@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.LinearInterpolator;
+import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
@@ -299,17 +300,17 @@ public class XRefreshView extends LinearLayout {
         int height = MeasureSpec.getSize(heightMeasureSpec);
         int childCount = getChildCount();
         int finalHeight = 0;
+        final int paddingLeft = getPaddingLeft();
+        final int paddingRight = getPaddingRight();
+        final int paddingTop = getPaddingTop();
+        final int paddingBottom = getPaddingBottom();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             if (child.getVisibility() != View.GONE) {
-                final int paddingLeft = getPaddingLeft();
-                final int paddingRight = getPaddingRight();
-                final int paddingTop = getPaddingTop();
-                final int paddingBottom = getPaddingBottom();
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
                 int childWidthSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth() - lp.leftMargin - lp.rightMargin - paddingLeft - paddingRight, MeasureSpec.EXACTLY);
 //                int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-//                        paddingLeft + paddingRight, getMeasuredWidth()-lp.leftMargin - lp.rightMargin);
+//                        paddingLeft + paddingRight,  getMeasuredWidth()-lp.leftMargin - lp.rightMargin);
                 int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
                         paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
                 child.measure(childWidthSpec, childHeightSpec);
@@ -892,9 +893,22 @@ public class XRefreshView extends LinearLayout {
      *
      * @param hideFooter hide footerview if true
      */
-    public void stopLoadMore(final boolean hideFooter) {
+    public void stopLoadMore(boolean hideFooter) {
+        stopLoadMore(hideFooter, 0);
+    }
+
+    /**
+     * 停止加载更多，流畅的回到初始位置，而不是瞬间到达
+     *
+     * @param hideFooter hide footerview if true
+     */
+    public void stopLoadMoreSmoothly(boolean hideFooter) {
+        stopLoadMore(hideFooter, SCROLLBACK_DURATION);
+    }
+
+    private void stopLoadMore(final boolean hideFooter, final int scrollBackDuration) {
         if (needAddFooterView()) {
-            if (mPullLoading == true) {
+            if (mPullLoading) {
                 mStopingRefresh = true;
                 mState = XRefreshViewState.STATE_COMPLETE;
                 mFooterCallBack.onStateFinish(hideFooter);
@@ -903,16 +917,24 @@ public class XRefreshView extends LinearLayout {
 
                         @Override
                         public void run() {
-                            endLoadMore(hideFooter);
+                            endLoadMore(hideFooter, scrollBackDuration);
                         }
                     }, mPinnedTime);
                 } else {
-                    endLoadMore(hideFooter);
+                    endLoadMore(hideFooter, scrollBackDuration);
                 }
             }
         }
 
         mContentView.stopLoading(hideFooter);
+    }
+
+    private void scrollback() {
+        View child = mContentView.getContentView();
+        if (child instanceof AbsListView) {
+            AbsListView absListView = (AbsListView) child;
+            absListView.smoothScrollBy(mFootHeight, 0);
+        }
     }
 
     protected void resetLayout() {
@@ -934,7 +956,7 @@ public class XRefreshView extends LinearLayout {
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (needAddFooterView()) {
-            stopLoadMore();
+            stopLoadMoreSmoothly(true);
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
 //                mFooterCallBack.show(true);
@@ -947,9 +969,21 @@ public class XRefreshView extends LinearLayout {
         return mHasLoadComplete;
     }
 
-    private void endLoadMore(boolean hideFooter) {
+    private int SCROLLBACK_DURATION = 300;
+
+    /**
+     * 设置当非recyclerview上拉加载完成以后的回弹时间
+     *
+     * @param duration
+     */
+    public void setScrollBackDuration(int duration) {
+        SCROLLBACK_DURATION = duration;
+    }
+
+    private void endLoadMore(boolean hideFooter, int scrolbackduration) {
+        scrollback();
         mPullLoading = false;
-        startScroll(-mHolder.mOffsetY, 0);
+        startScroll(-mHolder.mOffsetY, scrolbackduration);
 //        mFooterCallBack.onStateRefreshing();
         if (mHasLoadComplete && hideFooter) {
             mFooterCallBack.show(false);
@@ -1216,8 +1250,8 @@ public class XRefreshView extends LinearLayout {
         /**
          * 获取headerview显示的高度与headerview高度的比例
          *
-         * @param headerMovePercent  移动距离和headerview高度的比例
-         * @param offsetY headerview移动的距离
+         * @param headerMovePercent 移动距离和headerview高度的比例
+         * @param offsetY           headerview移动的距离
          */
         public void onHeaderMove(double headerMovePercent, int offsetY);
     }

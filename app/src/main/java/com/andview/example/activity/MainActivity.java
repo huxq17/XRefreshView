@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.andview.example.R;
+import com.andview.refreshview.utils.LogUtils;
 
 public class MainActivity extends Activity {
 
@@ -13,6 +14,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //如果不想XRefreshView后台输出log，此处传入false即可
+        LogUtils.enableLog(true);
     }
 
     public void onClick(View v) {
