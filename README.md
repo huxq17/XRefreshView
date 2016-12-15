@@ -31,8 +31,8 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。
 
 ### 更新日志：<br/>
-    2016-12-14：
-    1.AbsListView(ListView、GridView)支持加载更多数据完成之后露出新加载的数据。
+    2016-12-15：
+    1.优化非RecyclerView上拉加载回弹的效果，同时支持AbsListView(ListView、GridView)加载更多数据完成之后露出新加载的数据。
 
     2016-9-28：
     1.添加xscrollview的滑动监听

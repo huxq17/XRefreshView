@@ -894,23 +894,7 @@ public class XRefreshView extends LinearLayout {
      * @param hideFooter hide footerview if true
      */
     public void stopLoadMore(boolean hideFooter) {
-        stopLoadMore(hideFooter, 0);
-    }
-
-    /**
-     * 停止加载更多，流畅的回到初始位置，而不是瞬间到达
-     *
-     * @param hideFooter hide footerview if true  和stopLoadMore的参数一样的意思
-     */
-    public void stopLoadMoreSmoothly(boolean hideFooter) {
         stopLoadMore(hideFooter, SCROLLBACK_DURATION);
-    }
-
-    /**
-     * 停止加载更多，流畅的回到初始位置，而不是瞬间到达
-     */
-    public void stopLoadMoreSmoothly() {
-        stopLoadMore(true, SCROLLBACK_DURATION);
     }
 
     private void stopLoadMore(final boolean hideFooter, final int scrollBackDuration) {
@@ -936,11 +920,11 @@ public class XRefreshView extends LinearLayout {
         mContentView.stopLoading(hideFooter);
     }
 
-    private void scrollback() {
+    private void scrollback(int offset) {
         View child = mContentView.getContentView();
         if (child instanceof AbsListView) {
             AbsListView absListView = (AbsListView) child;
-            absListView.smoothScrollBy(mFootHeight, 0);
+            absListView.smoothScrollBy(offset, 0);
         }
     }
 
@@ -963,7 +947,7 @@ public class XRefreshView extends LinearLayout {
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (needAddFooterView()) {
-            stopLoadMoreSmoothly();
+            stopLoadMore(true);
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
 //                mFooterCallBack.show(true);
@@ -979,7 +963,7 @@ public class XRefreshView extends LinearLayout {
     private int SCROLLBACK_DURATION = 300;
 
     /**
-     * 设置当非AbsListView上拉加载完成以后的回弹时间
+     * 设置当非RecyclerView上拉加载完成以后的回弹时间
      *
      * @param duration
      */
@@ -988,8 +972,8 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void endLoadMore(boolean hideFooter, int scrolbackduration) {
-        scrollback();
         mPullLoading = false;
+        mRunnable.isStopLoadMore = true;
         startScroll(-mHolder.mOffsetY, scrolbackduration);
 //        mFooterCallBack.onStateRefreshing();
         if (mHasLoadComplete && hideFooter) {
@@ -1006,7 +990,8 @@ public class XRefreshView extends LinearLayout {
         post(mRunnable);
     }
 
-    private Runnable mRunnable = new Runnable() {
+    private ScrollRunner mRunnable = new ScrollRunner() {
+
         @Override
         public void run() {
             if (mScroller.computeScrollOffset()) {
@@ -1023,11 +1008,15 @@ public class XRefreshView extends LinearLayout {
                     mContentView.startLoadMore(false, null, null);
                 }
                 post(this);
+                if (isStopLoadMore) {
+                    scrollback(offsetY);
+                }
             } else {
                 int currentY = mScroller.getCurrY();
                 if (mHolder.mOffsetY == 0) {
                     enablePullUp(true);
                     mStopingRefresh = false;
+                    isStopLoadMore = false;
                 } else {
                     //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
                     if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
