@@ -705,8 +705,21 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         this.mBottomLoadMoreTime = bottomLoadMoreTime;
     }
 
+    private boolean isForbidLoadMore = true;
+
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
+        /******解决abslistview数据不满一屏的时候，会重复加载更多的问题 start ******/
+        if (mParent.isStopLoadMore() && scrollState == OnScrollListener.SCROLL_STATE_FLING) {
+            isForbidLoadMore = true;
+        }
+        if (isForbidLoadMore) {
+            if (!mParent.isStopLoadMore() && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+                isForbidLoadMore = false;
+            }
+            return;
+        }
+        /******解决abslistview数据不满一屏的时候，会重复加载更多的问题 end ******/
         if (mSilenceLoadMore) {
             if (mRefreshViewListener != null && !hasLoadCompleted() && !mIsLoadingMore && mTotalItemCount - 1 <= view.getLastVisiblePosition() + mPreLoadCount) {
                 mRefreshViewListener.onLoadMore(true);

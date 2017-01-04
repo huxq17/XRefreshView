@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.6'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.7'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。
 
 ### 更新日志：<br/>
+    2017-1-4：
+    1.解决AbsListview数据不满一屏的时候，会重复加载更多的问题。
+
     2016-12-15：
     1.优化非RecyclerView上拉加载回弹的效果，同时支持AbsListView(ListView、GridView)加载更多数据完成之后露出新加载的数据。
 

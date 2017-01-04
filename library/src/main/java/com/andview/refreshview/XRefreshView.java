@@ -990,6 +990,10 @@ public class XRefreshView extends LinearLayout {
         post(mRunnable);
     }
 
+    public boolean isStopLoadMore() {
+        return mRunnable.isStopLoadMore;
+    }
+
     private ScrollRunner mRunnable = new ScrollRunner() {
 
         @Override
