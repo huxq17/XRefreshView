@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。
 
 ### 更新日志：<br/>
+    2017-1-6：
+    1.解决issue[#49](https://github.com/huxq17/XRefreshView/issues/49)。
+
     2017-1-4：
     1.解决AbsListview数据不满一屏的时候，会重复加载更多的问题。
 

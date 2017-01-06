@@ -3,7 +3,10 @@ package com.andview.refreshview;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.widget.ScrollView;
+
+import com.andview.refreshview.utils.LogUtils;
 
 public class XScrollView extends ScrollView {
 
@@ -13,13 +16,16 @@ public class XScrollView extends ScrollView {
     // 上次滑动的最后位置
     private int lastT = 0;
     private XRefreshView mParent;
+    private int mTouchSlop;
+    private float lastY;
 
     public XScrollView(Context context) {
-        super(context);
+        super(context, null);
     }
 
     public XScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
     @Override
@@ -72,7 +78,6 @@ public class XScrollView extends ScrollView {
         return getScrollY() + getHeight() >= computeVerticalScrollRange();
     }
 
-
     protected void setOnScrollListener(XRefreshView parent, OnScrollListener scrollListener) {
         mParent = parent;
         this.onScrollListener = scrollListener;
@@ -82,6 +87,8 @@ public class XScrollView extends ScrollView {
                 int action = event.getAction();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
+                        lastY = event.getRawY();
+                        LogUtils.e("lastY=" + lastY);
                     case MotionEvent.ACTION_MOVE:
                         inTouch = true;
                         break;
@@ -89,8 +96,11 @@ public class XScrollView extends ScrollView {
                     case MotionEvent.ACTION_CANCEL:
                         inTouch = false;
                         lastT = getScrollY();
-                        removeCallbacks(mRunnable);
-                        postDelayed(mRunnable, 20);
+                        float curY = event.getRawY();
+                        if (lastY - curY >= mTouchSlop) {
+                            removeCallbacks(mRunnable);
+                            postDelayed(mRunnable, 20);
+                        }
                         break;
                 }
             }
@@ -99,6 +109,7 @@ public class XScrollView extends ScrollView {
 
     /**
      * 设置XScrollView的滚动监听
+     *
      * @param scrollListener
      */
     public void setOnScrollListener(OnScrollListener scrollListener) {
