@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.5.8'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.0'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。
 
 ### 更新日志：<br/>
+    2017-1-13：
+    1.解决Recyclerview使用StaggeredGridLayoutManager时，添加的headerview不能使用全部宽度的问题(headview layout won't use all span area)。
+
     2017-1-6：
     1.解决issue[#49](https://github.com/huxq17/XRefreshView/issues/49)。
 

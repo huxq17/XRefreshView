@@ -124,7 +124,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
         ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
         if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
             StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
-            p.setFullSpan(isFooter(position));
+            p.setFullSpan(isFooter(position) || isHeader(position));
         }
     }
 
