@@ -70,7 +70,7 @@ public class ScrollAdapter extends PagerAdapter {
             }
 
             @Override
-            public void onRefresh() {
+            public void onRefresh(boolean isPullDown) {
                 imageLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {

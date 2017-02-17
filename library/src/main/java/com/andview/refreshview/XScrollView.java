@@ -6,8 +6,6 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.ScrollView;
 
-import com.andview.refreshview.utils.LogUtils;
-
 public class XScrollView extends ScrollView {
 
     private OnScrollListener onScrollListener, mScrollListener;
@@ -88,7 +86,6 @@ public class XScrollView extends ScrollView {
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         lastY = event.getRawY();
-                        LogUtils.e("lastY=" + lastY);
                     case MotionEvent.ACTION_MOVE:
                         inTouch = true;
                         break;

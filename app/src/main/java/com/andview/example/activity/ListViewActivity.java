@@ -54,10 +54,8 @@ public class ListViewActivity extends Activity {
 //		});
 
         refreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
-
             @Override
-            public void onRefresh() {
-
+            public void onRefresh(boolean isPullDown) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

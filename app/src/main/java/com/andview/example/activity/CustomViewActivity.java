@@ -81,7 +81,7 @@ public class CustomViewActivity extends Activity {
         refreshView.setXRefreshViewListener(new XRefreshView.SimpleXRefreshListener() {
 
             @Override
-            public void onRefresh() {
+            public void onRefresh(boolean isPullDown) {
 
                 new Handler().postDelayed(new Runnable() {
                     @Override

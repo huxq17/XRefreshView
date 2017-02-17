@@ -44,7 +44,7 @@ public class WebViewActivity extends Activity {
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
-			public void onRefresh() {
+			public void onRefresh(boolean isPullDown) {
 				mWebView.loadUrl("http://www.baidu.com");
 			}
 

@@ -42,7 +42,7 @@ public class EmptyViewActivity extends Activity {
         configXRfreshView(xRefreshView1, new XRefreshView.SimpleXRefreshListener() {
 
             @Override
-            public void onRefresh() {
+            public void onRefresh(boolean isPullDown) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

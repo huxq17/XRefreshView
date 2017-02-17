@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.1'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.2'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,17 +31,22 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。**建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。**
 
 ### 更新日志：<br/>
+    2017-2-17：
+    1.添加下拉刷新时的回调onRefresh(boolean isPullDown)，其中isPullDown用来判断此次下拉刷新是不是由下拉手势触发的，true则代表是，
+    反之则是自动刷新或者是调用XRefreshView#startRefresh()}触发的刷新
+    2.升级到3.6.2版本
+
     2017-2-16：
     1.解决issue[#58](https://github.com/huxq17/XRefreshView/issues/58)
 
     2017-1-13：
-    1.解决Recyclerview使用StaggeredGridLayoutManager时，添加的headerview不能使用全部宽度的问题(headview layout won't use all span area)。
+    1.解决Recyclerview使用StaggeredGridLayoutManager时，添加的headerview不能使用全部宽度的问题(headview layout won't use all span area)
 
     2017-1-6：
     1.解决issue[#49](https://github.com/huxq17/XRefreshView/issues/49)
 
     2017-1-4：
-    1.解决AbsListview数据不满一屏的时候，会重复加载更多的问题。
+    1.解决AbsListview数据不满一屏的时候，会重复加载更多的问题
 
     2016-12-15：
     1.优化非RecyclerView上拉加载回弹的效果，同时支持AbsListView(ListView、GridView)加载更多数据完成之后露出新加载的数据

@@ -473,6 +473,7 @@ public class XRefreshView extends LinearLayout {
                         mState = XRefreshViewState.STATE_REFRESHING;
                         if (mRefreshViewListener != null) {
                             mRefreshViewListener.onRefresh();
+                            mRefreshViewListener.onRefresh(true);
                         }
                     }
                     resetHeaderHeight();
@@ -776,6 +777,7 @@ public class XRefreshView extends LinearLayout {
             mPullRefreshing = true;
             if (mRefreshViewListener != null) {
                 mRefreshViewListener.onRefresh();
+                mRefreshViewListener.onRefresh(false);
             }
             mContentView.scrollToTop();
         } else {
@@ -1233,19 +1235,28 @@ public class XRefreshView extends LinearLayout {
      * implements this interface to get refresh/load more event.
      */
     public interface XRefreshViewListener {
-        public void onRefresh();
+        /**
+         * use {@link #onRefresh(boolean)} instead.
+         */
+        @Deprecated
+        void onRefresh();
+
+        /**
+         * @param isPullDown 是不是由下拉手势引起的刷新，是则返回true，反之则是自动刷新或者是调用{@link #startRefresh()}引起的刷新
+         */
+        void onRefresh(boolean isPullDown);
 
         /**
          * @param isSilence 是不是静默加载，静默加载即不显示footerview，自动监听滚动到底部并触发此回调
          */
-        public void onLoadMore(boolean isSilence);
+        void onLoadMore(boolean isSilence);
 
         /**
          * 用户手指释放的监听回调
          *
          * @param direction >0: 下拉释放，<0:上拉释放 注：暂时没有使用这个方法
          */
-        public void onRelease(float direction);
+        void onRelease(float direction);
 
         /**
          * 获取headerview显示的高度与headerview高度的比例
@@ -1253,13 +1264,20 @@ public class XRefreshView extends LinearLayout {
          * @param headerMovePercent 移动距离和headerview高度的比例
          * @param offsetY           headerview移动的距离
          */
-        public void onHeaderMove(double headerMovePercent, int offsetY);
+        void onHeaderMove(double headerMovePercent, int offsetY);
     }
 
     public static class SimpleXRefreshListener implements XRefreshViewListener {
-
+        /**
+         * use {@link #onRefresh(boolean)} instead.
+         */
+        @Deprecated
         @Override
         public void onRefresh() {
+        }
+
+        @Override
+        public void onRefresh(boolean isPullDown) {
         }
 
         @Override
