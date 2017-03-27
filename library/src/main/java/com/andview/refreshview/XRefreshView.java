@@ -306,16 +306,14 @@ public class XRefreshView extends LinearLayout {
         final int paddingBottom = getPaddingBottom();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if (child.getVisibility() != View.GONE) {
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
-                int childWidthSpec = MeasureSpec.makeMeasureSpec(width - lp.leftMargin - lp.rightMargin - paddingLeft - paddingRight, MeasureSpec.EXACTLY);
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+            int childWidthSpec = MeasureSpec.makeMeasureSpec(width - lp.leftMargin - lp.rightMargin - paddingLeft - paddingRight, MeasureSpec.EXACTLY);
 //                int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
 //                        paddingLeft + paddingRight,  getMeasuredWidth()-lp.leftMargin - lp.rightMargin);
-                int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
-                        paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
-                child.measure(childWidthSpec, childHeightSpec);
-                finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            }
+            int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
+                    paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
+            child.measure(childWidthSpec, childHeightSpec);
+            finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
         }
         setMeasuredDimension(width, finalHeight);
         getHeaderHeight();

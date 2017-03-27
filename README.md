@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.2'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.3'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -31,6 +31,9 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。**建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。**
 
 ### 更新日志：<br/>
+    2017-3-27：
+    1.解决事先setPullRefreshEnable(false),再setPullRefreshEnable(true)和startRefresh()时，headerview无法显示的问题
+    2.升级到3.6.3版本
     2017-2-17：
     1.添加下拉刷新时的回调onRefresh(boolean isPullDown)，其中isPullDown用来判断此次下拉刷新是不是由下拉手势触发的，true则代表是，
     反之则是自动刷新或者是调用XRefreshView#startRefresh()}触发的刷新
