@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.andview.example.R;
 import com.andview.example.recylerview.Person;
-import com.andview.example.recylerview.SimpleAdapter2;
+import com.andview.example.recylerview.NormalRecyclerAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class WithoutBaseAdapterRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
-    SimpleAdapter2 adapter;
+    NormalRecyclerAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
     XRefreshView xRefreshView;
     int lastVisibleItem = 0;
@@ -41,7 +41,7 @@ public class WithoutBaseAdapterRecyclerViewActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
         initData();
-        adapter = new SimpleAdapter2(personList, this);
+        adapter = new NormalRecyclerAdapter(personList, this);
         // 设置静默加载模式
 //        xRefreshView1.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
@@ -142,8 +142,8 @@ public class WithoutBaseAdapterRecyclerViewActivity extends Activity {
                 } else {
                     recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                 }
-                //当切换layoutManager时，需调用此方法
-                xRefreshView.notifyLayoutManagerChanged();
+                //当切换layoutManager时，需调用此方法，如果Recyclerview的adapter没有集成BaseRecyclerAdapter，则不用加这行代码
+//                xRefreshView.notifyLayoutManagerChanged();
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();

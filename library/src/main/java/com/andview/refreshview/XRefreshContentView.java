@@ -193,6 +193,8 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         }
     }
 
+    private static final String RECYCLERVIEW_ADAPTER_WARIN = "Recylerview的adapter请继承 BaseRecyclerAdapter,否则不能使用封装的Recyclerview的相关特性";
+
     private void setRecyclerViewScrollListener() {
         layoutManagerType = null;
         final RecyclerView recyclerView = (RecyclerView) child;
@@ -200,7 +202,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             return;
         }
         if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
-            throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
+//            throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
+            LogUtils.w(RECYCLERVIEW_ADAPTER_WARIN);
+            return;
         }
         final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
         adapter.insideEnableFooter(mParent.getPullLoadEnable());
@@ -347,7 +351,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     }
 
     public void notifyDatasetChanged() {
-        if (child instanceof RecyclerView) {
+        if (isRecyclerView()) {
             final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
@@ -431,7 +435,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             if (adapter instanceof BaseRecyclerAdapter) {
                 return (BaseRecyclerAdapter) adapter;
             } else {
-                throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
+                LogUtils.w(RECYCLERVIEW_ADAPTER_WARIN);
             }
         }
         return null;
@@ -832,6 +836,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         if (mSilenceLoadMore) {
             return false;
         } else if (null != child && child instanceof RecyclerView) {
+            final RecyclerView recyclerView = (RecyclerView) child;
+            if (recyclerView.getAdapter() != null && !(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
+                return false;
+            }
             return true;
         }
         return false;

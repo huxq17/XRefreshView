@@ -442,7 +442,7 @@ public class XRefreshView extends LinearLayout {
                 } else {
                     return super.dispatchTouchEvent(ev);
                 }
-                if (!mPullLoading && !mReleaseToLoadMore && mContentView.isTop() && (deltaY > 0 || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
+                if (!mPullLoading && !mReleaseToLoadMore && mContentView.isTop() && ((deltaY > 0 && !mHolder.hasFooterPullUp()) || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
                     sendCancelEvent();
                     updateHeaderHeight(currentY, deltaY);
                 } else if (!mPullRefreshing && mContentView.isBottom()
