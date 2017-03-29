@@ -3,7 +3,7 @@
 ### Usage
 ----
 
-### Gradle
+#### Gradle
 
 ```groovy
 dependencies {
