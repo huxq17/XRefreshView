@@ -158,9 +158,24 @@ public class XRefreshView extends LinearLayout {
     /**
      * 设置静默加载更多，旨在提供被刷新的view滚动到底部的监听，自动静默加载更多
      */
+    @Deprecated
     public void setSilenceLoadMore() {
         mContentView.setSilenceLoadMore(true);
         setPullLoadEnable(false);
+    }
+
+    /**
+     * 设置静默加载更多，旨在提供被刷新的view滚动到底部的监听，自动静默加载更多
+     *
+     * @param enable 是否启用静默加载模式
+     */
+    public void setSilenceLoadMore(boolean enable) {
+        if (enable) {
+            mContentView.setSilenceLoadMore(true);
+            setPullLoadEnable(false);
+        } else {
+            mContentView.setSilenceLoadMore(false);
+        }
     }
 
     /**
@@ -316,6 +331,7 @@ public class XRefreshView extends LinearLayout {
             finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
         }
         setMeasuredDimension(width, finalHeight);
+        hideUselessFooter();
         getHeaderHeight();
         getFooterHeight();
     }
@@ -325,7 +341,6 @@ public class XRefreshView extends LinearLayout {
 //        super.onLayout(changed, l, t2, r, b);
 //        if(mHolder.mOffsetY!=0)return;
         LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
-
         int childCount = getChildCount();
         int top = getPaddingTop() + mHolder.mOffsetY;
         int adHeight = 0;
@@ -350,11 +365,21 @@ public class XRefreshView extends LinearLayout {
                     child.layout(l, top, l + r, bottom);
                     top += childHeight + bottomMargin;
                 } else {
-                    int bottom = child.getMeasuredHeight() + top;
-                    child.layout(l, top, l + r, bottom);
-                    top += child.getMeasuredHeight();
+                    if (needAddFooterView()) {
+                        int bottom = child.getMeasuredHeight() + top;
+                        child.layout(l, top, l + r, bottom);
+                        top += child.getMeasuredHeight();
+                    } else {
+                        hideUselessFooter();
+                    }
                 }
             }
+        }
+    }
+
+    private void hideUselessFooter() {
+        if (!needAddFooterView() && mFooterView != null && mFooterView.getVisibility() != GONE) {
+            mFooterView.setVisibility(GONE);
         }
     }
 

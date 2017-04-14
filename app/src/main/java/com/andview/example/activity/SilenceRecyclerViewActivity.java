@@ -47,7 +47,7 @@ public class SilenceRecyclerViewActivity extends Activity {
         initData();
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-        xRefreshView.setSilenceLoadMore();
+        xRefreshView.setSilenceLoadMore(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
