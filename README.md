@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.5'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.6'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -37,6 +37,7 @@ dependencies {
     1.解决Recyclerview上拉加载时会出现footerview位置异常的问题
     2.给setSilenceLoadMore方法添加boolean参数，可以启用和禁用静默加载模式
     3.升级到3.6.6版本
+    
     2017-3-28：
     1.不再强制Recyclerview使用BaseRecyclerAdapter,当不使用BaseRecyclerAdapter时，RecyclerView会被当成普通view，
     上拉加载等操作和普通view相同，空布局等功能的使用方式也和普通view相同
