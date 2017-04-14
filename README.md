@@ -34,7 +34,7 @@ dependencies {
 
 ### 更新日志：<br/>
     2017-4-14：
-    1.解决Recyclerview上拉加载时会出现footerview位置异常的问题
+    1.解决Recyclerview频繁上拉加载时会出现footerview位置异常的问题
     2.给setSilenceLoadMore方法添加boolean参数，可以启用和禁用静默加载模式
     3.升级到3.6.6版本
     
