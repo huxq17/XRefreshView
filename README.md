@@ -33,13 +33,14 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。**建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。**
 
 ### 更新日志：<br/>
+ 
     2017-4-14：
-    1.解决Recyclerview频繁上拉加载时会出现footerview位置异常的问题
-    2.给setSilenceLoadMore方法添加boolean参数，可以启用和禁用静默加载模式
+    1.解决Recyclerview频繁上拉加载时会出现footerview位置异常的问题
+    2.给setSilenceLoadMore方法添加boolean参数，可以启用和禁用静默加载模式  
     3.升级到3.6.6版本
-    
+
     2017-3-28：
-    1.不再强制Recyclerview使用BaseRecyclerAdapter,当不使用BaseRecyclerAdapter时，RecyclerView会被当成普通view，
+    1.不再强制Recyclerview使用BaseRecyclerAdapter,当不使用BaseRecyclerAdapter时，RecyclerView会被当成普通view
     上拉加载等操作和普通view相同，空布局等功能的使用方式也和普通view相同
     2.解决ListView的子项目不足一屏时，上拉时再下拉会出现布局突然缩回的问题
     3.升级到3.6.5版本
