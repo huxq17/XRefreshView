@@ -10,6 +10,7 @@ import com.andview.example.R;
 import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.utils.LogUtils;
 
 public class WebViewActivity extends Activity {
 	private XRefreshView outView;
@@ -28,6 +29,12 @@ public class WebViewActivity extends Activity {
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				view.loadUrl(url);
 				return true;
+			}
+
+			@Override
+			public void onScaleChanged(WebView view, float oldScale, float newScale) {
+				super.onScaleChanged(view, oldScale, newScale);
+				LogUtils.e("oldScale="+oldScale+";newScale="+newScale);
 			}
 
 			@Override

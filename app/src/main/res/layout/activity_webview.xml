@@ -9,7 +9,7 @@
     xrefreshview:isHeightMatchParent="true"
     xrefreshview:isWidthMatchParent="true" >
 
-    <WebView
+    <com.andview.refreshview.view.XWebView
         android:id="@+id/wv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

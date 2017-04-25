@@ -21,6 +21,7 @@ import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
+import com.andview.refreshview.view.XWebView;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, OnBottomLoadMoreTime {
     private View child;
@@ -802,8 +803,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     || absListView.getLastVisiblePosition() != mTotalItemCount - 1;
         } else if (child instanceof WebView) {
             WebView webview = (WebView) child;
-            return canScrollVertically(child, 1)
-                    || webview.getContentHeight() * webview.getScale() != webview.getHeight() + webview.getScrollY();
+            if (webview instanceof XWebView) {
+                return !((XWebView) webview).isBottom();
+            } else {
+                float left = webview.getContentHeight() * webview.getScale();
+                int right = webview.getHeight() + webview.getScrollY();
+                return left != right;
+            }
         } else if (child instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child;
             View childView = scrollView.getChildAt(0);

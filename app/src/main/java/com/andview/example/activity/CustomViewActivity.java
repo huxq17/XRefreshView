@@ -62,6 +62,7 @@ public class CustomViewActivity extends Activity {
                     View lastChild = stickyLv.getListChildAt(stickyLv.getListChildCount() - 1);
                     return (lastChild.getBottom() + stickyLv.getPaddingBottom()) <= stickyLv.getMeasuredHeight();
                 }
+                //没有到达底部则返回false
                 return false;
             }
         });

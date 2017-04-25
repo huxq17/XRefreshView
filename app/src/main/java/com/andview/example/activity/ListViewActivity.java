@@ -44,6 +44,8 @@ public class ListViewActivity extends Activity {
         refreshView.setPullLoadEnable(false);
         // 设置上次刷新的时间
         refreshView.restoreLastRefreshTime(lastRefreshTime);
+        //当下拉刷新被禁用时，调用这个方法并传入false可以不让头部被下拉
+        refreshView.setMoveHeadWhenDisablePullRefresh(true);
         // 设置时候可以自动刷新
         refreshView.setAutoRefresh(false);
 //		refreshView.setOnBottomLoadMoreTime(new OnBottomLoadMoreTime() {

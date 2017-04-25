@@ -33,6 +33,10 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。**建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。**
 
 ### 更新日志：<br/>
+
+    2017-4-25：
+    1.通过使用XWebView，解决在三星c5、小米5等机型在webview上加XRefreshView,会出现加载更多没有效果的现象，详见issue[#72](https://github.com/huxq17/XRefreshView/issues/72)
+    3.升级到3.6.7版本
  
     2017-4-14：
     1.解决Recyclerview频繁上拉加载时会出现footerview位置异常的问题
