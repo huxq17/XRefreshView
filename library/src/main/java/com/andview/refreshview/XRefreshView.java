@@ -330,7 +330,7 @@ public class XRefreshView extends LinearLayout {
             child.measure(childWidthSpec, childHeightSpec);
             finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
         }
-        setMeasuredDimension(width, finalHeight);
+        setMeasuredDimension(width, height);
         hideUselessFooter();
         getHeaderHeight();
         getFooterHeight();
