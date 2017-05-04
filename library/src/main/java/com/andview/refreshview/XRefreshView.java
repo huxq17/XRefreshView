@@ -919,6 +919,7 @@ public class XRefreshView extends LinearLayout {
      * @param hideFooter hide footerview if true
      */
     public void stopLoadMore(boolean hideFooter) {
+        mState = XRefreshViewState.STATE_FINISHED;
         stopLoadMore(hideFooter, SCROLLBACK_DURATION);
     }
 
@@ -926,8 +927,11 @@ public class XRefreshView extends LinearLayout {
         if (needAddFooterView()) {
             if (mPullLoading) {
                 mStopingRefresh = true;
-                mState = XRefreshViewState.STATE_COMPLETE;
-                mFooterCallBack.onStateFinish(hideFooter);
+                if (mState == XRefreshViewState.STATE_COMPLETE) {
+                    mFooterCallBack.onStateComplete();
+                } else {
+                    mFooterCallBack.onStateFinish(hideFooter);
+                }
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
                     postDelayed(new Runnable() {
 
@@ -965,14 +969,19 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 此方法当没有更多数据时调用，不要与stopLoadMore()同时调用
+     * 此方法当没有更多数据时调用，不要和stopLoadMore()同时调用
      *
      * @param hasComplete
      */
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (needAddFooterView()) {
-            stopLoadMore(true);
+            if (hasComplete) {
+                mState = XRefreshViewState.STATE_COMPLETE;
+            } else {
+                mState = XRefreshViewState.STATE_NORMAL;
+            }
+            stopLoadMore(true, SCROLLBACK_DURATION);
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
 //                mFooterCallBack.show(true);

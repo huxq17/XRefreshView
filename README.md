@@ -7,7 +7,7 @@
 
 ```groovy
 dependencies {
-   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.8'
+   compile 'com.huxq17.xrefreshview:xrefreshview:3.6.9'
    //依赖下面的库
    compile 'com.android.support:recyclerview-v7:23.0.1'
    compile 'com.android.support:support-v4:23.0.1'
@@ -33,6 +33,10 @@ dependencies {
 还有listview,scrollview，webview等其他的view就不一一截图了。**建议把此项目下载下来，然后跑到手机上看效果，例子都在app module里。**
 
 ### 更新日志：<br/>
+
+    2017-5-4：
+    1.解决已无更多数据显示不出来的问题，fix issue[#78](https://github.com/huxq17/XRefreshView/issues/78)
+    2.升级到3.6.9版本
 
     2017-5-3：
     1.解决xrefreshview不满屏的时候footerview正常状态下出现在屏幕上的问题，fix issue[#75](https://github.com/huxq17/XRefreshView/issues/75)
