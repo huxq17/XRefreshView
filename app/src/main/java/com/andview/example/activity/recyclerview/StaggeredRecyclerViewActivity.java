@@ -1,16 +1,16 @@
-package com.andview.example.activity;
+package com.andview.example.activity.recyclerview;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andview.example.R;
-import com.andview.example.recylerview.MultiItemAdapter;
 import com.andview.example.recylerview.Person;
+import com.andview.example.recylerview.SimpleAdapter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
@@ -18,40 +18,40 @@ import com.andview.refreshview.XRefreshViewFooter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiItemRecyclerViewActivity extends Activity {
+public class StaggeredRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
-    MultiItemAdapter adapter;
+    SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
     XRefreshView xRefreshView;
     int lastVisibleItem = 0;
-    //    GridLayoutManager layoutManager;
-    LinearLayoutManager layoutManager;
+    StaggeredGridLayoutManager layoutManager;
     private boolean isBottom = false;
     private int mLoadCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recylerview2);
+        setContentView(R.layout.activity_recylerview);
         xRefreshView = (XRefreshView) findViewById(R.id.xrefreshview);
+        xRefreshView.setPullLoadEnable(true);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_test_rv);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new MultiItemAdapter(personList);
+        initData();
+        adapter = new SimpleAdapter(personList,this);
         // 设置静默加载模式
-//        xRefreshView1.setSilenceLoadMore();
-        layoutManager = new LinearLayoutManager(this);
+//		xRefreshView1.setSilenceLoadMore();
+        layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-        //设置刷新完成以后，headerview固定的时间
-        xRefreshView.setPinnedTime(1000);
-        xRefreshView.setPullLoadEnable(true);
-        xRefreshView.setMoveForHorizontal(true);
 //        xRefreshView1.setAutoLoadMore(true);
+        xRefreshView.setPinnedTime(1000);
+        xRefreshView.setMoveForHorizontal(true);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
+//		xRefreshView1.setPullLoadEnable(false);
         //设置静默加载时提前加载的item个数
-//        xRefreshView1.setPreLoadCount(4);
+//		xRefreshView1.setPreLoadCount(2);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
@@ -61,57 +61,51 @@ public class MultiItemRecyclerViewActivity extends Activity {
                     @Override
                     public void run() {
                         xRefreshView.stopRefresh();
-                        for (int i = 0; i < 1; i++) {
-                            adapter.insert(new Person("More ", mLoadCount + "21", getType()),
-                                    adapter.getAdapterItemCount());
-                        }
                     }
-                }, 500);
+                }, 2000);
             }
 
             @Override
             public void onLoadMore(boolean isSilence) {
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        for (int i = 0; i < 1; i++) {
-                            adapter.insert(new Person("More ", mLoadCount + "21", getType()),
+                        for (int i = 0; i < 6; i++) {
+                            adapter.insert(new Person("More ", ""+ adapter.getAdapterItemCount()),
                                     adapter.getAdapterItemCount());
                         }
                         mLoadCount++;
-                        if (mLoadCount % 5 == 2) {
+                        if (mLoadCount >= 3) {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载
                             xRefreshView.stopLoadMore();
-                            //如果数据加载完成以后不隐藏footerview,传入false
-//                            xRefreshView1.stopLoadMore(false);
                         }
                     }
                 }, 1000);
             }
         });
-        //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
-//        xRefreshView1.setHideFooterWhenComplete(false);
-        requestData();
-    }
-
-    public void requestData() {
-        initData();
-        adapter.setData(personList);
+//		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//			@Override
+//			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//				super.onScrolled(recyclerView, dx, dy);
+//				lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+//			}
+//
+//			public void onScrollStateChanged(RecyclerView recyclerView,
+//											 int newState) {
+//				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
+//				}
+//			}
+//		});
     }
 
     private void initData() {
-        for (int i = 0; i < 1; i++) {
-            Person person = new Person("name" + i, "" + i, getType());
+        for (int i = 0; i < 15; i++) {
+            Person person = new Person("name" + i, "" + i);
             personList.add(person);
         }
-    }
-
-    private boolean isLeft = true;
-
-    private int getType() {
-        isLeft = !isLeft;
-        return isLeft ? 0 : 1;
     }
 
     @Override
@@ -126,6 +120,7 @@ public class MultiItemRecyclerViewActivity extends Activity {
         int menuId = item.getItemId();
         switch (menuId) {
             case R.id.menu_clear:
+                mLoadCount = 0;
                 xRefreshView.setLoadComplete(false);
                 break;
             case R.id.menu_refresh:

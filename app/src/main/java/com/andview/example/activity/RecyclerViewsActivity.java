@@ -6,6 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.andview.example.R;
+import com.andview.example.activity.recyclerview.BannerRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.GridRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.LinearRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.MultiItemRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.ShowFooterWhenNoMoreDataRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.SilenceRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.StaggeredRecyclerViewActivity;
+import com.andview.example.activity.recyclerview.WithoutBaseAdapterRecyclerViewActivity;
 
 public class RecyclerViewsActivity extends Activity {
 
@@ -38,6 +46,9 @@ public class RecyclerViewsActivity extends Activity {
                 break;
             case R.id.bt_without_baseRecyclerAdapter:
                 intent = new Intent(this, WithoutBaseAdapterRecyclerViewActivity.class);
+                break;
+            case R.id.bt_showFooter_noMoreData:
+                intent = new Intent(this, ShowFooterWhenNoMoreDataRecyclerViewActivity.class);
                 break;
             default:
                 break;

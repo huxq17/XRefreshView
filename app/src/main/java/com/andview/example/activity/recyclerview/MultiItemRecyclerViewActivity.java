@@ -1,4 +1,4 @@
-package com.andview.example.activity;
+package com.andview.example.activity.recyclerview;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import com.andview.refreshview.XRefreshViewFooter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowFooterRecyclerViewActivity extends Activity {
+public class MultiItemRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
     MultiItemAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
@@ -49,7 +49,6 @@ public class ShowFooterRecyclerViewActivity extends Activity {
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
 //        xRefreshView1.setAutoLoadMore(true);
-//        xRefreshView1.setHideFooterWhenComplete(false);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
 //        xRefreshView1.setPreLoadCount(4);
@@ -66,7 +65,6 @@ public class ShowFooterRecyclerViewActivity extends Activity {
                             adapter.insert(new Person("More ", mLoadCount + "21", getType()),
                                     adapter.getAdapterItemCount());
                         }
-                        xRefreshView.setLoadComplete(true);
                     }
                 }, 500);
             }
@@ -84,7 +82,9 @@ public class ShowFooterRecyclerViewActivity extends Activity {
                             xRefreshView.setLoadComplete(true);
                         } else {
                             // 刷新完成必须调用此方法停止加载
-                            xRefreshView.stopLoadMore(false);
+                            xRefreshView.stopLoadMore();
+                            //如果数据加载完成以后不隐藏footerview,传入false
+//                            xRefreshView1.stopLoadMore(false);
                         }
                     }
                 }, 1000);

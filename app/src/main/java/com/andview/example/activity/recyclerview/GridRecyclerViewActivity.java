@@ -1,4 +1,4 @@
-package com.andview.example.activity;
+package com.andview.example.activity.recyclerview;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,24 +7,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.andview.example.IndexPageAdapter;
 import com.andview.example.R;
 import com.andview.example.recylerview.Person;
 import com.andview.example.recylerview.SimpleAdapter;
-import com.andview.example.ui.AdHeader;
-import com.andview.example.ui.BannerViewPager;
-import com.andview.example.ui.CustomGifHeader;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
 import com.andview.refreshview.XRefreshViewFooter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class BannerRecyclerViewActivity extends Activity {
+public class GridRecyclerViewActivity extends Activity {
     RecyclerView recyclerView;
     SimpleAdapter adapter;
     List<Person> personList = new ArrayList<Person>();
@@ -33,11 +27,6 @@ public class BannerRecyclerViewActivity extends Activity {
     GridLayoutManager layoutManager;
     private boolean isBottom = false;
     private int mLoadCount = 0;
-    private AdHeader adHeader;
-
-    private BannerViewPager mBannerViewPager;
-    private int[] mImageIds = new int[]{R.mipmap.test01, R.mipmap.test02,
-            R.mipmap.test03};// 测试图片id
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,32 +38,26 @@ public class BannerRecyclerViewActivity extends Activity {
         recyclerView.setHasFixedSize(true);
 
         initData();
-        adapter = new SimpleAdapter(personList, this);
+        adapter = new SimpleAdapter(personList,this);
         // 设置静默加载模式
 //		xRefreshView1.setSilenceLoadMore();
-        layoutManager = new GridLayoutManager(this, 2);
+        layoutManager = new GridLayoutManager(this,2);
         recyclerView.setLayoutManager(layoutManager);
-        headerView = adapter.setHeaderView(R.layout.bannerview, recyclerView);
-//        LayoutInflater.from(this).inflate(R.layout.bannerview, rootview);
-        mBannerViewPager = (BannerViewPager) headerView.findViewById(R.id.index_viewpager);
-
-//        adHeader = new AdHeader(this);
-//        mBannerViewPager = (LoopViewPager) adHeader.findViewById(R.id.index_viewpager);
-        initViewPager();
-        CustomGifHeader header = new CustomGifHeader(this);
-        xRefreshView.setCustomHeaderView(header);
+        // 静默加载模式不能设置footerview
         recyclerView.setAdapter(adapter);
-        xRefreshView.setAutoLoadMore(false);
+//        xRefreshView1.setAutoLoadMore(false);
         xRefreshView.setPinnedTime(1000);
         xRefreshView.setMoveForHorizontal(true);
-//        recyclerviewAdapter.setHeaderView(headerView, recyclerView);
+
+        //当需要使用数据不满一屏时不显示点击加载更多的效果时，解注释下面的三行代码
+        //并注释掉第四行代码
+//        CustomerFooter customerFooter = new CustomerFooter(this);
+//        customerFooter.setRecyclerView(recyclerView);
+//        recyclerviewAdapter.setCustomLoadMoreView(customerFooter);
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
-//        xRefreshView1.setPullRefreshEnable(false);
-        //设置在下拉刷新被禁用的情况下，是否允许界面被下拉,默认是true
-//        xRefreshView1.setMoveHeadWhenDisablePullRefresh(false);
-//        xRefreshView1.enablePullUpWhenLoadCompleted(false);
+
+//        recyclerviewAdapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
 //		xRefreshView1.setPullLoadEnable(false);
-//        xRefreshView1.enableRecyclerViewPullUp(false);
         //设置静默加载时提前加载的item个数
 //		xRefreshView1.setPreLoadCount(2);
 
@@ -85,16 +68,7 @@ public class BannerRecyclerViewActivity extends Activity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //模拟数据加载失败的情况
-                        Random random = new Random();
-                        boolean success = random.nextBoolean();
-                        if(success){
-                            xRefreshView.stopRefresh();
-                        }else{
-                            xRefreshView.stopRefresh(false);
-                        }
-                        //或者
-//                        xRefreshView1.stopRefresh(success);
+                        xRefreshView.stopRefresh();
                     }
                 }, 2000);
             }
@@ -118,6 +92,21 @@ public class BannerRecyclerViewActivity extends Activity {
                 }, 1000);
             }
         });
+//		// 实现Recyclerview的滚动监听，在这里可以自己处理到达底部加载更多的操作，可以不实现onLoadMore方法，更加自由
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//			@Override
+//			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//				super.onScrolled(recyclerView, dx, dy);
+//				lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+//			}
+//
+//			public void onScrollStateChanged(RecyclerView recyclerView,
+//											 int newState) {
+//				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
+//				}
+//			}
+//		});
     }
 
     private void initData() {
@@ -129,16 +118,9 @@ public class BannerRecyclerViewActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // 加载菜单
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
-
-    private View headerView;
-
-    private void initViewPager() {
-        IndexPageAdapter pageAdapter = new IndexPageAdapter(this, mImageIds);
-        mBannerViewPager.setAdapter(pageAdapter);
-        mBannerViewPager.setParent(recyclerView);
     }
 
     @Override
@@ -151,10 +133,7 @@ public class BannerRecyclerViewActivity extends Activity {
                 break;
             case R.id.menu_refresh:
                 xRefreshView.startRefresh();
-//                xRefreshView1.setPullRefreshEnable(true);
-//                xRefreshView1.setPullLoadEnable(!xRefreshView1.getPullLoadEnable());
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }

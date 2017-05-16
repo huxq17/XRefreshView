@@ -83,7 +83,7 @@ public class XRefreshView extends LinearLayout {
     /**
      * 当刷新完成以后，headerview和footerview被固定的时间，在这个时间以后headerview才会回弹
      */
-    private int mPinnedTime;
+    private int mPinnedTime = 1000;
     private XRefreshViewState mState = null;
     /**
      * 当已无更多数据时候，需把这个变量设为true
