@@ -110,7 +110,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     public abstract void onBindViewHolder(VH holder, int position, boolean isItem);
 
     @Override
-    public final void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(VH holder, int position) {
         int start = getStart();
         if (!isHeader(position) && !isFooter(position)) {
             onBindViewHolder(holder, position - start, true);
