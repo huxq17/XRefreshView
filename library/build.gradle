@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.Humilton'
 
 android {
     compileSdkVersion 23
@@ -24,7 +27,6 @@ dependencies {
 //    compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'
-
 }
 
 //for upload jar
@@ -34,6 +36,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+		classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }
 }
 apply from: 'gradle-jcenter-push.gradle'

@@ -49,3 +49,6 @@ gradleinfo.properties
 gradle-app.setting
 manifest-merger-release-report.txt
 *.apk
+/gradlew
+/gradlew.bat
+/gradle
