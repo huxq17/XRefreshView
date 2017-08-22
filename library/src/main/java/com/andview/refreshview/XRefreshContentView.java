@@ -472,6 +472,12 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         mState = XRefreshViewState.STATE_FINISHED;
     }
 
+    public void stopLoadingQuietly(final boolean hideFooter) {
+        mIsLoadingMore = false;
+        mHideFooter = hideFooter;
+        mState = XRefreshViewState.STATE_FINISHED;
+    }
+
     private boolean mRefreshAdapter = false;
 
     private boolean isOnRecyclerViewBottom() {
