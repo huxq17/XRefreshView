@@ -57,6 +57,10 @@ public class MainActivity extends Activity {
             case R.id.bt_rain:
 //                intent = new Intent(this, RainDropActivity.class);
                 break;
+
+            case R.id.bt_wine:
+                intent = new Intent(this, WineActivity.class);
+                break;
             default:
                 break;
         }

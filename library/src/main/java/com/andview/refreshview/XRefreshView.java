@@ -108,6 +108,26 @@ public class XRefreshView extends LinearLayout {
     private boolean mLayoutReady = false;
     private boolean mNeedToRefresh = false;
 
+    private float headerTopHeight;
+
+    public float getHeaderTopHeight() {
+        return headerTopHeight;
+    }
+
+    public void setHeaderTopHeight(float headerTopHeight) {
+        this.headerTopHeight = headerTopHeight;
+    }
+
+    private boolean isAddHeaderTop = false;
+
+    public boolean isAddHeaderTop() {
+        return isAddHeaderTop;
+    }
+
+    public void setAddHeaderTop(boolean addHeaderTop) {
+        isAddHeaderTop = addHeaderTop;
+    }
+
     public XRefreshView(Context context) {
         this(context, null);
     }
@@ -490,7 +510,7 @@ public class XRefreshView extends LinearLayout {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);
                 // }
                 if (mHolder.hasHeaderPullDown()) {
-                    if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > mHeaderViewHeight) {
+                    if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > (isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight)) {
                         mPullRefreshing = true;
                         mHeaderCallBack.onStateRefreshing();
                         mState = XRefreshViewState.STATE_REFRESHING;
@@ -814,12 +834,12 @@ public class XRefreshView extends LinearLayout {
     private void resetHeaderHeight() {
         float height = mHolder.mOffsetY;
         // refreshing and header isn't shown fully. do nothing.
-        if (mPullRefreshing && (height <= mHeaderViewHeight || height == 0)) {
+        if (mPullRefreshing && (height <= (isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight) || height == 0)) {
             return;
         }
         int offsetY;
         if (mPullRefreshing) {
-            offsetY = mHeaderViewHeight - mHolder.mOffsetY;
+            offsetY = (int) ((isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight) - mHolder.mOffsetY);
             startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY, getHeight()));
         } else {
             offsetY = 0 - mHolder.mOffsetY;
