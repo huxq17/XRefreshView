@@ -43,7 +43,10 @@
             android:label="@string/title_activity_wine" />
         <activity
             android:name=".activity.JDActivity"
-            android:label="@string/title_activity_jd"></activity>
+            android:label="@string/title_activity_jd" />
+        <activity
+            android:name=".activity.TaoBaoActivity"
+            android:label="@string/title_activity_tao_bao"></activity>
     </application>
 
 </manifest>

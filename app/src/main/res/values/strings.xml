@@ -9,5 +9,6 @@
     <string name="clear_or_fill_data">清空或恢复数据</string>
     <string name="title_activity_wine">酒杯刷新</string>
     <string name="title_activity_jd">京东刷新</string>
+    <string name="title_activity_tao_bao">TaoBaoActivity</string>
 
 </resources>
