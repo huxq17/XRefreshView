@@ -4,11 +4,11 @@
 
     <item
         android:drawable="@drawable/jd_person_package_1"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/jd_person_package_2"
-        android:duration="300" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/jd_person_package_3"
-        android:duration="300" />
+        android:duration="100" />
 </animation-list>

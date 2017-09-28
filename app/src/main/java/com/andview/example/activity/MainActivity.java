@@ -61,6 +61,9 @@ public class MainActivity extends Activity {
             case R.id.bt_wine:
                 intent = new Intent(this, WineActivity.class);
                 break;
+            case R.id.bt_jd:
+                intent = new Intent(this, JDActivity.class);
+                break;
             default:
                 break;
         }
