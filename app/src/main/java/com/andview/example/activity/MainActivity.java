@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.andview.example.R;
+import com.andview.example.view.EatPluseView;
 import com.andview.refreshview.utils.LogUtils;
 
 public class MainActivity extends Activity {
@@ -63,6 +64,9 @@ public class MainActivity extends Activity {
                 break;
             case R.id.bt_jd:
                 intent = new Intent(this, JDActivity.class);
+                break;
+            case R.id.bt_pluse:
+                intent = new Intent(this, PluseActivity.class);
                 break;
             default:
                 break;

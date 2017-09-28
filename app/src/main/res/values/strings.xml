@@ -10,5 +10,6 @@
     <string name="title_activity_wine">酒杯刷新</string>
     <string name="title_activity_jd">京东刷新</string>
     <string name="title_activity_tao_bao">TaoBaoActivity</string>
+    <string name="title_activity_pluse">PluseActivity</string>
 
 </resources>
