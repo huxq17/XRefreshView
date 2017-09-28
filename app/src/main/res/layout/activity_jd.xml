@@ -4,8 +4,8 @@
     android:id="@+id/activity_jd"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
+    android:orientation="vertical"
     tools:context="com.andview.example.activity.JDActivity">
 
     <com.andview.refreshview.XRefreshView
@@ -52,7 +52,8 @@
             <SeekBar
                 android:id="@+id/jdSeekBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
         </LinearLayout>
     </com.andview.refreshview.XRefreshView>

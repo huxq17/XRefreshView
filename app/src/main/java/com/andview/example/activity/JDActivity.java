@@ -55,6 +55,7 @@ public class JDActivity extends Activity {
 
         jdXRefreshView = (XRefreshView) findViewById(R.id.jdXRefreshView);
         jdXRefreshView.setCustomHeaderView(new XRefreshViewJDHeader(this));
+        jdXRefreshView.setMoveForHorizontal(true);
     }
 
     private void initData() {
