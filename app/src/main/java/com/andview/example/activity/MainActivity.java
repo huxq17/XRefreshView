@@ -65,6 +65,9 @@ public class MainActivity extends Activity {
             case R.id.bt_jd:
                 intent = new Intent(this, JDActivity.class);
                 break;
+            case R.id.bt_carcrm:
+                intent = new Intent(this, CarCrmActivity.class);
+                break;
             case R.id.bt_pluse:
                 intent = new Intent(this, PluseActivity.class);
                 break;

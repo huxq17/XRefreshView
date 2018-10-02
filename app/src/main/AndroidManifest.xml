@@ -49,7 +49,8 @@
             android:label="@string/title_activity_tao_bao" />
         <activity
             android:name=".activity.PluseActivity"
-            android:label="@string/title_activity_pluse"></activity>
+            android:label="@string/title_activity_pluse" />
+        <activity android:name=".activity.CarCrmActivity"></activity>
     </application>
 
 </manifest>
