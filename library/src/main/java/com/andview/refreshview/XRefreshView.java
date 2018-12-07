@@ -1263,6 +1263,20 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
+    public void stopLoadMoreQuietly() {
+        mState = XRefreshViewState.STATE_FINISHED;
+
+        if (needAddFooterView()) {
+            if (mPullLoading) {
+                mStopingRefresh = true;
+                mPullLoading = false;
+                mRunnable.isStopLoadMore = true;
+            }
+        }
+
+        mContentView.stopLoadingQuietly(true);
+    }
+
     /**
      * implements this interface to get refresh/load more event.
      */
