@@ -9,8 +9,7 @@
 dependencies {
    compile 'com.huxq17.xrefreshview:xrefreshview:3.6.9'
    //依赖下面的库
-   compile 'com.android.support:recyclerview-v7:23.0.1'
-   compile 'com.android.support:support-v4:23.0.1'
+   implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }
 ```
 
@@ -39,6 +38,10 @@ dependencies {
 
 ### 更新日志：<br/>
 
+    2020-6-13：
+    1.更新android平台到androidx
+    
+    
     2017-5-4：
     1.解决已无更多数据显示不出来的问题，fix issue[#78](https://github.com/huxq17/XRefreshView/issues/78)
     2.升级到3.6.9版本
@@ -103,7 +106,7 @@ dependencies {
 
 
 ### 关于我
-    邮箱：huxq17@163.com
+    邮箱：huxq17@163.com   fanyafeng@live.cn
     ps:有问题联系我的话请不要问我在不在，直接说问题，谢谢。
 
 ### License
