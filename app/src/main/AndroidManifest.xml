@@ -3,6 +3,7 @@
     package="com.andview.example">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -37,6 +38,19 @@
         <activity android:name=".activity.NotFullScreenWithoutFooterActivity" />
         <activity android:name=".activity.SmileViewActivity" />
         <activity android:name=".activity.recyclerview.WithoutBaseAdapterRecyclerViewActivity" />
+        <activity
+            android:name=".activity.WineActivity"
+            android:label="@string/title_activity_wine" />
+        <activity
+            android:name=".activity.JDActivity"
+            android:label="@string/title_activity_jd" />
+        <activity
+            android:name=".activity.TaoBaoActivity"
+            android:label="@string/title_activity_tao_bao" />
+        <activity
+            android:name=".activity.PluseActivity"
+            android:label="@string/title_activity_pluse" />
+        <activity android:name=".activity.CarCrmActivity"></activity>
     </application>
 
 </manifest>

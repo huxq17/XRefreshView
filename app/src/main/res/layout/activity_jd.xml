@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_jd"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="com.andview.example.activity.JDActivity">
+
+    <com.andview.refreshview.XRefreshView
+        android:id="@+id/jdXRefreshView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="52.5dp"
+                android:layout_height="73dp">
+
+                <ImageView
+                    android:id="@+id/ivPerson"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/jd_person" />
+
+                <ImageView
+                    android:id="@+id/ivPackage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/jd_package" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btnPackageScan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="包裹缩放动画" />
+
+            <Button
+                android:id="@+id/btnPersonScan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="快递员缩放动画" />
+
+            <SeekBar
+                android:id="@+id/jdSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </com.andview.refreshview.XRefreshView>
+</LinearLayout>

@@ -61,7 +61,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             lp.height = LayoutParams.MATCH_PARENT;
         }
         if (isWidthMatchParent) {
-            lp.height = LayoutParams.MATCH_PARENT;
+            lp.weight = LayoutParams.MATCH_PARENT;
         }
         // 默认设置宽高为match_parent
         child.setLayoutParams(lp);

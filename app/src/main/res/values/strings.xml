@@ -7,5 +7,9 @@
     <string name="click_to_refresh">点击刷新</string>
     <string name="change">切换View</string>
     <string name="clear_or_fill_data">清空或恢复数据</string>
+    <string name="title_activity_wine">酒杯刷新</string>
+    <string name="title_activity_jd">京东刷新</string>
+    <string name="title_activity_tao_bao">TaoBaoActivity</string>
+    <string name="title_activity_pluse">PluseActivity</string>
 
 </resources>
