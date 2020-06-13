@@ -1,32 +1,32 @@
-package com.andview.refreshview.callback;
+package com.andview.refreshview.callback
 
 /**
  * 提供自定义headerview的接口
  *
  * @author huxq17@163.com
  */
-public interface IHeaderCallBack {
+interface IHeaderCallBack {
     /**
      * 正常状态
      */
-    public void onStateNormal();
+    fun onStateNormal()
 
     /**
      * 准备刷新
      */
-    public void onStateReady();
+    fun onStateReady()
 
     /**
      * 正在刷新
      */
-    public void onStateRefreshing();
+    fun onStateRefreshing()
 
     /**
      * 刷新结束
      *
      * @param success 是否刷新成功 success参数由XRefreshView.stopRefresh(boolean)传入
      */
-    public void onStateFinish(boolean success);
+    fun onStateFinish(success: Boolean)
 
     /**
      * 获取headerview显示的高度与headerview高度的比例
@@ -34,29 +34,29 @@ public interface IHeaderCallBack {
      * @param headerMovePercent  移动距离和headerview高度的比例
      * @param offsetY headerview移动的距离
      */
-    public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY);
+    fun onHeaderMove(headerMovePercent: Double, offsetY: Int, deltaY: Int)
 
     /**
      * 设置显示上一次刷新的时间
      *
      * @param lastRefreshTime 上一次刷新的时间
      */
-    public void setRefreshTime(long lastRefreshTime);
+    fun setRefreshTime(lastRefreshTime: Long)
 
     /**
      * 隐藏footerview
      */
-    public void hide();
+    fun hide()
 
     /**
      * 显示footerview
      */
-    public void show();
+    fun show()
 
     /**
      * 获得headerview的高度,如果不想headerview全部被隐藏，就可以只返回一部分的高度
      *
      * @return
      */
-    public int getHeaderHeight();
+    val headerHeight: Int
 }

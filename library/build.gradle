@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 29
@@ -24,6 +25,8 @@ dependencies {
 //    compile 'com.android.support:recyclerview-v7:23.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
@@ -37,3 +40,6 @@ buildscript {
     }
 }
 apply from: 'gradle-jcenter-push.gradle'
+repositories {
+    mavenCentral()
+}
