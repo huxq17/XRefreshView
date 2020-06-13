@@ -1,10 +1,11 @@
 package com.andview.example.ui;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by huxq17 on 2016/2/1.

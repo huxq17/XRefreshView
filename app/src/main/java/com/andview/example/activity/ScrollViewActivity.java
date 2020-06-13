@@ -2,9 +2,10 @@ package com.andview.example.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.andview.example.R;
 import com.andview.example.ScrollAdapter;
