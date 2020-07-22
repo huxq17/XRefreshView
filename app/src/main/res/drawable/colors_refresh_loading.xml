@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/colors_refresh_00"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_01"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_02"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_03"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_04"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_05"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_06"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_07"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_08"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_09"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_10"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_11"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_12"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_13"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_15"
+        android:duration="42" />
+    <item
+        android:drawable="@drawable/colors_refresh_16"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_17"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_18"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_19"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_20"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_21"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_22"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_23"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_24"
+        android:duration="42" />
+
+    <item
+        android:drawable="@drawable/colors_refresh_25"
+        android:duration="42" />
+
+
+
+</animation-list>

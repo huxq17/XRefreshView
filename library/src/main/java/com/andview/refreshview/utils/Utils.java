@@ -1,18 +1,24 @@
 package com.andview.refreshview.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 
-import com.andview.refreshview.callback.IFooterCallBack;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
+
+import java.lang.reflect.Method;
 
 public class Utils {
 
@@ -51,28 +57,25 @@ public class Utils {
 
     public static boolean isRecyclerViewFullscreen(RecyclerView viewGroup) {
         if (viewGroup.getAdapter() instanceof BaseRecyclerAdapter) {
-            int count = viewGroup.getChildCount();
-
-            View lastchild = viewGroup.getChildAt(count - 1);
-            if (lastchild instanceof IFooterCallBack) {
-                lastchild = viewGroup.getChildAt(count - 2);
-            }
-            if (lastchild == null) {
-                return false;
-            }
-            RecyclerView.LayoutParams lastLp = (RecyclerView.LayoutParams) lastchild.getLayoutParams();
-            int lastBottomMargin = lastLp.bottomMargin;
-            WindowManager wm = (WindowManager) viewGroup.getContext()
-                    .getSystemService(Context.WINDOW_SERVICE);
-            int[] position = new int[2];
-            int height = wm.getDefaultDisplay().getHeight();
-            lastchild.getLocationOnScreen(position);
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
-            int bottomMargin = layoutParams.bottomMargin;
-            int padding = viewGroup.getPaddingBottom();
-
+//            int count = viewGroup.getChildCount();
+//
+//            View lastchild = viewGroup.getChildAt(count - 1);
+//            if (lastchild instanceof IFooterCallBack) {
+//                lastchild = viewGroup.getChildAt(count - 2);
+//            }
+//            if (lastchild == null) {
+//                return false;
+//            }
+//            RecyclerView.LayoutParams lastLp = (RecyclerView.LayoutParams) lastchild.getLayoutParams();
+//            int lastBottomMargin = lastLp.bottomMargin;
+//            int[] position = new int[2];
+//            lastchild.getLocationOnScreen(position);
+//            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
+//            int bottomMargin = layoutParams.bottomMargin;
+//            int padding = viewGroup.getPaddingBottom();
+//            int height = getScreenHeight(viewGroup.getContext());
             boolean atTop = findFirstCompletelyVisibleItemPosition(viewGroup) > 0;
-            return (position[1] + lastchild.getHeight() + lastBottomMargin + bottomMargin + padding) >= height || atTop;
+            return /*(position[1] + lastchild.getHeight() + lastBottomMargin + bottomMargin + padding) >= height || */atTop;
         }
         return false;
     }
@@ -133,12 +136,106 @@ public class Utils {
         final int duration;
         float absDelta = (float) Math.abs(dy);
         duration = (int) (((absDelta / height) + 1) * 200);
-        return Math.min(duration, 500);
+        return dy == 0 ? 0 : Math.min(duration, 500);
     }
 
     private static float distanceInfluenceForSnapDuration(float f) {
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
         return (float) Math.sin(f);
+    }
+
+    public static boolean isScreenOriatationPortrait(Context context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    public static int getDpi(Context context) {
+        int dpi = 0;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        @SuppressWarnings("rawtypes")
+        Class c;
+        try {
+            c = Class.forName("android.view.Display");
+            @SuppressWarnings("unchecked")
+            Method method = c.getMethod("getRealMetrics", DisplayMetrics.class);
+            method.invoke(display, displayMetrics);
+            dpi = displayMetrics.heightPixels;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dpi;
+    }
+
+    /**
+     * 获取 虚拟按键的高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getBottomStatusHeight(Context context) {
+        int totalHeight = getDpi(context);
+        int contentHeight = getScreenHeight(context);
+        return totalHeight - contentHeight;
+    }
+
+    /**
+     * 标题栏高度
+     *
+     * @return
+     */
+    public static int getTitleHeight(Activity activity) {
+        return activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+    }
+
+    /**
+     * 获得状态栏的高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getStatusHeight(Context context) {
+
+        int statusHeight = -1;
+        try {
+            Class<?> clazz = Class.forName("com.android.internal.R$dimen");
+            Object object = clazz.newInstance();
+            int height = Integer.parseInt(clazz.getField("status_bar_height")
+                    .get(object).toString());
+            statusHeight = context.getResources().getDimensionPixelSize(height);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return statusHeight;
+    }
+
+
+    /**
+     * 获得屏幕高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getScreenHeight(Context context) {
+        WindowManager wm = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.heightPixels;
+    }
+
+    /**
+     * 获得屏幕宽度
+     *
+     * @param context
+     * @return
+     */
+    public static int getScreenWidth(Context context) {
+        WindowManager wm = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.widthPixels;
     }
 }

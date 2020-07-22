@@ -3,6 +3,7 @@
     package="com.andview.example">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,17 +22,35 @@
         <activity android:name=".activity.GridViewActivity" />
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.WebViewActivity" />
-        <activity android:name=".activity.LinearRecyclerViewActivity" />
-        <activity android:name=".activity.BannerRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.LinearRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.BannerRecyclerViewActivity" />
         <activity android:name=".activity.ScrollViewActivity" />
         <activity android:name=".activity.HeadAdActivity" />
         <activity android:name=".activity.RainDropActivity" />
         <activity android:name=".activity.RecyclerViewsActivity" />
-        <activity android:name=".activity.GridRecyclerViewActivity" />
-        <activity android:name=".activity.StaggeredRecyclerViewActivity" />
-        <activity android:name=".activity.SilenceRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.GridRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.StaggeredRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.SilenceRecyclerViewActivity" />
         <activity android:name=".activity.NotFullScreenActivity" />
-        <activity android:name=".activity.MultiItemRecyclerViewActivity" />
+        <activity android:name=".activity.EmptyViewActivity" />
+        <activity android:name=".activity.recyclerview.MultiItemRecyclerViewActivity" />
+        <activity android:name=".activity.recyclerview.ShowFooterWhenNoMoreDataRecyclerViewActivity" />
+        <activity android:name=".activity.NotFullScreenWithoutFooterActivity" />
+        <activity android:name=".activity.SmileViewActivity" />
+        <activity android:name=".activity.recyclerview.WithoutBaseAdapterRecyclerViewActivity" />
+        <activity
+            android:name=".activity.WineActivity"
+            android:label="@string/title_activity_wine" />
+        <activity
+            android:name=".activity.JDActivity"
+            android:label="@string/title_activity_jd" />
+        <activity
+            android:name=".activity.TaoBaoActivity"
+            android:label="@string/title_activity_tao_bao" />
+        <activity
+            android:name=".activity.PluseActivity"
+            android:label="@string/title_activity_pluse" />
+        <activity android:name=".activity.CarCrmActivity"></activity>
     </application>
 
 </manifest>

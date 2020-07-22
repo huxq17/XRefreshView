@@ -1,10 +1,11 @@
 package com.andview.refreshview;
 
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -14,7 +15,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
 import com.andview.refreshview.XRefreshView.XRefreshViewListener;
-import com.andview.refreshview.XScrollView.OnScrollBottomListener;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.listener.OnBottomLoadMoreTime;
 import com.andview.refreshview.listener.OnTopRefreshTime;
@@ -22,6 +22,7 @@ import com.andview.refreshview.recyclerview.BaseRecyclerAdapter;
 import com.andview.refreshview.recyclerview.XSpanSizeLookup;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
+import com.andview.refreshview.view.XWebView;
 
 public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, OnBottomLoadMoreTime {
     private View child;
@@ -61,7 +62,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             lp.height = LayoutParams.MATCH_PARENT;
         }
         if (isWidthMatchParent) {
-            lp.height = LayoutParams.MATCH_PARENT;
+            lp.weight = LayoutParams.MATCH_PARENT;
         }
         // 默认设置宽高为match_parent
         child.setLayoutParams(lp);
@@ -95,15 +96,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             absListView.setSelection(0);
         } else if (child instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) child;
-            RecyclerView.LayoutManager layoutManager = null;
-            layoutManager = recyclerView.getLayoutManager();
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             layoutManager.scrollToPosition(0);
         }
     }
 
     private boolean mSilenceLoadMore = false;
 
-    public void setSlienceLoadMore(boolean silenceLoadMore) {
+    public void setSilenceLoadMore(boolean silenceLoadMore) {
         mSilenceLoadMore = silenceLoadMore;
     }
 
@@ -124,17 +124,23 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     private void setScrollViewScrollListener() {
         if (child instanceof XScrollView) {
             XScrollView scrollView = (XScrollView) child;
-            scrollView.registerOnBottomListener(new OnScrollBottomListener() {
+            scrollView.setOnScrollListener(mParent, new XScrollView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(ScrollView view, int scrollState, boolean arriveBottom) {
+                    if (scrollState == SCROLL_STATE_IDLE && arriveBottom) {
+                        if (mSilenceLoadMore) {
+                            if (mRefreshViewListener != null) {
+                                mRefreshViewListener.onLoadMore(true);
+                            }
+                        } else if (mContainer != null && !hasLoadCompleted()) {
+                            mContainer.invokeLoadMore();
+                        }
+                    }
+                }
 
                 @Override
-                public void srollToBottom() {
-                    if (mSilenceLoadMore) {
-                        if (mRefreshViewListener != null) {
-                            mRefreshViewListener.onLoadMore(true);
-                        }
-                    } else if (mContainer != null && !hasLoadCompleted()) {
-                        mContainer.invokeLoadMore();
-                    }
+                public void onScroll(int l, int t, int oldl, int oldt) {
+
                 }
             });
         } else {
@@ -146,22 +152,24 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         if (mRecyclerViewScrollListener != null) {
             mRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
         }
-        if (mFooterCallBack == null && !mSilenceLoadMore) {
+        if (mFooterCallBack == null && !mSilenceLoadMore || adapter == null) {
             return;
         }
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         getRecyclerViewInfo(layoutManager);
         refreshAdapter(adapter, layoutManager);
+        LogUtils.d("test pre onScrolled mIsLoadingMore=" + mIsLoadingMore);
         if (onRecyclerViewTop()) {
             if (Utils.isRecyclerViewFullscreen(recyclerView)) {
 //                        addFooterView(true);
             } else {
-                mFooterCallBack.onStateReady();
-                mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                if (mHideFooter) {
+                    mFooterCallBack.onStateReady();
+                    mFooterCallBack.callWhenNotAutoLoadMore(mParent);
+                }
             }
             return;
         }
-        LogUtils.d("test pre onScrolled mIsLoadingMore=" + mIsLoadingMore);
         if (dy == 0 && !force) {
             return;
         }
@@ -187,17 +195,35 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         }
     }
 
+    private static final String RECYCLERVIEW_ADAPTER_WARIN = "Recylerview的adapter请继承 BaseRecyclerAdapter,否则不能使用封装的Recyclerview的相关特性";
+
+    private BaseRecyclerAdapter getRecyclerApdater(RecyclerView recyclerView) {
+        BaseRecyclerAdapter adapter = null;
+        if (recyclerView.getAdapter() instanceof BaseRecyclerAdapter) {
+            adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+                gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
+            }
+            adapter.insideEnableFooter(mParent.getPullLoadEnable());
+            initFooterCallBack(adapter, mParent);
+        }
+        return adapter;
+    }
+
+    private BaseRecyclerAdapter mRecyclerApdater;
+
     private void setRecyclerViewScrollListener() {
         layoutManagerType = null;
         final RecyclerView recyclerView = (RecyclerView) child;
-        if (recyclerView.getAdapter() == null) {
-            return;
+        if (recyclerView.getAdapter() != null) {
+            if (recyclerView.getAdapter() instanceof BaseRecyclerAdapter) {
+                mRecyclerApdater = getRecyclerApdater(recyclerView);
+            } else {
+                LogUtils.w(RECYCLERVIEW_ADAPTER_WARIN);
+            }
         }
-        if (!(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
-            throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
-        }
-        final BaseRecyclerAdapter adapter = (BaseRecyclerAdapter) recyclerView.getAdapter();
-        adapter.insideEnableFooter(mParent.getPullLoadEnable());
         recyclerView.removeOnScrollListener(mOnScrollListener);
         mOnScrollListener = new RecyclerView.OnScrollListener() {
 
@@ -211,20 +237,16 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                onRecyclerViewScrolled(recyclerView, adapter, dx, dy, false);
+                if (mRecyclerApdater == null && recyclerView.getAdapter() != null && recyclerView.getAdapter() instanceof BaseRecyclerAdapter) {
+                    mRecyclerApdater = getRecyclerApdater(recyclerView);
+                }
+                onRecyclerViewScrolled(recyclerView, mRecyclerApdater, dx, dy, false);
             }
         };
         recyclerView.addOnScrollListener(mOnScrollListener);
-
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager != null && layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            gridLayoutManager.setSpanSizeLookup(new XSpanSizeLookup(adapter, gridLayoutManager.getSpanCount()));
-        }
-        initFooterCallBack(adapter);
     }
 
-    private void initFooterCallBack(BaseRecyclerAdapter adapter) {
+    public void initFooterCallBack(BaseRecyclerAdapter adapter, XRefreshView parent) {
         if (!mSilenceLoadMore) {
             if (adapter != null) {
                 View footerView = adapter.getCustomLoadMoreView();
@@ -232,11 +254,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     return;
                 }
                 mFooterCallBack = (IFooterCallBack) footerView;
-                // 如果设置到达底部不自动加载更多，那么就点击footerview加载更多
                 if (mFooterCallBack != null) {
                     mFooterCallBack.onStateReady();
-                    mFooterCallBack.callWhenNotAutoLoadMore(mParent);
-                    if (mParent != null && !mParent.getPullLoadEnable()) {
+                    mFooterCallBack.callWhenNotAutoLoadMore(parent);
+                    if (parent != null && !parent.getPullLoadEnable()) {
                         mFooterCallBack.show(false);
                     }
                 }
@@ -285,13 +306,13 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             return;
         }
         if (!hasLoadCompleted()) {
-            if (mRefreshViewListener != null) {
-                mRefreshViewListener.onLoadMore(silence);
-            }
             mIsLoadingMore = true;
             previousTotal = mTotalItemCount;
             mFooterCallBack.onStateRefreshing();
             setState(XRefreshViewState.STATE_LOADING);
+            if (mRefreshViewListener != null) {
+                mRefreshViewListener.onLoadMore(silence);
+            }
         } else {
             loadCompleted();
         }
@@ -323,7 +344,14 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                 setState(XRefreshViewState.STATE_RELEASE_TO_LOADMORE);
             }
         } else {
-            doReadyState();
+            if (mHideFooter) {
+                doReadyState();
+            } else {
+                if (mState != XRefreshViewState.STATE_READY) {
+                    mFooterCallBack.onStateFinish(false);
+                    setState(XRefreshViewState.STATE_READY);
+                }
+            }
         }
     }
 
@@ -335,9 +363,11 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
     }
 
     public void notifyDatasetChanged() {
-        final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
+        if (isRecyclerView()) {
+            final BaseRecyclerAdapter adapter = getRecyclerViewAdapter((RecyclerView) child);
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -377,6 +407,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         if (mFooterCallBack == null || !isFooterEnable()) return;
         final RecyclerView recyclerView = (RecyclerView) child;
         if (hasComplete) {
+            mHideFooter = true;
             mFooterCallBack.onStateFinish(true);
             if (!Utils.isRecyclerViewFullscreen(recyclerView)) {
                 child.postDelayed(new Runnable() {
@@ -416,7 +447,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
             if (adapter instanceof BaseRecyclerAdapter) {
                 return (BaseRecyclerAdapter) adapter;
             } else {
-                throw new RuntimeException("Recylerview的adapter请继承 BaseRecyclerAdapter");
+                LogUtils.w(RECYCLERVIEW_ADAPTER_WARIN);
             }
         }
         return null;
@@ -547,7 +578,9 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     @Override
                     public void run() {
                         resetLayout();
-                        addFooterView(false);
+                        if (mHasLoadComplete) {
+                            addFooterView(false);
+                        }
                     }
                 }, mPinnedTime);
             }
@@ -612,6 +645,7 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
      *
      * @param enablePullLoad
      */
+
     public void setEnablePullLoad(boolean enablePullLoad) {
         addFooterView(enablePullLoad);
         hasIntercepted = false;
@@ -687,8 +721,21 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         this.mBottomLoadMoreTime = bottomLoadMoreTime;
     }
 
+    private boolean isForbidLoadMore = true;
+
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
+        /******解决abslistview数据不满一屏的时候，会重复加载更多的问题 start ******/
+        if (mParent.isStopLoadMore() && scrollState == OnScrollListener.SCROLL_STATE_FLING) {
+            isForbidLoadMore = true;
+        }
+        if (isForbidLoadMore) {
+            if (!mParent.isStopLoadMore() && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+                isForbidLoadMore = false;
+            }
+            return;
+        }
+        /******解决abslistview数据不满一屏的时候，会重复加载更多的问题 end ******/
         if (mSilenceLoadMore) {
             if (mRefreshViewListener != null && !hasLoadCompleted() && !mIsLoadingMore && mTotalItemCount - 1 <= view.getLastVisiblePosition() + mPreLoadCount) {
                 mRefreshViewListener.onLoadMore(true);
@@ -767,15 +814,19 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
                     || absListView.getLastVisiblePosition() != mTotalItemCount - 1;
         } else if (child instanceof WebView) {
             WebView webview = (WebView) child;
-            return canScrollVertically(child, 1)
-                    || webview.getContentHeight() * webview.getScale() != webview.getHeight() + webview.getScrollY();
+            if (webview instanceof XWebView) {
+                return !((XWebView) webview).isBottom();
+            } else {
+                float left = webview.getContentHeight() * webview.getScale();
+                int right = webview.getHeight() + webview.getScrollY();
+                return left != right;
+            }
         } else if (child instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) child;
             View childView = scrollView.getChildAt(0);
             if (childView != null) {
                 return canScrollVertically(child, 1)
-                        || scrollView.getScrollY() != childView.getHeight()
-                        - scrollView.getHeight();
+                        || scrollView.getScrollY() < childView.getHeight() - scrollView.getHeight();
             }
         } else {
             return canScrollVertically(child, 1);
@@ -802,6 +853,10 @@ public class XRefreshContentView implements OnScrollListener, OnTopRefreshTime, 
         if (mSilenceLoadMore) {
             return false;
         } else if (null != child && child instanceof RecyclerView) {
+            final RecyclerView recyclerView = (RecyclerView) child;
+            if (recyclerView.getAdapter() != null && !(recyclerView.getAdapter() instanceof BaseRecyclerAdapter)) {
+                return false;
+            }
             return true;
         }
         return false;

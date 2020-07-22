@@ -44,9 +44,6 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
     public void setRefreshTime(long lastRefreshTime) {
     }
 
-    /**
-     * hide footer when disable pull load more
-     */
     public void hide() {
         setVisibility(View.GONE);
     }
@@ -79,15 +76,15 @@ public class CustomGifHeader extends LinearLayout implements IHeaderCallBack {
     }
 
     @Override
-    public void onStateFinish() {
-        mHintTextView.setText(R.string.xrefreshview_header_hint_loaded);
+    public void onStateFinish(boolean success) {
+        mHintTextView.setText(success ? R.string.xrefreshview_header_hint_loaded : R.string.xrefreshview_header_hint_loaded_fail);
 //        gifView1.setVisibility(View.VISIBLE);
         gifView2.setVisibility(View.GONE);
         gifView2.setPaused(true);
     }
 
     @Override
-    public void onHeaderMove(double offset, int offsetY, int deltaY) {
+    public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY) {
         //
     }
 

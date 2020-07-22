@@ -10,6 +10,7 @@ import com.andview.example.R;
 import com.andview.example.ui.raindrop.CustomerFooter;
 import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.XRefreshView.SimpleXRefreshListener;
+import com.andview.refreshview.utils.LogUtils;
 
 public class WebViewActivity extends Activity {
 	private XRefreshView outView;
@@ -31,6 +32,12 @@ public class WebViewActivity extends Activity {
 			}
 
 			@Override
+			public void onScaleChanged(WebView view, float oldScale, float newScale) {
+				super.onScaleChanged(view, oldScale, newScale);
+				LogUtils.e("oldScale="+oldScale+";newScale="+newScale);
+			}
+
+			@Override
 			public void onPageFinished(WebView view, String url) {
 				outView.stopRefresh();
 				lastRefreshTime = outView.getLastRefreshTime();
@@ -44,12 +51,12 @@ public class WebViewActivity extends Activity {
 		outView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
 			@Override
-			public void onRefresh() {
+			public void onRefresh(boolean isPullDown) {
 				mWebView.loadUrl("http://www.baidu.com");
 			}
 
 			@Override
-			public void onLoadMore(boolean isSlience) {
+			public void onLoadMore(boolean isSilence) {
 				new Handler().postDelayed(new Runnable() {
 
 					@Override

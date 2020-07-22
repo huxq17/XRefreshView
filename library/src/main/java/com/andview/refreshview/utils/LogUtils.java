@@ -19,6 +19,19 @@ public class LogUtils {
     private LogUtils() {
     }
 
+    /**
+     * 是否打印log
+     *
+     * @param enable
+     */
+    public static void enableLog(boolean enable) {
+        allowD = enable;
+        allowE = enable;
+        allowI = enable;
+        allowV = enable;
+        allowW = enable;
+    }
+
     public static boolean allowD = true;
     public static boolean allowE = true;
     public static boolean allowI = true;
@@ -235,6 +248,7 @@ public class LogUtils {
             Log.wtf(tag, tr);
         }
     }
+
     public static StackTraceElement getCallerStackTraceElement() {
         return Thread.currentThread().getStackTrace()[4];
     }

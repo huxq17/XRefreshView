@@ -19,10 +19,12 @@ public class CustomHeader extends View implements IHeaderCallBack {
             , 0xFF00FFFF, 0xFFFF0000, 0xFF8B00FF, 0xFFFFFF00};
     // Default background for the progress spinner
     private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
+    private int mPinnedTime;
 
-    public CustomHeader(Context context) {
+    public CustomHeader(Context context, int pinnedTime) {
         super(context);
         initView();
+        this.mPinnedTime = pinnedTime;
     }
 
     public CustomHeader(Context context, AttributeSet attrs) {
@@ -92,8 +94,8 @@ public class CustomHeader extends View implements IHeaderCallBack {
     @Override
     public void onStateNormal() {
         mScale = 1f;
-        mDrawable.stop();
-
+        isStop = false;
+//        mDrawable.stop();
     }
 
     @Override
@@ -109,27 +111,32 @@ public class CustomHeader extends View implements IHeaderCallBack {
     }
 
     @Override
-    public void onStateFinish() {
-        isStop = true;
-        mDrawable.stop();
+    public void onStateFinish(boolean success) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isStop = true;
+                mDrawable.stop();
+            }
+        }, mPinnedTime);
     }
 
     private boolean isStop = false;
 
     @Override
-    public void onHeaderMove(double offset, int offsetY, int deltaY) {
+    public void onHeaderMove(double headerMovePercent, int offsetY, int deltaY) {
         if (isStop) {
             return;
         }
-        mDrawable.setAlpha((int) (255 * offset));
+        mDrawable.setAlpha((int) (255 * headerMovePercent));
         mDrawable.showArrow(true);
 
-        float strokeStart = (float) ((offset) * .8f);
+        float strokeStart = (float) ((headerMovePercent) * .8f);
         mDrawable.setStartEndTrim(0f, Math.min(0.8f, strokeStart));
-        mDrawable.setArrowScale((float) Math.min(1f, offset));
+        mDrawable.setArrowScale((float) Math.min(1f, headerMovePercent));
 
         // magic
-        float rotation = (float) ((-0.25f + .4f * offset + offset * 2) * .5f);
+        float rotation = (float) ((-0.25f + .4f * headerMovePercent + headerMovePercent * 2) * .5f);
         mDrawable.setProgressRotation(rotation);
         invalidate();
 
@@ -143,7 +150,6 @@ public class CustomHeader extends View implements IHeaderCallBack {
     @Override
     public void hide() {
         setVisibility(View.GONE);
-
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.andview.example.R;
+import com.andview.example.view.EatPluseView;
+import com.andview.refreshview.utils.LogUtils;
 
 public class MainActivity extends Activity {
 
@@ -13,6 +15,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //如果不想XRefreshView后台输出log，此处传入false即可
+        LogUtils.enableLog(true);
     }
 
     public void onClick(View v) {
@@ -42,8 +46,30 @@ public class MainActivity extends Activity {
             case R.id.bt_not_full_screen:
                 intent = new Intent(this, NotFullScreenActivity.class);
                 break;
+            case R.id.bt_not_fullscreen_nofooter:
+                intent = new Intent(this, NotFullScreenWithoutFooterActivity.class);
+                break;
+            case R.id.bt_emptyview:
+                intent = new Intent(this, EmptyViewActivity.class);
+                break;
+            case R.id.bt_smileview:
+                intent = new Intent(this, SmileViewActivity.class);
+                break;
             case R.id.bt_rain:
 //                intent = new Intent(this, RainDropActivity.class);
+                break;
+
+            case R.id.bt_wine:
+                intent = new Intent(this, WineActivity.class);
+                break;
+            case R.id.bt_jd:
+                intent = new Intent(this, JDActivity.class);
+                break;
+            case R.id.bt_carcrm:
+                intent = new Intent(this, CarCrmActivity.class);
+                break;
+            case R.id.bt_pluse:
+                intent = new Intent(this, PluseActivity.class);
                 break;
             default:
                 break;

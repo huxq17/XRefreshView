@@ -5,15 +5,19 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.LayoutRes;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.LinearInterpolator;
+import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
@@ -26,6 +30,7 @@ import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
 
 import java.util.Calendar;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class XRefreshView extends LinearLayout {
     // -- header view
@@ -80,8 +85,7 @@ public class XRefreshView extends LinearLayout {
     /**
      * 当刷新完成以后，headerview和footerview被固定的时间，在这个时间以后headerview才会回弹
      */
-    private int mPinnedTime;
-    private static Handler mHandler = new Handler();
+    private int mPinnedTime = 1000;
     private XRefreshViewState mState = null;
     /**
      * 当已无更多数据时候，需把这个变量设为true
@@ -100,6 +104,31 @@ public class XRefreshView extends LinearLayout {
      * 当Recyclerview加载完成的时候，不允许界面被上拉
      */
     private boolean enablePullUp = true;
+    /**
+     * 布局是否准备好了，准备好以后才能进行自动刷新这种操作
+     */
+    private boolean mLayoutReady = false;
+    private boolean mNeedToRefresh = false;
+
+    private float headerTopHeight;
+
+    public float getHeaderTopHeight() {
+        return headerTopHeight;
+    }
+
+    public void setHeaderTopHeight(float headerTopHeight) {
+        this.headerTopHeight = headerTopHeight;
+    }
+
+    private boolean isAddHeaderTop = false;
+
+    public boolean isAddHeaderTop() {
+        return isAddHeaderTop;
+    }
+
+    public void setAddHeaderTop(boolean addHeaderTop) {
+        isAddHeaderTop = addHeaderTop;
+    }
 
     public XRefreshView(Context context) {
         this(context, null);
@@ -151,9 +180,24 @@ public class XRefreshView extends LinearLayout {
     /**
      * 设置静默加载更多，旨在提供被刷新的view滚动到底部的监听，自动静默加载更多
      */
+    @Deprecated
     public void setSilenceLoadMore() {
-        mContentView.setSlienceLoadMore(true);
+        mContentView.setSilenceLoadMore(true);
         setPullLoadEnable(false);
+    }
+
+    /**
+     * 设置静默加载更多，旨在提供被刷新的view滚动到底部的监听，自动静默加载更多
+     *
+     * @param enable 是否启用静默加载模式
+     */
+    public void setSilenceLoadMore(boolean enable) {
+        if (enable) {
+            mContentView.setSilenceLoadMore(true);
+            setPullLoadEnable(false);
+        } else {
+            mContentView.setSilenceLoadMore(false);
+        }
     }
 
     /**
@@ -165,11 +209,9 @@ public class XRefreshView extends LinearLayout {
     }
 
     private void initWithContext(Context context, AttributeSet attrs) {
-
         // 根据属性设置参数
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-
                     R.styleable.XRefreshView, 0, 0);
             try {
                 isHeightMatchParent = a.getBoolean(
@@ -186,53 +228,76 @@ public class XRefreshView extends LinearLayout {
                 a.recycle();
             }
         }
-        mHeaderView = new XRefreshViewHeader(context);
-        mFooterView = new XRefreshViewFooter(context);
+        addHeaderView();
         this.getViewTreeObserver().addOnGlobalLayoutListener(
                 new OnGlobalLayoutListener() {
 
                     @Override
                     public void onGlobalLayout() {
-                        addHeaderView();
-                        addFooterView(this);
+                        mLayoutReady = true;
+                        if (autoRefresh || mNeedToRefresh) {
+                            startRefresh();
+                        }
+                        setHeadMoveLargestDistence(mHeadMoveDistence);
+                        attachContentView();
+                        addFooterView();
+                        if (waitForShowEmptyView == 1) {
+                            enableEmptyView(true);
+                            waitForShowEmptyView = 0;
+                        }
+                        // 移除视图树监听器
+                        removeViewTreeObserver(this);
                     }
                 });
         mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
     private void addHeaderView() {
-        Utils.removeViewFromParent(mHeaderView);
-        addView(mHeaderView, 0);
-        mHeaderView.measure(0, 0);
+        if (mHeaderView == null) {
+            mHeaderView = new XRefreshViewHeader(getContext());
+        }
+        dealAddHeaderView();
+    }
+
+    private void dealAddHeaderView() {
+        if (indexOfChild(mHeaderView) == -1) {
+            Utils.removeViewFromParent(mHeaderView);
+            addView(mHeaderView, 0);
+            mHeaderCallBack = (IHeaderCallBack) mHeaderView;
+            setRefreshTime();
+            checkPullRefreshEnable();
+        }
+    }
+
+    private void dealAddFooterView() {
+        if (indexOfChild(mFooterView) == -1) {
+            if (needAddFooterView()) {
+                Utils.removeViewFromParent(mFooterView);
+                try {
+                    addView(mFooterView, 2);
+                } catch (IndexOutOfBoundsException e) {
+                    new RuntimeException("XRefreshView is allowed to have one and only one child");
+                }
+            }
+            mFooterCallBack = (IFooterCallBack) mFooterView;
+            checkPullLoadEnable();
+        }
+    }
+
+    private void attachContentView() {
         mContentView.setContentView(XRefreshView.this.getChildAt(1));
         mContentView.setContainer(autoLoadMore ? this : null);
         mContentView.setContentViewLayoutParams(isHeightMatchParent, isWidthMatchParent);
-        mHeaderCallBack = (IHeaderCallBack) mHeaderView;
-        mFooterCallBack = (IFooterCallBack) mFooterView;
-        setRefreshTime();
-        checkPullRefreshEnable();
-        checkPullLoadEnable();
-    }
-
-    private void addFooterView(OnGlobalLayoutListener listener) {
-        mHeaderViewHeight = ((IHeaderCallBack) mHeaderView).getHeaderHeight();
         mContentView.setHolder(mHolder);
         mContentView.setParent(this);
         mContentView.setScrollListener();
-        if (needAddFooterView()) {
-            LogUtils.d("test add footView" + ";mHeaderViewHeight=" + mHeaderViewHeight);
-            Utils.removeViewFromParent(mFooterView);
-            addView(mFooterView);
+    }
+
+    private void addFooterView() {
+        if (mFooterView == null) {
+            mFooterView = new XRefreshViewFooter(getContext());
         }
-        // 移除视图树监听器
-        removeViewTreeObserver(listener);
-        if (autoRefresh) {
-            startRefresh();
-        }
-        if (mHeadMoveDistence == 0) {
-            int ScreenHeight = Utils.getScreenSize(getContext()).y;
-            mHeadMoveDistence = ScreenHeight / 3;
-        }
+        dealAddFooterView();
     }
 
     @SuppressWarnings("deprecation")
@@ -245,31 +310,52 @@ public class XRefreshView extends LinearLayout {
         }
     }
 
+    private int mHeaderGap;
+
+    public void setHeaderGap(int headerGap) {
+        mHeaderGap = headerGap;
+    }
+
+    private void getHeaderHeight() {
+        if (mHeaderCallBack != null) {
+            mHeaderViewHeight = mHeaderCallBack.getHeaderHeight();
+        }
+    }
+
+    private void getFooterHeight() {
+        if (mFooterCallBack != null) {
+            mFootHeight = mFooterCallBack.getFooterHeight();
+        }
+//        if (mFooterView != null) {
+//            mFootHeight = mFooterView.getMeasuredHeight();
+//        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-//        int width2 = getDefaultSize(0, widthMeasureSpec);
-//        int height2 = getDefaultSize(0, heightMeasureSpec);
         int childCount = getChildCount();
         int finalHeight = 0;
+        final int paddingLeft = getPaddingLeft();
+        final int paddingRight = getPaddingRight();
+        final int paddingTop = getPaddingTop();
+        final int paddingBottom = getPaddingBottom();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if (child.getVisibility() != View.GONE) {
-                final int paddingLeft = getPaddingLeft();
-                final int paddingRight = getPaddingRight();
-                final int paddingTop = getPaddingTop();
-                final int paddingBottom = getPaddingBottom();
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
-                int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-                        paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
-                int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
-                        paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
-                child.measure(childWidthSpec, childHeightSpec);
-                finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            }
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+            int childWidthSpec = MeasureSpec.makeMeasureSpec(width - lp.leftMargin - lp.rightMargin - paddingLeft - paddingRight, MeasureSpec.EXACTLY);
+//                int childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
+//                        paddingLeft + paddingRight,  getMeasuredWidth()-lp.leftMargin - lp.rightMargin);
+            int childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
+                    paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin, lp.height);
+            child.measure(childWidthSpec, childHeightSpec);
+            finalHeight += child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
         }
-        setMeasuredDimension(width, finalHeight);
+        setMeasuredDimension(width, height);
+        hideUselessFooter();
+        getHeaderHeight();
+        getFooterHeight();
     }
 
     @Override
@@ -277,7 +363,6 @@ public class XRefreshView extends LinearLayout {
 //        super.onLayout(changed, l, t2, r, b);
 //        if(mHolder.mOffsetY!=0)return;
         LogUtils.d("onLayout mHolder.mOffsetY=" + mHolder.mOffsetY);
-        mFootHeight = ((IFooterCallBack) mFooterView).getFooterHeight();
         int childCount = getChildCount();
         int top = getPaddingTop() + mHolder.mOffsetY;
         int adHeight = 0;
@@ -294,7 +379,6 @@ public class XRefreshView extends LinearLayout {
             if (child.getVisibility() != View.GONE) {
                 if (i == 0) {
                     adHeight = child.getMeasuredHeight() - mHeaderViewHeight;
-                    // 通过把headerview向上移动一个headerview高度的距离来达到隐藏headerview的效果
                     child.layout(l, top - mHeaderViewHeight, l + r, top + adHeight);
                     top += adHeight;
                 } else if (i == 1) {
@@ -303,22 +387,62 @@ public class XRefreshView extends LinearLayout {
                     child.layout(l, top, l + r, bottom);
                     top += childHeight + bottomMargin;
                 } else {
-                    int bottom = child.getMeasuredHeight() + top;
-                    child.layout(l, top, l + r, bottom);
-                    top += child.getMeasuredHeight();
+                    if (needAddFooterView()) {
+                        int bottom = child.getMeasuredHeight() + top;
+                        child.layout(l, top, l + r, bottom);
+                        top += child.getMeasuredHeight();
+                    } else {
+                        hideUselessFooter();
+                    }
                 }
             }
+        }
+    }
+
+    private void hideUselessFooter() {
+        if (!needAddFooterView() && mFooterView != null && mFooterView.getVisibility() != GONE) {
+            mFooterView.setVisibility(GONE);
         }
     }
 
     private boolean isIntercepted = false;
     private int mHeadMoveDistence;
 
+    private final CopyOnWriteArrayList<TouchLifeCycle> mTouchLifeCycles = new CopyOnWriteArrayList<>();
+
+    interface TouchLifeCycle {
+
+        void onTouch(MotionEvent event);
+    }
+
+
+    public void addTouchLifeCycle(TouchLifeCycle lifeCycle) {
+        mTouchLifeCycles.add(lifeCycle);
+    }
+
+    public void removeTouchLifeCycle(TouchLifeCycle lifeCycle) {
+        if (lifeCycle == null) {
+            return;
+        }
+        if (mTouchLifeCycles.contains(lifeCycle)) {
+            mTouchLifeCycles.remove(lifeCycle);
+        }
+    }
+
+    private void updateTouchAction(MotionEvent event) {
+        for (TouchLifeCycle lifeCycle : mTouchLifeCycles) {
+            if (lifeCycle != null) {
+                lifeCycle.onTouch(event);
+            }
+        }
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
         int deltaY = 0;
         int deltaX = 0;
+        updateTouchAction(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mHasSendCancelEvent = false;
@@ -365,7 +489,7 @@ public class XRefreshView extends LinearLayout {
                 } else {
                     return super.dispatchTouchEvent(ev);
                 }
-                if (!mPullLoading && !mReleaseToLoadMore && mContentView.isTop() && (deltaY > 0 || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
+                if (!mPullLoading && !mReleaseToLoadMore && mContentView.isTop() && ((deltaY > 0 && !mHolder.hasFooterPullUp()) || (deltaY < 0 && mHolder.hasHeaderPullDown()))) {
                     sendCancelEvent();
                     updateHeaderHeight(currentY, deltaY);
                 } else if (!mPullRefreshing && mContentView.isBottom()
@@ -388,18 +512,19 @@ public class XRefreshView extends LinearLayout {
                 // mRefreshViewListener.onRelease(mHolder.mOffsetY);
                 // }
                 if (mHolder.hasHeaderPullDown()) {
-                    if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > mHeaderViewHeight) {
+                    if (mEnablePullRefresh && !mStopingRefresh && !mPullRefreshing && mHolder.mOffsetY > (isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight)) {
                         mPullRefreshing = true;
                         mHeaderCallBack.onStateRefreshing();
                         mState = XRefreshViewState.STATE_REFRESHING;
                         if (mRefreshViewListener != null) {
                             mRefreshViewListener.onRefresh();
+                            mRefreshViewListener.onRefresh(true);
                         }
                     }
                     resetHeaderHeight();
                 } else if (mHolder.hasFooterPullUp()) {
                     if (!mStopingRefresh) {
-                        if (mEnablePullLoad && needAddFooterView() && !mHasLoadComplete) {
+                        if (mEnablePullLoad && !isEmptyViewShowing() && needAddFooterView() && !mHasLoadComplete) {
                             invokeLoadMore();
                         } else {
                             int offset = 0 - mHolder.mOffsetY;
@@ -412,14 +537,17 @@ public class XRefreshView extends LinearLayout {
                 mInitialMotionY = 0;
                 isIntercepted = false;
                 mMoveForHorizontal = false;
-                mIsIntercept = false;
                 break;
         }
         return super.dispatchTouchEvent(ev);
     }
 
+    public XRefreshContentView getContentView() {
+        return mContentView;
+    }
+
     public boolean invokeLoadMore() {
-        if (mEnablePullLoad && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
+        if (mEnablePullLoad && !isEmptyViewShowing() && !mPullRefreshing && !mStopingRefresh && !mHasLoadComplete) {
             int offset = 0 - mHolder.mOffsetY - mFootHeight;
             if (offset != 0) {
                 startScroll(offset, Utils.computeScrollVerticalDuration(offset, getHeight()));
@@ -468,7 +596,13 @@ public class XRefreshView extends LinearLayout {
      * @param headMoveDistence
      */
     public void setHeadMoveLargestDistence(int headMoveDistence) {
-        mHeadMoveDistence = headMoveDistence;
+        if (headMoveDistence <= 0) {
+            int ScreenHeight = Utils.getScreenSize(getContext()).y;
+            mHeadMoveDistence = ScreenHeight / 3;
+        } else {
+            mHeadMoveDistence = headMoveDistence;
+        }
+        mHeadMoveDistence = mHeadMoveDistence <= mHeaderViewHeight ? mHeaderViewHeight + 1 : mHeadMoveDistence;
     }
 
     private void sendDownEvent() {
@@ -625,9 +759,15 @@ public class XRefreshView extends LinearLayout {
     private void updateFooterHeight(int deltaY) {
         if (mEnablePullLoad) {
             if (needAddFooterView()) {
-                if (mState != XRefreshViewState.STATE_LOADING) {
-                    mFooterCallBack.onStateRefreshing();
-                    mState = XRefreshViewState.STATE_LOADING;
+                if (isEmptyViewShowing()) {
+                    if (mFooterCallBack.isShowing()) {
+                        mFooterCallBack.show(false);
+                    }
+                } else {
+                    if (mState != XRefreshViewState.STATE_LOADING) {
+                        mFooterCallBack.onStateRefreshing();
+                        mState = XRefreshViewState.STATE_LOADING;
+                    }
                 }
             } else if (canReleaseToLoadMore()) {
                 releaseToLoadMore(mHolder.mOffsetY != 0);
@@ -673,21 +813,20 @@ public class XRefreshView extends LinearLayout {
     }
 
     public void startRefresh() {
-        if (!mEnablePullRefresh || mHolder.mOffsetY != 0 || mContentView.isLoading() || !isEnabled()) {
+        if (!mEnablePullRefresh || mHolder.mOffsetY != 0 || mContentView.isLoading() || mPullRefreshing || !isEnabled()) {
             return;
         }
-        // 如果条件成立，代表布局还没有初始化完成，改变标记，等待该方法再次调用，完成开始刷新
-        if (mHeaderCallBack == null) {
-            this.autoRefresh = true;
-        } else {
-            if (!mPullRefreshing) {
-                updateHeaderHeight(0, mHeaderViewHeight, 0);
-                mPullRefreshing = true;
-                if (mRefreshViewListener != null) {
-                    mRefreshViewListener.onRefresh();
-                }
-                mContentView.scrollToTop();
+        if (mLayoutReady) {
+            mNeedToRefresh = false;
+            updateHeaderHeight(0, mHeaderViewHeight, 0);
+            mPullRefreshing = true;
+            if (mRefreshViewListener != null) {
+                mRefreshViewListener.onRefresh();
+                mRefreshViewListener.onRefresh(false);
             }
+            mContentView.scrollToTop();
+        } else {
+            mNeedToRefresh = true;
         }
     }
 
@@ -696,15 +835,13 @@ public class XRefreshView extends LinearLayout {
      */
     private void resetHeaderHeight() {
         float height = mHolder.mOffsetY;
-        if (height == 0) // not visible.
-            return;
         // refreshing and header isn't shown fully. do nothing.
-        if (mPullRefreshing && height <= mHeaderViewHeight) {
+        if (mPullRefreshing && (height <= (isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight) || height == 0)) {
             return;
         }
-        int offsetY = 0;
+        int offsetY;
         if (mPullRefreshing) {
-            offsetY = mHeaderViewHeight - mHolder.mOffsetY;
+            offsetY = (int) ((isAddHeaderTop ? (mHeaderViewHeight - headerTopHeight) : mHeaderViewHeight) - mHolder.mOffsetY);
             startScroll(offsetY, Utils.computeScrollVerticalDuration(offsetY, getHeight()));
         } else {
             offsetY = 0 - mHolder.mOffsetY;
@@ -721,42 +858,11 @@ public class XRefreshView extends LinearLayout {
             mFooterView.offsetTopAndBottom(deltaY);
         }
         ViewCompat.postInvalidateOnAnimation(this);
-
-        if (mRefreshViewListener != null
-                && (mContentView.isTop() || mPullRefreshing)) {
-            double offset = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
-            offset = offset > 1 ? 1 : offset;
-            mRefreshViewListener.onHeaderMove(offset, mHolder.mOffsetY);
-            mHeaderCallBack.onHeaderMove(offset, mHolder.mOffsetY, deltaY);
-        }
-    }
-
-    @Override
-    public void computeScroll() {
-        super.computeScroll();
-        if (mScroller.computeScrollOffset()) {
-            int lastScrollY = mHolder.mOffsetY;
-            int currentY = mScroller.getCurrY();
-            int offsetY = currentY - lastScrollY;
-            lastScrollY = currentY;
-            moveView(offsetY);
-
-            LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
-            if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
-                mReleaseToLoadMore = false;
-                mContentView.startLoadMore(false, null, null);
-            }
-        } else {
-            int currentY = mScroller.getCurrY();
-            if (mHolder.mOffsetY == 0) {
-                enablePullUp(true);
-                mStopingRefresh = false;
-            } else {
-                //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
-                if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
-                    startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY, getHeight()));
-                }
-            }
+        if (mRefreshViewListener != null && (mContentView.isTop() || mPullRefreshing)) {
+            double headerMovePercent = 1.0 * mHolder.mOffsetY / mHeaderViewHeight;
+//            headerMovePercent = headerMovePercent > 1 ? 1 : headerMovePercent;
+            mRefreshViewListener.onHeaderMove(headerMovePercent, mHolder.mOffsetY);
+            mHeaderCallBack.onHeaderMove(headerMovePercent, mHolder.mOffsetY, deltaY);
         }
     }
 
@@ -766,12 +872,19 @@ public class XRefreshView extends LinearLayout {
      * stop refresh, reset header view.
      */
     public void stopRefresh() {
+        stopRefresh(true);
+    }
+
+    /**
+     * stop refresh, reset header view.
+     */
+    public void stopRefresh(boolean success) {
         LogUtils.d("stopRefresh mPullRefreshing=" + mPullRefreshing);
         if (mPullRefreshing == true) {
             mStopingRefresh = true;
-            mHeaderCallBack.onStateFinish();
+            mHeaderCallBack.onStateFinish(success);
             mState = XRefreshViewState.STATE_COMPLETE;
-            mHandler.postDelayed(new Runnable() {
+            postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
@@ -819,25 +932,7 @@ public class XRefreshView extends LinearLayout {
      * stop load more, reset footer view.
      */
     public void stopLoadMore() {
-        if (needAddFooterView()) {
-            if (mPullLoading == true) {
-                mStopingRefresh = true;
-                mState = XRefreshViewState.STATE_COMPLETE;
-                mFooterCallBack.onStateFinish(true);
-                if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    mHandler.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            endLoadMore(true);
-                        }
-                    }, mPinnedTime);
-                } else {
-                    endLoadMore(true);
-                }
-            }
-        }
-        mContentView.stopLoading(true);
+        stopLoadMore(true);
     }
 
     /**
@@ -845,31 +940,48 @@ public class XRefreshView extends LinearLayout {
      *
      * @param hideFooter hide footerview if true
      */
-    public void stopLoadMore(final boolean hideFooter) {
+    public void stopLoadMore(boolean hideFooter) {
+        mState = XRefreshViewState.STATE_FINISHED;
+        stopLoadMore(hideFooter, SCROLLBACK_DURATION);
+    }
+
+    private void stopLoadMore(final boolean hideFooter, final int scrollBackDuration) {
         if (needAddFooterView()) {
-            if (mPullLoading == true) {
+            if (mPullLoading) {
                 mStopingRefresh = true;
-                mState = XRefreshViewState.STATE_COMPLETE;
-                mFooterCallBack.onStateFinish(hideFooter);
+                if (mState == XRefreshViewState.STATE_COMPLETE) {
+                    mFooterCallBack.onStateComplete();
+                } else {
+                    mFooterCallBack.onStateFinish(hideFooter);
+                }
                 if (mPinnedTime >= 1000) {// 在加载更多完成以后，只有mPinnedTime大于1s才生效，不然效果不好
-                    mHandler.postDelayed(new Runnable() {
+                    postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
-                            endLoadMore(hideFooter);
+                            endLoadMore(hideFooter, scrollBackDuration);
                         }
                     }, mPinnedTime);
                 } else {
-                    endLoadMore(hideFooter);
+                    endLoadMore(hideFooter, scrollBackDuration);
                 }
             }
         }
+
         mContentView.stopLoading(hideFooter);
+    }
+
+    private void scrollback(int offset) {
+        View child = mContentView.getContentView();
+        if (child instanceof AbsListView) {
+            AbsListView absListView = (AbsListView) child;
+            absListView.smoothScrollBy(offset, 0);
+        }
     }
 
     protected void resetLayout() {
         enablePullUp(false);
-        if (mHolder.mOffsetY != 0) {
+        if (mHolder.mOffsetY != 0 && !mStopingRefresh) {
             startScroll(-mHolder.mOffsetY, Utils.computeScrollVerticalDuration(mHolder.mOffsetY, getHeight()));
         }
     }
@@ -879,14 +991,19 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 此方法当没有更多数据时调用，不要与stopLoadMore()同时调用，内部已经调用了stopLoadMore()。
+     * 此方法当没有更多数据时调用，不要和stopLoadMore()同时调用
      *
      * @param hasComplete
      */
     public void setLoadComplete(boolean hasComplete) {
         mHasLoadComplete = hasComplete;
         if (needAddFooterView()) {
-            stopLoadMore();
+            if (hasComplete) {
+                mState = XRefreshViewState.STATE_COMPLETE;
+            } else {
+                mState = XRefreshViewState.STATE_NORMAL;
+            }
+            stopLoadMore(true, SCROLLBACK_DURATION);
             if (!hasComplete && mEnablePullLoad && mFooterCallBack != null) {
                 mFooterCallBack.onStateRefreshing();
 //                mFooterCallBack.show(true);
@@ -899,9 +1016,21 @@ public class XRefreshView extends LinearLayout {
         return mHasLoadComplete;
     }
 
-    private void endLoadMore(boolean hideFooter) {
+    private int SCROLLBACK_DURATION = 300;
+
+    /**
+     * 设置当非RecyclerView上拉加载完成以后的回弹时间
+     *
+     * @param duration
+     */
+    public void setScrollBackDuration(int duration) {
+        SCROLLBACK_DURATION = duration;
+    }
+
+    private void endLoadMore(boolean hideFooter, int scrolbackduration) {
         mPullLoading = false;
-        startScroll(-mHolder.mOffsetY, 0);
+        mRunnable.isStopLoadMore = true;
+        startScroll(-mHolder.mOffsetY, scrolbackduration);
 //        mFooterCallBack.onStateRefreshing();
         if (mHasLoadComplete && hideFooter) {
             mFooterCallBack.show(false);
@@ -913,11 +1042,50 @@ public class XRefreshView extends LinearLayout {
      * @param duration 滑动持续时间
      */
     public void startScroll(int offsetY, int duration) {
-        if (offsetY != 0) {
-            mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
-            ViewCompat.postInvalidateOnAnimation(this);
-        }
+        mScroller.startScroll(0, mHolder.mOffsetY, 0, offsetY, duration);
+        post(mRunnable);
     }
+
+    public boolean isStopLoadMore() {
+        return mRunnable.isStopLoadMore;
+    }
+
+    private ScrollRunner mRunnable = new ScrollRunner() {
+
+        @Override
+        public void run() {
+            if (mScroller.computeScrollOffset()) {
+                int lastScrollY = mHolder.mOffsetY;
+                int currentY = mScroller.getCurrY();
+                int offsetY = currentY - lastScrollY;
+                lastScrollY = currentY;
+                moveView(offsetY);
+                int[] location = new int[2];
+                mHeaderView.getLocationInWindow(location);
+                LogUtils.d("currentY=" + currentY + ";mHolder.mOffsetY=" + mHolder.mOffsetY);
+                if (enableReleaseToLoadMore && mHolder.mOffsetY == 0 && mReleaseToLoadMore && mContentView != null && mContentView.isBottom()) {
+                    mReleaseToLoadMore = false;
+                    mContentView.startLoadMore(false, null, null);
+                }
+                post(this);
+                if (isStopLoadMore) {
+                    scrollback(offsetY);
+                }
+            } else {
+                int currentY = mScroller.getCurrY();
+                if (mHolder.mOffsetY == 0) {
+                    enablePullUp(true);
+                    mStopingRefresh = false;
+                    isStopLoadMore = false;
+                } else {
+                    //有时scroller已经停止了，但是却没有回到应该在的位置，执行下面的方法恢复
+                    if (mStopingRefresh && !mPullLoading && !mPullRefreshing) {
+                        startScroll(-currentY, Utils.computeScrollVerticalDuration(currentY, getHeight()));
+                    }
+                }
+            }
+        }
+    };
 
     /**
      * 设置Abslistview的滚动监听事件
@@ -926,6 +1094,73 @@ public class XRefreshView extends LinearLayout {
      */
     public void setOnAbsListViewScrollListener(OnScrollListener scrollListener) {
         mContentView.setOnAbsListViewScrollListener(scrollListener);
+    }
+
+    private View mEmptyView;
+    private View mTempTarget;
+
+    public void setEmptyView(View emptyView) {
+        Utils.removeViewFromParent(emptyView);
+        mEmptyView = emptyView;
+        addEmptyViewLayoutParams();
+    }
+
+    private void addEmptyViewLayoutParams() {
+        if (mEmptyView == null) {
+            return;
+        }
+        LayoutParams layoutparams = generateDefaultLayoutParams();
+        layoutparams.height = LayoutParams.MATCH_PARENT;
+        layoutparams.width = LayoutParams.MATCH_PARENT;
+        mEmptyView.setLayoutParams(layoutparams);
+
+    }
+
+    public void setEmptyView(@LayoutRes int emptyView) {
+        String resourceTypeName = getContext().getResources().getResourceTypeName(emptyView);
+        if (!resourceTypeName.contains("layout")) {
+            throw new RuntimeException(getContext().getResources().getResourceName(emptyView) + " is a illegal layoutid , please check your layout id first !");
+        }
+        setEmptyView(LayoutInflater.from(getContext()).inflate(emptyView, this, false));
+    }
+
+    private int waitForShowEmptyView = 0;
+
+    public void enableEmptyView(boolean enable) {
+        if (!mLayoutReady) {
+            waitForShowEmptyView = enable ? 1 : 2;
+            return;
+        }
+        View contentView = getChildAt(1);
+        if (enable) {
+            if (mEmptyView != null && contentView != mEmptyView) {
+                mTempTarget = getChildAt(1);
+                swapContentView(mEmptyView);
+            }
+        } else {
+            if (mTempTarget != null && contentView == mEmptyView) {
+                swapContentView(mTempTarget);
+            }
+        }
+    }
+
+    public boolean isEmptyViewShowing() {
+        if (mEmptyView != null && getChildCount() >= 2) {
+            View child = getChildAt(1);
+            return child == mEmptyView;
+        }
+        return false;
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
+    }
+
+    private void swapContentView(View newContentView) {
+        removeViewAt(1);
+        addView(newContentView, 1);
+        mContentView.setContentView(newContentView);
+        mContentView.scrollToTop();
     }
 
     /**
@@ -998,7 +1233,7 @@ public class XRefreshView extends LinearLayout {
     }
 
     /**
-     * 设置是否在数据加载完成以后隐藏footerview
+     * 设置Recyclerview是否在数据加载完成以后隐藏footerview
      *
      * @param hide true则隐藏footerview，false则反之，默认隐藏
      */
@@ -1022,13 +1257,15 @@ public class XRefreshView extends LinearLayout {
      */
     public void setCustomHeaderView(View headerView) {
         if (headerView instanceof IHeaderCallBack) {
+            if (mHeaderView != null) {
+                removeView(mHeaderView);
+            }
             mHeaderView = headerView;
+            dealAddHeaderView();
         } else {
-            throw new RuntimeException(
-                    "headerView must be implementes IHeaderCallBack!");
+            throw new RuntimeException("headerView must be implementes IHeaderCallBack!");
         }
     }
-
 
     /**
      * 设置自定义footerView
@@ -1037,7 +1274,11 @@ public class XRefreshView extends LinearLayout {
      */
     public void setCustomFooterView(View footerView) {
         if (footerView instanceof IFooterCallBack) {
+            if (mFooterView != null) {
+                removeView(mFooterView);
+            }
             mFooterView = footerView;
+            dealAddFooterView();
         } else {
             throw new RuntimeException(
                     "footerView must be implementes IFooterCallBack!");
@@ -1048,34 +1289,49 @@ public class XRefreshView extends LinearLayout {
      * implements this interface to get refresh/load more event.
      */
     public interface XRefreshViewListener {
-        public void onRefresh();
+        /**
+         * use {@link #onRefresh(boolean)} instead.
+         */
+        @Deprecated
+        void onRefresh();
+
+        /**
+         * @param isPullDown 是不是由下拉手势引起的刷新，是则返回true，反之则是自动刷新或者是调用{@link #startRefresh()}引起的刷新
+         */
+        void onRefresh(boolean isPullDown);
 
         /**
          * @param isSilence 是不是静默加载，静默加载即不显示footerview，自动监听滚动到底部并触发此回调
          */
-        public void onLoadMore(boolean isSilence);
+        void onLoadMore(boolean isSilence);
 
         /**
          * 用户手指释放的监听回调
          *
          * @param direction >0: 下拉释放，<0:上拉释放 注：暂时没有使用这个方法
          */
-        public void onRelease(float direction);
+        void onRelease(float direction);
 
         /**
          * 获取headerview显示的高度与headerview高度的比例
          *
-         * @param offset  移动距离和headerview高度的比例，范围是0~1，0：headerview完全没显示
-         *                1：headerview完全显示
-         * @param offsetY headerview移动的距离
+         * @param headerMovePercent 移动距离和headerview高度的比例
+         * @param offsetY           headerview移动的距离
          */
-        public void onHeaderMove(double offset, int offsetY);
+        void onHeaderMove(double headerMovePercent, int offsetY);
     }
 
     public static class SimpleXRefreshListener implements XRefreshViewListener {
-
+        /**
+         * use {@link #onRefresh(boolean)} instead.
+         */
+        @Deprecated
         @Override
         public void onRefresh() {
+        }
+
+        @Override
+        public void onRefresh(boolean isPullDown) {
         }
 
         @Override

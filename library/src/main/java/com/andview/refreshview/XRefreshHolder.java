@@ -17,6 +17,5 @@ public class XRefreshHolder {
 	}
 	public boolean isOverHeader(int deltaY){
 		return mOffsetY<-deltaY;
-		
 	}
 }

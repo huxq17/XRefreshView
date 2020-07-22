@@ -1,6 +1,6 @@
 package com.andview.example.recylerview;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +21,12 @@ public class MultiItemAdapter extends BaseRecyclerAdapter<MultiItemAdapter.Simpl
     @Override
     public void onBindViewHolder(SimpleAdapterViewHolder holder, int position, boolean isItem) {
         Person person = list.get(position);
-        holder.nameTv.setText(person.getName());
+        int type = getAdapterItemViewType(position);
+        if (type == 0) {
+            holder.tvLeft.setText(person.getName());
+        } else {
+            holder.tvRight.setText(person.getName());
+        }
     }
 
     @Override
@@ -62,7 +67,7 @@ public class MultiItemAdapter extends BaseRecyclerAdapter<MultiItemAdapter.Simpl
 
     public class SimpleAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView nameTv;
+        public TextView tvRight, tvLeft;
 
         public SimpleAdapterViewHolder(View itemView, boolean isItem) {
             super(itemView);
@@ -78,10 +83,10 @@ public class MultiItemAdapter extends BaseRecyclerAdapter<MultiItemAdapter.Simpl
             if (isItem) {
                 switch (viewType) {
                     case 0:
-                        nameTv = (TextView) itemView.findViewById(R.id.tv_multi_left);
+                        tvLeft = (TextView) itemView.findViewById(R.id.tv_multi_left);
                         break;
                     default:
-                        nameTv = (TextView) itemView.findViewById(R.id.tv_multi_right);
+                        tvRight = (TextView) itemView.findViewById(R.id.tv_multi_right);
                         break;
                 }
             }

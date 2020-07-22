@@ -1,14 +1,17 @@
 package com.andview.refreshview.recyclerview;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import com.andview.refreshview.XRefreshView;
 import com.andview.refreshview.callback.IFooterCallBack;
 import com.andview.refreshview.utils.LogUtils;
 import com.andview.refreshview.utils.Utils;
@@ -83,6 +86,16 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
     public abstract VH getViewHolder(View view);
 
     /**
+     * 会调用此方法来判断是否显示空布局，返回true就会显示空布局<br/>
+     * 如有特殊需要，可重写此方法
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return getAdapterItemCount() == 0;
+    }
+
+    /**
      * @param parent
      * @param viewType
      * @param isItem   如果是true，才需要做处理 ,但是这个值总是true
@@ -112,18 +125,26 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
         ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
         if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
             StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
-            p.setFullSpan(isFooter(position));
+            p.setFullSpan(isFooter(position) || isHeader(position));
         }
     }
+
+    private final RecyclerViewDataObserver observer = new RecyclerViewDataObserver();
+
+    private XRefreshView mParent;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-//        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-//        if (manager instanceof GridLayoutManager) {
-//            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
-//            gridManager.setSpanSizeLookup(new XSpanSizeLookup(this, ((GridLayoutManager) manager).getSpanCount()));
-//        }
+        ViewParent parent = recyclerView.getParent();
+        if (parent != null && parent instanceof XRefreshView) {
+            mParent = (XRefreshView) recyclerView.getParent();
+            if (mParent != null && !observer.hasAttached()) {
+                observer.setData(this, mParent);
+                observer.attach();
+                registerAdapterDataObserver(observer);
+            }
+        }
     }
 
     /**
@@ -132,9 +153,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
      * @param footerView the inflated view
      */
     public void setCustomLoadMoreView(View footerView) {
-        Utils.removeViewFromParent(customLoadMoreView);
         if (footerView instanceof IFooterCallBack) {
             customLoadMoreView = footerView;
+            Utils.removeViewFromParent(customLoadMoreView);
+            if (mParent != null && mParent.getContentView() != null) {
+                mParent.getContentView().initFooterCallBack(this, mParent);
+            }
             showFooter(customLoadMoreView, false);
             notifyDataSetChanged();
         } else {
@@ -144,13 +168,12 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
 
     public void setHeaderView(View headerView, RecyclerView recyclerView) {
         if (recyclerView == null) return;
-        Utils.removeViewFromParent(customLoadMoreView);
+        Utils.removeViewFromParent(headerView);
         customHeaderView = headerView;
         notifyDataSetChanged();
     }
 
     public View setHeaderView(@LayoutRes int id, RecyclerView recyclerView) {
-
         if (recyclerView == null) return null;
         Context context = recyclerView.getContext();
         String resourceTypeName = context.getResources().getResourceTypeName(id);
@@ -240,6 +263,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
         isFooterEnable = enable;
     }
 
+
     /**
      * Insert a item to the list of the adapter
      *
@@ -272,7 +296,7 @@ public abstract class BaseRecyclerAdapter<VH extends RecyclerView.ViewHolder> ex
      */
     public void clear(List<?> list) {
         int start = getStart();
-        int size = list.size() + start;
+        int size = list.size();
         list.clear();
         notifyItemRangeRemoved(start, size);
     }

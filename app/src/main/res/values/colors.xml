@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--全局app使用-->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="contentBackground">#f5f5f5</color>
+    <color name="hintTextColor">#bababa</color>
+
+    <color name="black_common">#19191a</color>
+    <color name="red_common">#a70e2e</color>
+    <color name="gray_common">#9c9c9c</color>
+    <color name="gray_92">#929292</color>
+    <color name="gray_bg">#c0c0c0</color>
+    <color name="text_search_hint_grey">#616161</color>
+    <color name="bg_edit_grey">#29292a</color>
+
+
+</resources>

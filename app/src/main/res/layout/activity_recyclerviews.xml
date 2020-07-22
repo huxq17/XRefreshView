@@ -1,54 +1,73 @@
-<com.andview.example.FlowView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_linear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="Linear样式的Recyclerview" />
+    <com.andview.example.FlowView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_grid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="Grid样式的Recyclerview" />
+        <Button
+            android:id="@+id/bt_linear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="Linear样式的Recyclerview" />
 
-    <Button
-        android:id="@+id/bt_staggered"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="Staggered样式的Recyclerview" />
+        <Button
+            android:id="@+id/bt_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="Grid样式的Recyclerview" />
 
-    <Button
-        android:id="@+id/bt_banner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="带Banner的Recyclerview" />
+        <Button
+            android:id="@+id/bt_staggered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="Staggered样式的Recyclerview" />
 
-    <Button
-        android:id="@+id/bt_multi_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="多种布局的Recyclerview" />
+        <Button
+            android:id="@+id/bt_banner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="带Banner的Recyclerview" />
 
-    <Button
-        android:id="@+id/bt_slience"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:onClick="onClick"
-        android:text="静默加载的Recyclerview" />
+        <Button
+            android:id="@+id/bt_multi_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="多种布局的Recyclerview" />
 
+        <Button
+            android:id="@+id/bt_slience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="静默加载的Recyclerview" />
 
-</com.andview.example.FlowView>
+        <Button
+            android:id="@+id/bt_without_baseRecyclerAdapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="不使用BaseRecyclerApdater" />
+        <Button
+            android:id="@+id/bt_showFooter_noMoreData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="onClick"
+            android:text="没有更多数据时显示footerview" />
+
+    </com.andview.example.FlowView>
+</ScrollView>

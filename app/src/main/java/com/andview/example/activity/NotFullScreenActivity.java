@@ -3,11 +3,13 @@ package com.andview.example.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.andview.example.R;
 import com.andview.example.recylerview.Person;
@@ -43,7 +45,7 @@ public class NotFullScreenActivity extends Activity {
 
         adapter = new SimpleAdapter(personList, this);
         // 设置静默加载模式
-//        xRefreshView.setSilenceLoadMore();
+//        xRefreshView1.setSilenceLoadMore();
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         // 静默加载模式不能设置footerview
@@ -53,14 +55,17 @@ public class NotFullScreenActivity extends Activity {
         xRefreshView.setPullLoadEnable(true);
         xRefreshView.setMoveForHorizontal(true);
         xRefreshView.setAutoLoadMore(true);
+        xRefreshView.setEmptyView(R.layout.layout_emptyview);
+        showXRefreshView(false);
+
         adapter.setCustomLoadMoreView(new XRefreshViewFooter(this));
         //设置静默加载时提前加载的item个数
-//        xRefreshView.setPreLoadCount(4);
+//        xRefreshView1.setPreLoadCount(4);
 
         xRefreshView.setXRefreshViewListener(new SimpleXRefreshListener() {
 
             @Override
-            public void onRefresh() {
+            public void onRefresh(boolean isPullDown) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -70,14 +75,15 @@ public class NotFullScreenActivity extends Activity {
             }
 
             @Override
-            public void onLoadMore(boolean isSlience) {
+            public void onLoadMore(boolean isSilence) {
+                LogUtils.e("loadmore");
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
                         for (int i = 0; i < 1; i++) {
                             adapter.insert(new Person("More ", mLoadCount + "21"),
                                     adapter.getAdapterItemCount());
                         }
-                        LogUtils.i("test onLoadMore adapter.count="+adapter.getItemCount());
+                        LogUtils.i("test onLoadMore recyclerviewAdapter.count=" + adapter.getItemCount());
                         mLoadCount++;
 
                         if (mLoadCount >= 5) {
@@ -91,10 +97,10 @@ public class NotFullScreenActivity extends Activity {
             }
         });
         //如果想在数据加载完成以后不隐藏footerview则需要调用下面这行代码并传入false
-//        xRefreshView.setHideFooterWhenComplete(false);
+//        xRefreshView1.setHideFooterWhenComplete(false);
         requestData();
 //		// 实现Recyclerview的滚动监听
-//		xRefreshView.setOnRecyclerViewScrollListener(new OnScrollListener() {
+//		xRefreshView1.setOnRecyclerViewScrollListener(new OnScrollListener() {
 //			@Override
 //			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //				super.onScrolled(recyclerView, dx, dy);
@@ -104,10 +110,14 @@ public class NotFullScreenActivity extends Activity {
 //			public void onScrollStateChanged(RecyclerView recyclerView,
 //											 int newState) {
 //				if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//					isBottom = adapter.getItemCount() - 1 == lastVisibleItem;
+//					isBottom = recyclerviewAdapter.getItemCount() - 1 == lastVisibleItem;
 //				}
 //			}
 //		});
+    }
+
+    public void showXRefreshView(boolean show) {
+        xRefreshView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void requestData() {
@@ -124,6 +134,7 @@ public class NotFullScreenActivity extends Activity {
         for (int i = 0; i < 1; i++) {
             Person person = new Person("name" + i, "" + i);
             personList.add(person);
+            showXRefreshView(true);
         }
     }
 
