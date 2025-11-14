@@ -71,6 +71,9 @@ public class MainActivity extends Activity {
             case R.id.bt_pluse:
                 intent = new Intent(this, PluseActivity.class);
                 break;
+            case R.id.bt_banner_recyclerview:
+                intent = new Intent(this, BannerRecyclerViewActivity.class);
+                break;
             default:
                 break;
         }
